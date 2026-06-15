@@ -145,6 +145,7 @@
   width: 42%;
   max-width: 650px;
   filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.06));
+  z-index: 15;
 }
 
 .cornerTl {
@@ -169,22 +170,18 @@
 
 .frameLogoOverlay {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(85vw, 650px); /* Widescreen layout for intro video */
-  aspect-ratio: 16/9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
   transition: opacity 0.15s ease-out;
 }
 
 .introVideo {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  border-radius: 12px;
+  object-fit: cover;
 }
 
 /* TAHAP 3 BACKGROUND & SEPARATE FLOATING ANIMATIONS */
