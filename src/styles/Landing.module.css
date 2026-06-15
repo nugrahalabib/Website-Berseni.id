@@ -184,6 +184,12 @@
   object-fit: cover;
 }
 
+@media (max-width: 768px) {
+  .introVideo {
+    object-fit: contain;
+  }
+}
+
 /* TAHAP 3 BACKGROUND & SEPARATE FLOATING ANIMATIONS */
 .heroStage3Bg {
   position: absolute;
