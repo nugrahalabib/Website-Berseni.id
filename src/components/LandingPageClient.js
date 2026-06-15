@@ -151,9 +151,9 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
       : 0;
 
   const birdsTranslateY = scrollProgress < 0.33 
-    ? 80 
+    ? -60 
     : scrollProgress < 0.52 
-      ? 80 - ((scrollProgress - 0.33) / 0.19) * 80 
+      ? -60 - ((scrollProgress - 0.33) / 0.19) * -60 
       : 0;
 
   // 4. Experience Art Text Card (fades and scales in last, from 0.46 to 0.63)
