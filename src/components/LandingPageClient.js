@@ -172,11 +172,26 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
               }}
             >
               <div className={styles.frameWrapper}>
-                {/* Gambar Bingkai Seni yang Digenerate */}
+                {/* 4 Pojok Bingkai Responsif */}
                 <img 
-                  src="/hero-frame.png" 
-                  alt="Art Frame" 
-                  className={styles.frameImage}
+                  src="/hero-corner-tl.png" 
+                  alt="Corner Top Left" 
+                  className={`${styles.frameCorner} ${styles.cornerTl}`}
+                />
+                <img 
+                  src="/hero-corner-tr.png" 
+                  alt="Corner Top Right" 
+                  className={`${styles.frameCorner} ${styles.cornerTr}`}
+                />
+                <img 
+                  src="/hero-corner-bl.png" 
+                  alt="Corner Bottom Left" 
+                  className={`${styles.frameCorner} ${styles.cornerBl}`}
+                />
+                <img 
+                  src="/hero-corner-br.png" 
+                  alt="Corner Bottom Right" 
+                  className={`${styles.frameCorner} ${styles.cornerBr}`}
                 />
                 
                 {/* Logo Berseni di Tengah Bingkai */}
