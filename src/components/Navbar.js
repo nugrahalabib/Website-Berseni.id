@@ -104,17 +104,8 @@ export default function Navbar() {
               );
             })}
 
-            {/* Admin/Dashboard Button */}
-            {isAdmin ? (
-              <Link href="/admin" className={styles.adminBtn}>
-                Dashboard
-              </Link>
-            ) : (
-              <Link href="/admin/login" className={styles.navLink} style={{ fontSize: '0.8rem', opacity: 0.6 }}>
-                Admin
-              </Link>
-            )}
           </div>
+
 
           {/* Hamburger Menu Toggle (Mobile) */}
           <div 
@@ -143,16 +134,8 @@ export default function Navbar() {
             </a>
           );
         })}
-        {isAdmin ? (
-          <Link href="/admin" className={styles.adminBtn} style={{ textAlign: 'center', marginTop: '1rem' }} onClick={closeMobileMenu}>
-            Dashboard Admin
-          </Link>
-        ) : (
-          <Link href="/admin/login" className={styles.mobileLink} onClick={closeMobileMenu}>
-            Login Admin
-          </Link>
-        )}
       </div>
+
     </>
   );
 }
