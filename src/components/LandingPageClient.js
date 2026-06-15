@@ -148,13 +148,6 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
         className={styles.heroScrollContainer}
       >
         <div className={styles.heroStickyWrapper}>
-          {/* Latar Belakang Kanvas Lukisan Galeri */}
-          <div 
-            className={styles.heroBgCanvas}
-            style={{
-              transform: `scale(${1 + scrollProgress * 0.1})`,
-            }}
-          />
 
           {/* Background Decorative Brush Accents */}
           <div className={styles.heroBrush1} style={{ transform: `translate(${-scrollProgress * 150}px, ${scrollProgress * 50}px)`, opacity: 0.1 * (1 - scrollProgress) }}>
