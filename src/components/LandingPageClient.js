@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import HeroCarousel from '@/components/HeroCarousel';
@@ -11,6 +11,38 @@ import styles from '@/styles/Landing.module.css';
 export default function LandingPageClient({ initialContent, initialProducts }) {
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Hook untuk memantau progress scroll di Hero Section
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroEl = document.getElementById('hero-scroll-container');
+      if (!heroEl) return;
+
+      const rect = heroEl.getBoundingClientRect();
+      const heroHeight = rect.height;
+      const viewportHeight = window.innerHeight;
+
+      // Hitung seberapa jauh area hero ter-scroll relatif terhadap viewport
+      const scrollStart = window.scrollY;
+      const containerTop = heroEl.offsetTop;
+      const totalScrollable = heroHeight - viewportHeight;
+
+      let progress = 0;
+      if (totalScrollable > 0) {
+        progress = (scrollStart - containerTop) / totalScrollable;
+        progress = Math.max(0, Math.min(1, progress));
+      }
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Jalankan sekali di awal untuk menetapkan state inisial
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
 
   // Fallback konten jika database kosong / error
   const content = initialContent || {
@@ -63,53 +95,169 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
     return title;
   };
 
+  // Hitung nilai animasi berdasarkan scrollProgress (0 - 1)
+  const textOpacity = scrollProgress < 0.35 
+    ? 0 
+    : scrollProgress < 0.5 
+      ? (scrollProgress - 0.35) / 0.15 
+      : scrollProgress < 0.7 
+        ? 1 
+        : scrollProgress < 0.85 
+          ? 1 - (scrollProgress - 0.7) / 0.15 
+          : 0;
+
+  const textScale = scrollProgress < 0.35 
+    ? 0.95 
+    : scrollProgress < 0.5 
+      ? 0.95 + ((scrollProgress - 0.35) / 0.15) * 0.05 
+      : scrollProgress < 0.7 
+        ? 1 
+        : scrollProgress < 0.85 
+          ? 1 - ((scrollProgress - 0.7) / 0.15) * 0.05 
+          : 0.95;
+
+  const textTranslateY = scrollProgress < 0.35 
+    ? 40 
+    : scrollProgress < 0.5 
+      ? 40 - ((scrollProgress - 0.35) / 0.15) * 40 
+      : scrollProgress < 0.7 
+        ? 0 
+        : scrollProgress < 0.85 
+          ? -((scrollProgress - 0.7) / 0.15) * 40 
+          : -40;
+
+  const showcaseOpacity = scrollProgress < 0.7 
+    ? 0 
+    : Math.min(1, (scrollProgress - 0.7) / 0.2);
+
+  const showcaseScale = scrollProgress < 0.7 
+    ? 0.9 
+    : 0.9 + Math.min(1, (scrollProgress - 0.7) / 0.2) * 0.1;
+
+  const showcaseTranslateY = scrollProgress < 0.7 
+    ? 60 
+    : 60 - Math.min(1, (scrollProgress - 0.7) / 0.2) * 60;
+
   return (
     <div className={styles.page}>
       <Navbar />
 
-      {/* 1. HERO SECTION */}
-      <section className={styles.hero}>
-        {/* Background Decorative Brush Accents */}
-        <div className={styles.heroBrush1}>
-          <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 80 C 40 10, 60 10, 100 80 C 130 150, 160 150, 190 80" stroke="var(--color-tosca)" strokeWidth="8" strokeLinecap="round"/>
-          </svg>
-        </div>
-        <div className={styles.heroBrush2}>
-          <svg width="250" height="250" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 20 C 80 180, 120 180, 180 20" stroke="var(--color-kunyit)" strokeWidth="6" strokeLinecap="round" strokeDasharray="5,5"/>
-          </svg>
-        </div>
-
-        <div className={styles.heroContent}>
-          <div className={styles.heroLogoWrapper}>
-            <img 
-              src="/logo.png" 
-              alt="Berseni Logo" 
-              className={styles.heroLogo}
-              onError={(e) => {
-                e.target.style.display = 'none';
-              }}
-            />
-          </div>
-          <span className={styles.heroSubtitle}>{content.heroSubtitle}</span>
-          <h1 className={styles.heroTitle}>{renderHeroTitle(content.heroTitle)}</h1>
-          <p className={styles.heroDesc}>{content.heroDescription}</p>
-          <div className={styles.heroCTAs}>
-            <a href="#products" className="btn btn-primary">Lihat Galeri & Kelas</a>
-            <a href="#about" className="btn btn-outline">Tentang Kami</a>
-          </div>
-        </div>
-
-
-        {/* 3D Perspective Card Carousel Showcase */}
-        {featuredProducts.length > 0 && (
-          <HeroCarousel 
-            items={featuredProducts} 
-            onCardClick={handleCardSelect} 
+      {/* 1. HERO SECTION (SCROLL-ZOOM STICKY CONTAINER) */}
+      <section 
+        id="hero-scroll-container" 
+        className={styles.heroScrollContainer}
+      >
+        <div className={styles.heroStickyWrapper}>
+          {/* Latar Belakang Kanvas Lukisan Galeri */}
+          <div 
+            className={styles.heroBgCanvas}
+            style={{
+              transform: `scale(${1 + scrollProgress * 0.1})`,
+            }}
           />
-        )}
+
+          {/* Background Decorative Brush Accents */}
+          <div className={styles.heroBrush1} style={{ transform: `translate(${-scrollProgress * 150}px, ${scrollProgress * 50}px)`, opacity: 0.1 * (1 - scrollProgress) }}>
+            <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 80 C 40 10, 60 10, 100 80 C 130 150, 160 150, 190 80" stroke="var(--color-tosca)" strokeWidth="8" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <div className={styles.heroBrush2} style={{ transform: `translate(${scrollProgress * 150}px, ${-scrollProgress * 50}px)`, opacity: 0.1 * (1 - scrollProgress) }}>
+            <svg width="250" height="250" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 20 C 80 180, 120 180, 180 20" stroke="var(--color-kunyit)" strokeWidth="6" strokeLinecap="round" strokeDasharray="5,5"/>
+            </svg>
+          </div>
+
+          {/* TAHAP 1 & 2: ZOOM BINGKAI LUKISAN & LOGO BERSENI */}
+          {scrollProgress < 0.6 && (
+            <div 
+              className={styles.frameContainer}
+              style={{
+                transform: `translate(-50%, -50%) scale(${1 + scrollProgress * 18})`,
+                opacity: scrollProgress < 0.2 ? 1 : Math.max(0, 1 - (scrollProgress - 0.2) / 0.35),
+                pointerEvents: scrollProgress > 0.45 ? 'none' : 'auto',
+              }}
+            >
+              <div className={styles.frameWrapper}>
+                {/* Gambar Bingkai Seni yang Digenerate */}
+                <img 
+                  src="/hero-frame.png" 
+                  alt="Art Frame" 
+                  className={styles.frameImage}
+                />
+                
+                {/* Logo Berseni di Tengah Bingkai */}
+                <div 
+                  className={styles.frameLogoOverlay}
+                  style={{
+                    opacity: scrollProgress < 0.1 ? 1 : Math.max(0, 1 - (scrollProgress - 0.1) / 0.25),
+                  }}
+                >
+                  <img 
+                    src="/logo.png" 
+                    alt="Berseni Logo" 
+                    className={styles.frameLogo}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAHAP 3: HERO TEXT CONTENT */}
+          <div 
+            className={styles.heroContent}
+            style={{
+              opacity: textOpacity,
+              transform: `translateY(${textTranslateY}px) scale(${textScale})`,
+              pointerEvents: textOpacity < 0.3 ? 'none' : 'auto',
+              display: scrollProgress > 0.92 ? 'none' : 'block',
+            }}
+          >
+            <span className={styles.heroSubtitle}>{content.heroSubtitle}</span>
+            <h1 className={styles.heroTitle}>{renderHeroTitle(content.heroTitle)}</h1>
+            <p className={styles.heroDesc}>{content.heroDescription}</p>
+            <div className={styles.heroCTAs}>
+              <a href="#products" className="btn btn-primary">Lihat Galeri & Kelas</a>
+              <a href="#about" className="btn btn-outline">Tentang Kami</a>
+            </div>
+          </div>
+
+          {/* TAHAP 4: SHOWCASE CAROUSEL & ELEMEN KOLASE FLYER */}
+          <div 
+            className={styles.showcaseWrapper}
+            style={{
+              opacity: showcaseOpacity,
+              transform: `translateY(${showcaseTranslateY}px) scale(${showcaseScale})`,
+              pointerEvents: showcaseOpacity < 0.3 ? 'none' : 'auto',
+            }}
+          >
+            {/* Background floating collage flyer kiri */}
+            <div className={`${styles.floatingFlyer} ${styles.flyerLeft}`}>
+              <img src="/collage-1.jpg" alt="Artwork flyer" />
+            </div>
+
+            {/* Background floating collage flyer kanan */}
+            <div className={`${styles.floatingFlyer} ${styles.flyerRight}`}>
+              <img src="/collage-2.jpg" alt="Artwork flyer" />
+            </div>
+
+            {/* Carousel Karya 3D Utama */}
+            {featuredProducts.length > 0 && (
+              <div className={styles.carouselShowcaseContainer}>
+                <div className={styles.carouselShowcaseHeader}>
+                  <h3>Karya & Kelas Unggulan Kami<span>.</span></h3>
+                  <p>Geser atau klik kartu untuk melihat detail kelas dan lukisan Berseni</p>
+                </div>
+                <HeroCarousel 
+                  items={featuredProducts} 
+                  onCardClick={handleCardSelect} 
+                />
+              </div>
+            )}
+          </div>
+        </div>
       </section>
+
 
       {/* 2. PROGRAMS SECTION (DARK INTERFACE) */}
       <section id="programs" className={styles.programs}>
