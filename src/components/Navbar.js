@@ -60,74 +60,65 @@ export default function Navbar() {
   ];
 
   return (
-    <>
-      <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
-        <div className={styles.navInner}>
-          {/* Brand Logo */}
-          <div className={styles.logo} onClick={() => { closeMobileMenu(); router.push('/'); }}>
-            <div className={styles.logoTextContainer}>
-              <span className={styles.logoText}>Berseni</span>
-              <span className={styles.logoTagline}>A World of Art for Everyone</span>
-            </div>
-          </div>
-
-
-
-
-
-          {/* Desktop Links */}
-          <div className={styles.navLinks}>
-            {navLinks.map((link) => {
-              const isAnchor = link.path.startsWith('#');
-              const isActive = pathname === '/' && isAnchor ? false : pathname === link.path;
-              
-              if (isAnchor) {
-                return (
-                  <a
-                    key={link.name}
-                    href={pathname === '/' ? link.path : `/${link.path}`}
-                    className={styles.navLink}
-                  >
-                    {link.name}
-                  </a>
-                );
-              }
-              
-              return (
-                <Link
-                  key={link.name}
-                  href={link.path}
-                  className={`${styles.navLink} ${isActive ? styles.activeLink : ''}`}
-                >
-                  {link.name}
-                </Link>
-              );
-            })}
-
-          </div>
-
-
-          {/* Hamburger Menu Toggle (Mobile) */}
-          <div 
-            className={`${styles.menuToggle} ${mobileActive ? styles.menuActive : ''}`}
-            onClick={toggleMobileMenu}
-          >
-            <span className={styles.bar}></span>
-            <span className={styles.bar}></span>
-            <span className={styles.bar}></span>
+    <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''} ${mobileActive ? styles.navbarExpanded : ''}`}>
+      <div className={styles.navInner}>
+        {/* Brand Logo */}
+        <div className={styles.logo} onClick={() => { closeMobileMenu(); router.push('/'); }}>
+          <div className={styles.logoTextContainer}>
+            <span className={styles.logoText}>Berseni</span>
+            <span className={styles.logoTagline}>A World of Art for Everyone</span>
           </div>
         </div>
-      </nav>
 
-      {/* Mobile Drawer Menu */}
-      <div className={`${styles.mobileDrawer} ${mobileActive ? styles.mobileDrawerActive : ''}`}>
+        {/* Desktop Links */}
+        <div className={styles.navLinks}>
+          {navLinks.map((link) => {
+            const isAnchor = link.path.startsWith('#');
+            const isActive = pathname === '/' && isAnchor ? false : pathname === link.path;
+            
+            if (isAnchor) {
+              return (
+                <a
+                  key={link.name}
+                  href={pathname === '/' ? link.path : `/${link.path}`}
+                  className={styles.navLink}
+                >
+                  {link.name}
+                </a>
+              );
+            }
+            
+            return (
+              <Link
+                key={link.name}
+                href={link.path}
+                className={`${styles.navLink} ${isActive ? styles.activeLink : ''}`}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Hamburger Menu Toggle (Mobile) */}
+        <div 
+          className={`${styles.menuToggle} ${mobileActive ? styles.menuActive : ''}`}
+          onClick={toggleMobileMenu}
+        >
+          <span className={styles.bar}></span>
+          <span className={styles.bar}></span>
+          <span className={styles.bar}></span>
+        </div>
+      </div>
+
+      {/* Mobile Dropdown Expanded Menu Links */}
+      <div className={`${styles.mobileMenuContent} ${mobileActive ? styles.mobileMenuVisible : ''}`}>
         {navLinks.map((link) => {
-          const isAnchor = link.path.startsWith('#');
           return (
             <a
               key={link.name}
               href={pathname === '/' ? link.path : `/${link.path}`}
-              className={styles.mobileLink}
+              className={styles.mobileNavLink}
               onClick={closeMobileMenu}
             >
               {link.name}
@@ -135,7 +126,6 @@ export default function Navbar() {
           );
         })}
       </div>
-
-    </>
+    </nav>
   );
 }

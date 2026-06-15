@@ -814,39 +814,51 @@
   transform: rotate(45deg) translate(-5px, -6px);
 }
 
-.mobileDrawer {
-  position: fixed;
-  top: 0;
-  right: -100%;
-  width: 75%;
-  max-width: 300px;
-  height: 100%;
-  background: rgba(250, 245, 235, 0.82); /* Semi-transparent cream glass */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.08);
-  z-index: 999;
-  padding: 6rem 2rem 2rem 2rem;
+.navbarExpanded {
+  border-radius: 24px !important; /* Smoothly changes from pill to rounded card when expanded */
+}
+
+.mobileMenuContent {
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.3s ease, 
+              transform 0.3s ease,
+              margin-top 0.3s ease,
+              padding-top 0.3s ease;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border-left: 1px solid rgba(20, 120, 155, 0.15);
+  gap: 0.5rem;
+  border-top: 1px solid rgba(20, 120, 155, 0);
+  padding-top: 0;
 }
 
-.mobileDrawerActive {
-  right: 0;
+.mobileMenuVisible {
+  max-height: 380px; /* High enough to contain all navigation links */
+  opacity: 1;
+  transform: translateY(0);
+  border-top: 1px solid rgba(20, 120, 155, 0.12);
+  padding-top: 1.25rem;
+  margin-top: 1.25rem;
 }
 
-.mobileLink {
-  font-size: 1.1rem;
+.mobileNavLink {
+  font-size: 1rem;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--color-text-dark);
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(20, 120, 155, 0.1);
+  padding: 0.65rem 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  display: block;
 }
 
-.mobileLink:hover {
+.mobileNavLink:hover {
+  background: rgba(20, 120, 155, 0.06);
   color: var(--color-maroon);
+  padding-left: 1.5rem;
 }
