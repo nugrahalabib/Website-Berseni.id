@@ -211,6 +211,12 @@
     height: 100%;
     object-fit: contain;
   }
+
+  .bgBirds {
+    background-size: contain;
+    background-position: center top;
+    height: 35vh;
+  }
 }
 
 /* TAHAP 3 BACKGROUND & SEPARATE FLOATING ANIMATIONS */
