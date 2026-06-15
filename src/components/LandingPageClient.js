@@ -259,6 +259,11 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
                     playsInline
                     preload="auto"
                   />
+                  <img
+                    src="/logo.png"
+                    alt="Berseni Logo"
+                    className={styles.frameLogo}
+                  />
                 </div>
               </div>
             </div>

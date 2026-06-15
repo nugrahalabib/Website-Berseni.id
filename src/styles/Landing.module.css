@@ -176,6 +176,9 @@
   height: 100%;
   z-index: 5;
   transition: opacity 0.15s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .introVideo {
@@ -184,8 +187,28 @@
   object-fit: cover;
 }
 
+.frameLogo {
+  display: none;
+}
+
 @media (max-width: 768px) {
+  .frameLogoOverlay {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(80vw, 450px);
+    height: auto;
+    aspect-ratio: 320/275;
+  }
+  
   .introVideo {
+    display: none !important;
+  }
+  
+  .frameLogo {
+    display: block;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
   }
 }
