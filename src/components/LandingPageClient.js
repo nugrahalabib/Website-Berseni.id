@@ -82,6 +82,16 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
         </div>
 
         <div className={styles.heroContent}>
+          <div className={styles.heroLogoWrapper}>
+            <img 
+              src="/logo.png" 
+              alt="Berseni Logo" 
+              className={styles.heroLogo}
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
           <span className={styles.heroSubtitle}>{content.heroSubtitle}</span>
           <h1 className={styles.heroTitle}>{renderHeroTitle(content.heroTitle)}</h1>
           <p className={styles.heroDesc}>{content.heroDescription}</p>
@@ -90,6 +100,7 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
             <a href="#about" className="btn btn-outline">Tentang Kami</a>
           </div>
         </div>
+
 
         {/* 3D Perspective Card Carousel Showcase */}
         {featuredProducts.length > 0 && (
