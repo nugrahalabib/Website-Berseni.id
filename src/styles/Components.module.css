@@ -1,21 +1,29 @@
 /* NAVBAR STYLES */
 .navbar {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1100px;
   z-index: 1000;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 1rem 0;
+  padding: 0.75rem 2.5rem;
+  background: rgba(250, 245, 235, 0.65); /* Semi-transparent cream glass */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 50px; /* Capsule shape */
+  border: 1px solid rgba(20, 120, 155, 0.12); /* Subtle matching Tosca border */
+  box-shadow: 0 8px 32px rgba(20, 120, 155, 0.05);
 }
 
 .scrolled {
-  background: rgba(250, 245, 235, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-  border-bottom: 1px solid rgba(20, 120, 155, 0.15);
-  padding: 0.75rem 0;
+  top: 14px;
+  width: 86%; /* Slightly more compact horizontal width on scroll */
+  background: rgba(250, 245, 235, 0.88); /* More solid backdrop for readability on scroll */
+  border: 1px solid rgba(20, 120, 155, 0.2);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
+  padding: 0.55rem 2.5rem;
 }
 
 .navInner {
@@ -749,6 +757,18 @@
 }
 
 @media (max-width: 768px) {
+  .navbar {
+    top: 16px;
+    width: 92%;
+    padding: 0.65rem 1.5rem;
+  }
+  
+  .scrolled {
+    top: 10px;
+    width: 92%;
+    padding: 0.5rem 1.5rem;
+  }
+
   .navLinks {
     display: none; /* Mobile menu drawer will overlay this */
   }
@@ -801,8 +821,10 @@
   width: 75%;
   max-width: 300px;
   height: 100%;
-  background: var(--color-cream-bg);
-  box-shadow: -4px 0 30px rgba(0,0,0,0.1);
+  background: rgba(250, 245, 235, 0.82); /* Semi-transparent cream glass */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.08);
   z-index: 999;
   padding: 6rem 2rem 2rem 2rem;
   display: flex;
