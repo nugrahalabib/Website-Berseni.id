@@ -211,12 +211,42 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
             </div>
           )}
 
+          {/* BACKGROUND UNTUK TAHAP 3 (HERO TEXT) */}
+          <div 
+            className={styles.heroStage3Bg}
+            style={{
+              opacity: textOpacity,
+              pointerEvents: 'none',
+              display: scrollProgress < 0.25 || scrollProgress > 0.9 ? 'none' : 'block',
+            }}
+          >
+            {/* Latar Belakang Ombak Sunset */}
+            <div 
+              className={styles.sunsetParallaxWrapper}
+              style={{
+                transform: `scale(${1.02 + scrollProgress * 0.03}) translate(${scrollProgress * -8}px, ${scrollProgress * -4}px)`,
+              }}
+            >
+              <div className={styles.bgSunset} />
+            </div>
+
+            {/* Overlay Burung-Burung Terbang */}
+            <div 
+              className={styles.birdsParallaxWrapper}
+              style={{
+                transform: `scale(${1 + scrollProgress * 0.1}) translate(${scrollProgress * 20}px, ${scrollProgress * -12}px)`,
+              }}
+            >
+              <div className={styles.bgBirds} />
+            </div>
+          </div>
+
           {/* TAHAP 3: HERO TEXT CONTENT */}
           <div 
             className={styles.heroContent}
             style={{
               opacity: textOpacity,
-              transform: `translateY(${textTranslateY}px) scale(${textScale})`,
+              transform: `translate(-50%, -50%) translateY(${textTranslateY}px) scale(${textScale})`,
               pointerEvents: textOpacity < 0.3 ? 'none' : 'auto',
               display: scrollProgress > 0.92 ? 'none' : 'block',
             }}

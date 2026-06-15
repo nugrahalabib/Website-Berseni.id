@@ -38,6 +38,17 @@
   text-align: center;
   margin-bottom: 0;
   transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+  
+  /* Premium Glass Container for Readability */
+  background: rgba(250, 245, 235, 0.85); /* Semi-transparent cream matching --color-cream-bg */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 3.5rem 3rem;
+  border-radius: 28px;
+  border: 1px solid rgba(20, 120, 155, 0.12);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.02),
+    0 30px 60px rgba(20, 120, 155, 0.05);
 }
 
 .heroSubtitle {
@@ -173,6 +184,76 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+/* TAHAP 3 BACKGROUND & SEPARATE FLOATING ANIMATIONS */
+.heroStage3Bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.sunsetParallaxWrapper,
+.birdsParallaxWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  transition: transform 0.1s ease-out;
+}
+
+.bgSunset {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/pantai-sunset.webp') no-repeat center center;
+  background-size: cover;
+  animation: swaySunset 16s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.bgBirds {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/burung-burung.webp') no-repeat center center;
+  background-size: cover;
+  animation: flyBirds 8s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes swaySunset {
+  0% {
+    transform: translate(0, 0) scale(1.02);
+  }
+  100% {
+    transform: translate(-10px, -5px) scale(1.04);
+  }
+}
+
+@keyframes flyBirds {
+  0% {
+    transform: translate(-15px, -12px) scale(1) rotate(-1deg);
+  }
+  33% {
+    transform: translate(10px, 15px) scale(1.03) rotate(0.5deg);
+  }
+  66% {
+    transform: translate(-5px, 5px) scale(0.98) rotate(-0.5deg);
+  }
+  100% {
+    transform: translate(15px, -15px) scale(1.02) rotate(1deg);
+  }
 }
 
 /* TAHAP 4: SHOWCASE CAROUSEL & ELEMEN KOLASE FLYER */
@@ -613,6 +694,12 @@
     width: 50%;
   }
 
+  .heroContent {
+    padding: 2.5rem 2rem;
+    border-radius: 20px;
+    width: 92%;
+  }
+
   .heroTitle {
     font-size: 2.75rem;
   }
@@ -640,6 +727,11 @@
 @media (max-width: 480px) {
   .frameCorner {
     width: 60%;
+  }
+
+  .heroContent {
+    padding: 1.75rem 1.25rem;
+    border-radius: 16px;
   }
 
   .heroTitle {
