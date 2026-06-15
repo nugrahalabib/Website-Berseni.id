@@ -1,0 +1,464 @@
+.page {
+  padding-top: 80px; /* Jarak dari fixed navbar */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HERO SECTION */
+.hero {
+  position: relative;
+  padding: 4rem 1.5rem;
+  background: radial-gradient(circle at 10% 20%, rgba(20, 120, 155, 0.04) 0%, rgba(250, 245, 235, 1) 90%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.heroContent {
+  max-width: 800px;
+  margin-bottom: 2rem;
+  z-index: 10;
+}
+
+.heroSubtitle {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--color-maroon);
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  line-height: 1.15;
+  margin-bottom: 1.5rem;
+  letter-spacing: -1px;
+}
+
+.heroTitle cursive,
+.heroTitle span {
+  font-family: var(--font-cursive);
+  font-weight: 500;
+  color: var(--color-tosca);
+  text-transform: none;
+  font-size: 4rem;
+  display: inline-block;
+  transform: rotate(-2deg);
+  margin: 0 0.5rem;
+}
+
+.heroDesc {
+  font-size: 1.15rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  max-width: 650px;
+  margin: 0 auto 2rem auto;
+}
+
+.heroCTAs {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* Decoration brushes in hero */
+.heroBrush1 {
+  position: absolute;
+  top: 10%;
+  left: -5%;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.heroBrush2 {
+  position: absolute;
+  bottom: 5%;
+  right: -5%;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+/* PROGRAMS SECTION (DARK) */
+.programs {
+  background-color: var(--color-dark-bg);
+  color: var(--color-text-light);
+  padding: 6.5rem 1.5rem;
+  position: relative;
+}
+
+.sectionHeader {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 4.5rem auto;
+}
+
+.sectionHeader h2 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-white);
+}
+
+.sectionHeader h2 span {
+  font-family: var(--font-cursive);
+  color: var(--color-kunyit);
+  text-transform: none;
+  font-size: 2.75rem;
+  margin-left: 0.5rem;
+}
+
+.sectionHeader p {
+  color: #94A3B8;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.programsGrid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.programCard {
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.programCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(250, 164, 51, 0.3);
+}
+
+.iconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.programCard:nth-child(1) .iconWrapper {
+  background-color: rgba(171, 34, 35, 0.2);
+  color: var(--color-maroon);
+}
+
+.programCard:nth-child(2) .iconWrapper {
+  background-color: rgba(20, 120, 155, 0.2);
+  color: #38BDF8;
+}
+
+.programCard:nth-child(3) .iconWrapper {
+  background-color: rgba(250, 164, 51, 0.2);
+  color: var(--color-kunyit);
+}
+
+.programCard h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.programCard p {
+  color: #94A3B8;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  flex-grow: 1;
+}
+
+.learnMoreBtn {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s;
+  width: fit-content;
+}
+
+.programCard:nth-child(1) .learnMoreBtn { color: #FDA4AF; }
+.programCard:nth-child(2) .learnMoreBtn { color: #38BDF8; }
+.programCard:nth-child(3) .learnMoreBtn { color: #FDE047; }
+
+.programCard:hover .learnMoreBtn {
+  gap: 0.8rem;
+}
+
+/* ABOUT SECTION (LIGHT) */
+.about {
+  padding: 6.5rem 1.5rem;
+  background-color: var(--color-cream-bg);
+}
+
+.aboutGrid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.aboutContent h2 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  margin-bottom: 0.5rem;
+}
+
+.aboutContent h2 span {
+  font-family: var(--font-cursive);
+  color: var(--color-maroon);
+  font-size: 2.75rem;
+  text-transform: none;
+}
+
+.aboutSubtitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-tosca);
+  margin-bottom: 1.5rem;
+}
+
+.aboutDesc {
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  white-space: pre-line;
+  margin-bottom: 2rem;
+}
+
+.visiMisiBox {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.visiMisiCol h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.visiMisiCol p {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.misiList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.misiList li {
+  position: relative;
+  padding-left: 1.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.misiList li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--color-maroon);
+  font-weight: 900;
+}
+
+/* STATS BADGE */
+.statsContainer {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.statItem {
+  background: var(--color-white);
+  border: 1px solid rgba(20, 120, 155, 0.12);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 130px;
+}
+
+.statNum {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--color-maroon);
+  line-height: 1.1;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+  letter-spacing: 0.5px;
+}
+
+/* PRODUCT GALLERY SECTION */
+.gallery {
+  padding: 6.5rem 1.5rem;
+  background-color: var(--color-white);
+}
+
+.filterTabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+  flex-wrap: wrap;
+}
+
+.filterTab {
+  background: var(--color-cream-bg);
+  border: 1px solid rgba(20, 120, 155, 0.1);
+  padding: 0.6rem 1.5rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filterTab:hover {
+  background-color: var(--color-tosca);
+  color: var(--color-white);
+  border-color: var(--color-tosca);
+}
+
+.activeFilterTab {
+  background-color: var(--color-maroon);
+  color: var(--color-white);
+  border-color: var(--color-maroon);
+  box-shadow: 0 4px 12px rgba(171, 34, 35, 0.25);
+}
+
+.activeFilterTab:hover {
+  background-color: var(--color-maroon);
+  border-color: var(--color-maroon);
+}
+
+.galleryGrid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2.5rem;
+}
+
+.emptyGallery {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 0;
+  color: var(--color-text-muted);
+}
+
+/* CTA / JOIN SECTION */
+.cta {
+  background: linear-gradient(135deg, var(--color-tosca) 0%, #0d5d79 100%);
+  color: var(--color-white);
+  padding: 6.5rem 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaInner {
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+.cta h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  letter-spacing: -0.5px;
+}
+
+.cta p {
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 960px) {
+  .heroTitle {
+    font-size: 2.75rem;
+  }
+  
+  .heroTitle cursive,
+  .heroTitle span {
+    font-size: 3.2rem;
+  }
+  
+  .programsGrid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+  
+  .aboutGrid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  
+  .statsContainer {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroTitle {
+    font-size: 2.25rem;
+  }
+  
+  .heroTitle cursive,
+  .heroTitle span {
+    font-size: 2.6rem;
+  }
+  
+  .heroCTAs {
+    flex-direction: column;
+    width: 100%;
+    max-width: 250px;
+  }
+}
