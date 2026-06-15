@@ -34,6 +34,18 @@
   cursor: pointer;
 }
 
+.logoImage {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.logoImage:hover {
+  transform: scale(1.05);
+}
+
+
 .logoFrame {
   width: 42px;
   height: 48px;

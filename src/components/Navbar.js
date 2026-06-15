@@ -65,14 +65,20 @@ export default function Navbar() {
         <div className={styles.navInner}>
           {/* Brand Logo */}
           <div className={styles.logo} onClick={() => { closeMobileMenu(); router.push('/'); }}>
-            <div className={styles.logoFrame}>
-              {/* Batik frame representation */}
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="Berseni Logo" 
+              className={styles.logoImage}
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
             <div className={styles.logoTextContainer}>
               <span className={styles.logoText}>Berseni</span>
               <span className={styles.logoTagline}>A World of Art for Everyone</span>
             </div>
           </div>
+
 
           {/* Desktop Links */}
           <div className={styles.navLinks}>

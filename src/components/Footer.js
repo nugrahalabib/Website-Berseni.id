@@ -10,12 +10,23 @@ export default function Footer() {
         <div className={styles.footerGrid}>
           {/* Brand & About */}
           <div className={styles.footerCol}>
-            <div className={styles.footerBrandText}>Berseni</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+              <img 
+                src="/logo.png" 
+                alt="Berseni Logo" 
+                style={{ height: '40px', width: 'auto', objectFit: 'contain' }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
+              <div className={styles.footerBrandText} style={{ marginBottom: 0 }}>Berseni</div>
+            </div>
             <div className={styles.footerTagline}>A World of Art for Everyone</div>
             <p className={styles.footerDesc}>
               Menghubungkan publik dengan seniman Indonesia secara nyata. Temukan keindahan budaya Nusantara melalui kelas online, workshop offline, dan koleksi karya seni pilihan.
             </p>
           </div>
+
 
           {/* Quick Links */}
           <div className={styles.footerCol}>
