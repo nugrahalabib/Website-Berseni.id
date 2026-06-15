@@ -12,6 +12,18 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [videoEnded, setVideoEnded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Hook untuk memantau apakah layar berukuran mobile
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    setIsMobile(mediaQuery.matches);
+    
+    const handler = (e) => setIsMobile(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
 
   // Hook untuk memantau progress scroll di Hero Section
   useEffect(() => {
@@ -187,6 +199,23 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
     ? 60 
     : 60 - Math.min(1, (scrollProgress - 0.7) / 0.2) * 60;
 
+  const showScrollButton = (isMobile || videoEnded);
+  
+  const scrollButtonOpacity = showScrollButton
+    ? (scrollProgress < 0.05 
+        ? 1 
+        : scrollProgress < 0.15 
+          ? 1 - (scrollProgress - 0.05) / 0.1 
+          : 0)
+    : 0;
+
+  const handleScrollDown = () => {
+    window.scrollTo({
+      top: window.innerHeight * 0.8,
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <div className={styles.page}>
       <Navbar />
@@ -258,6 +287,7 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
                     muted
                     playsInline
                     preload="auto"
+                    onEnded={() => setVideoEnded(true)}
                   />
                   <img
                     src="/logo.png"
@@ -352,6 +382,23 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
               </div>
             )}
           </div>
+          
+          {/* Scroll Indicator (Fades out dynamically on scroll) */}
+          {showScrollButton && (
+            <div 
+              className={styles.scrollIndicator}
+              style={{
+                opacity: scrollButtonOpacity,
+                pointerEvents: scrollButtonOpacity < 0.2 ? 'none' : 'auto',
+              }}
+              onClick={handleScrollDown}
+            >
+              <span className={styles.scrollText}>SCROLL</span>
+              <svg className={styles.scrollArrow} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 5v14M19 12l-7 7-7-7" />
+              </svg>
+            </div>
+          )}
         </div>
       </section>
 
