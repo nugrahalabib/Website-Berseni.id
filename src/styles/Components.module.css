@@ -35,11 +35,12 @@
 }
 
 .logoImage {
-  height: 40px;
+  height: 48px;
   width: auto;
   object-fit: contain;
   transition: transform 0.3s ease;
 }
+
 
 .logoImage:hover {
   transform: scale(1.05);

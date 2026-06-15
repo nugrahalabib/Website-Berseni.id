@@ -38,9 +38,24 @@ export default function DashboardClient() {
       {/* Sidebar Navigation */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <div className={styles.sidebarTitle}>Berseni</div>
-          <span className={styles.sidebarSubtitle}>Admin Dashboard</span>
+          <div style={{ 
+            backgroundColor: 'var(--color-cream-bg)', 
+            padding: '8px 14px', 
+            borderRadius: '10px', 
+            display: 'inline-block', 
+            width: 'fit-content', 
+            marginBottom: '1rem',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
+          }}>
+            <img 
+              src="/logo.png" 
+              alt="Berseni Logo" 
+              style={{ height: '36px', width: 'auto', display: 'block', objectFit: 'contain' }}
+            />
+          </div>
+          <span className={styles.sidebarSubtitle} style={{ display: 'block', marginTop: '0.25rem' }}>Admin Dashboard</span>
         </div>
+
 
         <nav>
           <ul className={styles.menuList}>

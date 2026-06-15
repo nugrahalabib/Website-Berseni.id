@@ -42,8 +42,24 @@ export default function AdminLoginPage() {
   return (
     <div className={styles.loginPage}>
       <div className={`${styles.loginCard} glass-dark`}>
-        <div className={styles.loginLogo}>Berseni</div>
+        <div style={{ 
+          backgroundColor: 'var(--color-cream-bg)', 
+          padding: '12px 20px', 
+          borderRadius: '16px', 
+          display: 'inline-block', 
+          width: 'fit-content', 
+          margin: '0 auto 1.5rem auto',
+          boxShadow: '0 8px 30px rgba(0,0,0,0.25)',
+          border: '1px solid rgba(20, 120, 155, 0.15)'
+        }}>
+          <img 
+            src="/logo.png" 
+            alt="Berseni Logo" 
+            style={{ height: '54px', width: 'auto', display: 'block', objectFit: 'contain' }}
+          />
+        </div>
         <h1 className={styles.loginTitle}>Admin Portal</h1>
+
 
         {error && <div className={styles.loginError}>{error}</div>}
 
