@@ -95,36 +95,85 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
     return title;
   };
 
-  // Hitung nilai animasi berdasarkan scrollProgress (0 - 1)
-  const textOpacity = scrollProgress < 0.35 
+  // Hitung nilai animasi staggered berdasarkan scrollProgress (0 - 1)
+  
+  // 1. Intro Video Opacity (fades out from 0.1 to 0.22)
+  const videoOpacity = scrollProgress < 0.1 
+    ? 1 
+    : scrollProgress < 0.22 
+      ? 1 - (scrollProgress - 0.1) / 0.12 
+      : 0;
+
+  // 2. Sunset & Waves Transition (fades and slides up from 0.2 to 0.4)
+  const sunsetOpacity = scrollProgress < 0.2 
     ? 0 
-    : scrollProgress < 0.5 
-      ? (scrollProgress - 0.35) / 0.15 
-      : scrollProgress < 0.7 
+    : scrollProgress < 0.4 
+      ? (scrollProgress - 0.2) / 0.2 
+      : scrollProgress < 0.72 
         ? 1 
         : scrollProgress < 0.85 
-          ? 1 - (scrollProgress - 0.7) / 0.15 
+          ? 1 - (scrollProgress - 0.72) / 0.13 
           : 0;
 
-  const textScale = scrollProgress < 0.35 
-    ? 0.95 
-    : scrollProgress < 0.5 
-      ? 0.95 + ((scrollProgress - 0.35) / 0.15) * 0.05 
-      : scrollProgress < 0.7 
+  const sunsetTranslateY = scrollProgress < 0.2 
+    ? 120 
+    : scrollProgress < 0.4 
+      ? 120 - ((scrollProgress - 0.2) / 0.2) * 120 
+      : 0;
+
+  // 3. Birds Transition (fades and flies from left-bottom from 0.33 to 0.52)
+  const birdsOpacity = scrollProgress < 0.33 
+    ? 0 
+    : scrollProgress < 0.52 
+      ? (scrollProgress - 0.33) / 0.19 
+      : scrollProgress < 0.75 
         ? 1 
         : scrollProgress < 0.85 
-          ? 1 - ((scrollProgress - 0.7) / 0.15) * 0.05 
+          ? 1 - (scrollProgress - 0.75) / 0.1 
+          : 0;
+
+  const birdsTranslateX = scrollProgress < 0.33 
+    ? -200 
+    : scrollProgress < 0.52 
+      ? -200 - ((scrollProgress - 0.33) / 0.19) * -200 
+      : 0;
+
+  const birdsTranslateY = scrollProgress < 0.33 
+    ? 80 
+    : scrollProgress < 0.52 
+      ? 80 - ((scrollProgress - 0.33) / 0.19) * 80 
+      : 0;
+
+  // 4. Experience Art Text Card (fades and scales in last, from 0.46 to 0.63)
+  const textOpacity = scrollProgress < 0.46 
+    ? 0 
+    : scrollProgress < 0.63 
+      ? (scrollProgress - 0.46) / 0.17 
+      : scrollProgress < 0.76 
+        ? 1 
+        : scrollProgress < 0.86 
+          ? 1 - (scrollProgress - 0.76) / 0.1 
+          : 0;
+
+  const textScale = scrollProgress < 0.46 
+    ? 0.9 
+    : scrollProgress < 0.63 
+      ? 0.9 + ((scrollProgress - 0.46) / 0.17) * 0.1 
+      : scrollProgress < 0.76 
+        ? 1 
+        : scrollProgress < 0.86 
+          ? 1 - ((scrollProgress - 0.76) / 0.1) * 0.05 
           : 0.95;
 
-  const textTranslateY = scrollProgress < 0.35 
+  const textTranslateY = scrollProgress < 0.46 
     ? 40 
-    : scrollProgress < 0.5 
-      ? 40 - ((scrollProgress - 0.35) / 0.15) * 40 
-      : scrollProgress < 0.7 
+    : scrollProgress < 0.63 
+      ? 40 - ((scrollProgress - 0.46) / 0.17) * 40 
+      : scrollProgress < 0.76 
         ? 0 
-        : scrollProgress < 0.85 
-          ? -((scrollProgress - 0.7) / 0.15) * 40 
-          : -40;
+        : scrollProgress < 0.86 
+          ? -((scrollProgress - 0.76) / 0.1) * 30 
+          : -30;
 
   const showcaseOpacity = scrollProgress < 0.7 
     ? 0 
@@ -161,13 +210,13 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
             </svg>
           </div>
 
-          {/* TAHAP 1 & 2: ZOOM BINGKAI LUKISAN & LOGO BERSENI */}
-          {scrollProgress < 0.6 && (
+          {/* TAHAP 1 & 2: ZOOM BINGKAI LUKISAN & VIDEO INTRO */}
+          {scrollProgress < 0.65 && (
             <div 
               className={styles.frameContainer}
               style={{
                 transform: `translate(-50%, -50%) scale(${1 + scrollProgress * 18})`,
-                opacity: scrollProgress < 0.2 ? 1 : Math.max(0, 1 - (scrollProgress - 0.2) / 0.35),
+                opacity: scrollProgress < 0.25 ? 1 : Math.max(0, 1 - (scrollProgress - 0.25) / 0.35),
                 pointerEvents: scrollProgress > 0.45 ? 'none' : 'auto',
               }}
             >
@@ -194,47 +243,52 @@ export default function LandingPageClient({ initialContent, initialProducts }) {
                   className={`${styles.frameCorner} ${styles.cornerBr}`}
                 />
                 
-                {/* Logo Berseni di Tengah Bingkai */}
+                {/* Video Intro Logo di Tengah Bingkai (Fades out smoothly) */}
                 <div 
                   className={styles.frameLogoOverlay}
                   style={{
-                    opacity: scrollProgress < 0.1 ? 1 : Math.max(0, 1 - (scrollProgress - 0.1) / 0.25),
+                    opacity: videoOpacity,
+                    pointerEvents: videoOpacity < 0.1 ? 'none' : 'auto',
                   }}
                 >
-                  <img 
-                    src="/logo.png" 
-                    alt="Berseni Logo" 
-                    className={styles.frameLogo}
+                  <video
+                    className={styles.introVideo}
+                    src="/video-intro-logo.mp4"
+                    autoPlay
+                    muted
+                    playsInline
+                    preload="auto"
                   />
                 </div>
               </div>
             </div>
           )}
 
-          {/* BACKGROUND UNTUK TAHAP 3 (HERO TEXT) */}
+          {/* BACKGROUND UNTUK TAHAP 3 (HERO TEXT) - STAGGERED ACCENTS */}
           <div 
             className={styles.heroStage3Bg}
             style={{
-              opacity: textOpacity,
               pointerEvents: 'none',
-              display: scrollProgress < 0.25 || scrollProgress > 0.9 ? 'none' : 'block',
+              display: scrollProgress < 0.15 || scrollProgress > 0.9 ? 'none' : 'block',
             }}
           >
-            {/* Latar Belakang Ombak Sunset */}
+            {/* Latar Belakang Ombak Sunset (Slides up and fades in) */}
             <div 
               className={styles.sunsetParallaxWrapper}
               style={{
-                transform: `scale(${1.02 + scrollProgress * 0.03}) translate(${scrollProgress * -8}px, ${scrollProgress * -4}px)`,
+                opacity: sunsetOpacity,
+                transform: `scale(${1.02 + scrollProgress * 0.03}) translate(${scrollProgress * -8}px, ${sunsetTranslateY - scrollProgress * 4}px)`,
               }}
             >
               <div className={styles.bgSunset} />
             </div>
 
-            {/* Overlay Burung-Burung Terbang */}
+            {/* Overlay Burung-Burung Terbang (Slides from left-bottom and fades in) */}
             <div 
               className={styles.birdsParallaxWrapper}
               style={{
-                transform: `scale(${1 + scrollProgress * 0.1}) translate(${scrollProgress * 20}px, ${scrollProgress * -12}px)`,
+                opacity: birdsOpacity,
+                transform: `scale(${1 + scrollProgress * 0.1}) translate(${birdsTranslateX + scrollProgress * 20}px, ${birdsTranslateY - scrollProgress * 12}px)`,
               }}
             >
               <div className={styles.bgBirds} />
