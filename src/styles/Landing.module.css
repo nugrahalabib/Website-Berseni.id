@@ -879,8 +879,8 @@
   }
 
   .bgBirds {
-    background-size: contain !important;
-    background-position: center top !important;
-    height: 35vh !important;
+    background-size: 125% auto !important;
+    background-position: center 45px !important;
+    height: 48vh !important;
   }
 }
