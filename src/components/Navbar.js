@@ -63,7 +63,17 @@ export default function Navbar() {
     <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''} ${mobileActive ? styles.navbarExpanded : ''}`}>
       <div className={styles.navInner}>
         {/* Brand Logo */}
-        <div className={styles.logo} onClick={() => { closeMobileMenu(); router.push('/'); }}>
+        <div 
+          className={styles.logo} 
+          onClick={() => { 
+            closeMobileMenu(); 
+            if (pathname === '/') {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+              router.push('/');
+            }
+          }}
+        >
           <div className={styles.logoTextContainer}>
             <span className={styles.logoText}>Berseni</span>
             <span className={styles.logoTagline}>A World of Art for Everyone</span>
@@ -93,6 +103,12 @@ export default function Navbar() {
                 key={link.name}
                 href={link.path}
                 className={`${styles.navLink} ${isActive ? styles.activeLink : ''}`}
+                onClick={(e) => {
+                  if (link.path === '/' && pathname === '/') {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
               >
                 {link.name}
               </Link>
@@ -119,7 +135,13 @@ export default function Navbar() {
               key={link.name}
               href={pathname === '/' ? link.path : `/${link.path}`}
               className={styles.mobileNavLink}
-              onClick={closeMobileMenu}
+              onClick={(e) => {
+                closeMobileMenu();
+                if (link.path === '/' && pathname === '/') {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
             >
               {link.name}
             </a>
