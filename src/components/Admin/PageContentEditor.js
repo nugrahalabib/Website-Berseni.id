@@ -587,6 +587,15 @@ export default function PageContentEditor({ showToast }) {
             { name: 'blogEmpty_id', label: 'Empty Blog Warning (ID)', type: 'textarea' },
             { name: 'blogEmpty_en', label: 'Empty Blog Warning (EN)', type: 'textarea' }
           ]
+        },
+        about_berseni: {
+          title: 'Tentang Berseni (Di Bawah Artikel)',
+          fields: [
+            { name: 'blogAboutTitle_id', label: 'Judul Tentang Berseni (ID)', type: 'text' },
+            { name: 'blogAboutTitle_en', label: 'Judul Tentang Berseni (EN)', type: 'text' },
+            { name: 'blogAboutDesc_id', label: 'Deskripsi Tentang Berseni (ID)', type: 'textarea' },
+            { name: 'blogAboutDesc_en', label: 'Deskripsi Tentang Berseni (EN)', type: 'textarea' }
+          ]
         }
       }
     }

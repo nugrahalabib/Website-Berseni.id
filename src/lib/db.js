@@ -55,7 +55,11 @@ function initLocalDb() {
           "/support/6.png",
           "/support/7.png",
           "/support/8.png"
-        ]
+        ],
+        blogAboutTitle_id: "Tentang Berseni",
+        blogAboutTitle_en: "About Berseni",
+        blogAboutDesc_id: "Berseni adalah platform kolaboratif dan komunitas seni rupa terbesar di Indonesia, menjembatani seniman lokal dan masyarakat umum untuk saling belajar, berkarya, dan mengapresiasi keindahan seni bersama-sama.",
+        blogAboutDesc_en: "Berseni is a collaborative platform and the largest visual art community in Indonesia, bridging local artists and the general public to learn, create, and appreciate the beauty of art together."
       },
       products: [
         {
@@ -313,6 +317,13 @@ function initLocalDb() {
           "/support/7.png",
           "/support/8.png"
         ];
+        updated = true;
+      }
+      if (data.content && !data.content.blogAboutTitle_id) {
+        data.content.blogAboutTitle_id = "Tentang Berseni";
+        data.content.blogAboutTitle_en = "About Berseni";
+        data.content.blogAboutDesc_id = "Berseni adalah platform kolaboratif dan komunitas seni rupa terbesar di Indonesia, menjembatani seniman lokal dan masyarakat umum untuk saling belajar, berkarya, dan mengapresiasi keindahan seni bersama-sama.";
+        data.content.blogAboutDesc_en = "Berseni is a collaborative platform and the largest visual art community in Indonesia, bridging local artists and the general public to learn, create, and appreciate the beauty of art together.";
         updated = true;
       }
       if (!data.admin_password) {

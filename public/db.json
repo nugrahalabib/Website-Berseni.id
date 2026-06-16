@@ -326,7 +326,11 @@
       "/support/6.png",
       "/support/7.png",
       "/support/8.png"
-    ]
+    ],
+    "blogAboutTitle_id": "Tentang Berseni",
+    "blogAboutTitle_en": "About Berseni",
+    "blogAboutDesc_id": "Berseni adalah platform kolaboratif dan komunitas seni rupa terbesar di Indonesia, menjembatani seniman lokal dan masyarakat umum untuk saling belajar, berkarya, dan mengapresiasi keindahan seni bersama-sama.",
+    "blogAboutDesc_en": "Berseni is a collaborative platform and the largest visual art community in Indonesia, bridging local artists and the general public to learn, create, and appreciate the beauty of art together."
   },
   "products": [
     {
