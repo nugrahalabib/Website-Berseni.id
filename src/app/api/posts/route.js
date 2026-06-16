@@ -143,24 +143,30 @@ export async function PUT(request) {
 export async function DELETE(request) {
   try {
     if (!(await isAdmin())) {
+      console.log("DELETE post: Unauthorized access attempt");
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get('slug');
+    console.log("DELETE post - Received slug:", slug);
     
     if (!slug) {
       return NextResponse.json({ error: 'Slug artikel wajib disertakan' }, { status: 400 });
     }
     
     let posts = await db.get('posts') || [];
+    console.log("DELETE post - Existing slugs:", posts.map(p => p.slug));
     const filteredPosts = posts.filter(p => p.slug !== slug);
+    console.log("DELETE post - Remaining count:", filteredPosts.length);
     
     if (posts.length === filteredPosts.length) {
+      console.log("DELETE post - Slug not found in list:", slug);
       return NextResponse.json({ error: 'Artikel tidak ditemukan' }, { status: 404 });
     }
     
     const success = await db.set('posts', filteredPosts);
+    console.log("DELETE post - Write status:", success);
     if (success) {
       return NextResponse.json({ success: true });
     }

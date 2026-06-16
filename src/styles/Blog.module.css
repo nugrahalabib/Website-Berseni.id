@@ -443,6 +443,9 @@
   line-height: 1.85;
   max-width: 760px;
   margin: 0 auto;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .postContent p {

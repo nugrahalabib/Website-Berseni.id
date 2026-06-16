@@ -146,7 +146,7 @@ export default function ProductEditor({ showToast }) {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus item ini?')) return;
+    if (!window.confirm('Apakah Anda yakin ingin menghapus item ini?')) return;
 
     try {
       const res = await fetch(`/api/products?id=${id}`, {
@@ -180,6 +180,38 @@ export default function ProductEditor({ showToast }) {
       link: ''
     });
     setIsEditing(false);
+  };
+
+  const handleMove = async (index, direction) => {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= products.length) return;
+
+    const newProducts = [...products];
+    const temp = newProducts[index];
+    newProducts[index] = newProducts[targetIndex];
+    newProducts[targetIndex] = temp;
+
+    setProducts(newProducts);
+
+    try {
+      const res = await fetch('/api/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProducts)
+      });
+
+      if (res.ok) {
+        showToast('Urutan produk berhasil diperbarui!');
+        fetchProducts();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Gagal menyimpan urutan baru.');
+        fetchProducts();
+      }
+    } catch (err) {
+      alert('Koneksi bermasalah saat memperbarui urutan.');
+      fetchProducts();
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -424,6 +456,7 @@ export default function ProductEditor({ showToast }) {
           <table className={styles.table}>
             <thead>
               <tr>
+                <th style={{ width: '80px' }}>Urutan</th>
                 <th>Gambar</th>
                 <th>Nama (ID / EN)</th>
                 <th>Kategori</th>
@@ -434,8 +467,48 @@ export default function ProductEditor({ showToast }) {
             </thead>
             <tbody>
               {products.length > 0 ? (
-                products.map((product) => (
+                products.map((product, index) => (
                   <tr key={product.id} className={styles.tableRow}>
+                    <td>
+                      <div style={{ display: 'flex', gap: '0.25rem' }}>
+                        <button
+                          type="button"
+                          onClick={() => handleMove(index, -1)}
+                          disabled={index === 0}
+                          style={{
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            border: '1px solid #CBD5E1',
+                            background: index === 0 ? '#F1F5F9' : '#FFFFFF',
+                            color: index === 0 ? '#94A3B8' : '#334155',
+                            cursor: index === 0 ? 'not-allowed' : 'pointer',
+                            fontSize: '0.75rem',
+                            fontWeight: 'bold'
+                          }}
+                          title="Geser ke atas"
+                        >
+                          ▲
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMove(index, 1)}
+                          disabled={index === products.length - 1}
+                          style={{
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            border: '1px solid #CBD5E1',
+                            background: index === products.length - 1 ? '#F1F5F9' : '#FFFFFF',
+                            color: index === products.length - 1 ? '#94A3B8' : '#334155',
+                            cursor: index === products.length - 1 ? 'not-allowed' : 'pointer',
+                            fontSize: '0.75rem',
+                            fontWeight: 'bold'
+                          }}
+                          title="Geser ke bawah"
+                        >
+                          ▼
+                        </button>
+                      </div>
+                    </td>
                     <td>
                       <img 
                         src={product.image} 

@@ -73,6 +73,16 @@ export async function PUT(request) {
     }
     
     const body = await request.json();
+    
+    // Jika body adalah array, simpan sebagai urutan baru dari daftar produk
+    if (Array.isArray(body)) {
+      const success = await db.set('products', body);
+      if (success) {
+        return NextResponse.json({ success: true });
+      }
+      return NextResponse.json({ error: 'Gagal menulis ke database' }, { status: 500 });
+    }
+    
     const { id, title_id, title_en, category, price, image, description_id, description_en, specs_id, specs_en, link } = body;
     
     if (!id || !title_id || !title_en || !category || !link) {
@@ -115,24 +125,30 @@ export async function PUT(request) {
 export async function DELETE(request) {
   try {
     if (!(await isAdmin())) {
+      console.log("DELETE product: Unauthorized access attempt");
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    console.log("DELETE product - Received ID:", id);
     
     if (!id) {
       return NextResponse.json({ error: 'ID produk tidak disertakan' }, { status: 400 });
     }
     
     let products = await db.get('products') || [];
+    console.log("DELETE product - Existing IDs:", products.map(p => p.id));
     const filteredProducts = products.filter(p => p.id !== id);
+    console.log("DELETE product - Remaining count:", filteredProducts.length);
     
     if (products.length === filteredProducts.length) {
+      console.log("DELETE product - ID not found in products list:", id);
       return NextResponse.json({ error: 'Produk tidak ditemukan' }, { status: 404 });
     }
     
     const success = await db.set('products', filteredProducts);
+    console.log("DELETE product - Write status:", success);
     if (success) {
       return NextResponse.json({ success: true });
     }

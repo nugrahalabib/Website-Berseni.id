@@ -173,7 +173,7 @@ export default function BlogEditor({ showToast }) {
 
   // Delete Handler
   const handleDeleteClick = async (slug) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus artikel ini? Tindakan ini tidak bisa dibatalkan.')) {
+    if (!window.confirm('Apakah Anda yakin ingin menghapus artikel ini? Tindakan ini tidak bisa dibatalkan.')) {
       return;
     }
 

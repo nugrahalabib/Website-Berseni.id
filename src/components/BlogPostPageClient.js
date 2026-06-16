@@ -42,6 +42,21 @@ export default function BlogPostPageClient({ post }) {
             <div className={styles.postMeta}>
               {getTranslation('publishedOn')} {post.date} <span>•</span> {getTranslation('writtenBy')} <strong>Tim Berseni</strong> <span>•</span> 3 {getTranslation('minRead')}
             </div>
+            {t(post, 'excerpt') && (
+              <p className={styles.postExcerptIntro} style={{ 
+                fontSize: '1.25rem', 
+                color: 'var(--color-text-muted)', 
+                fontStyle: 'italic', 
+                maxWidth: '700px', 
+                margin: '1.5rem auto 0 auto',
+                lineHeight: '1.6',
+                borderLeft: '4px solid var(--color-tosca)',
+                paddingLeft: '1.25rem',
+                textAlign: 'left'
+              }}>
+                {t(post, 'excerpt')}
+              </p>
+            )}
           </header>
           
           {/* Hero Image */}
