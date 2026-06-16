@@ -4,13 +4,17 @@ import { put } from '@vercel/blob';
 import fs from 'fs';
 import path from 'path';
 import { decryptSession } from '@/lib/auth';
+import { db } from '@/lib/db';
 
 // Helper untuk validasi session admin
 async function isAdmin() {
   const cookieStore = await cookies();
   const token = cookieStore.get('berseni_session')?.value;
   const session = decryptSession(token);
-  return session && session.role === 'admin';
+  if (!session || session.role !== 'admin') return false;
+
+  const activeSessionId = await db.get('admin_session_id');
+  return session.sessionId === activeSessionId;
 }
 
 export async function POST(request) {

@@ -54,7 +54,21 @@ export async function generateMetadata() {
 }
 
 export default async function BlogPage() {
-  const posts = await db.get('posts') || [];
+  const rawPosts = await db.get('posts') || [];
+
+  // Sort posts descending by date (DD/MM/YYYY)
+  const parseBlogDate = (dateStr) => {
+    if (!dateStr) return new Date(0);
+    const parts = dateStr.split('/');
+    if (parts.length === 3) {
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const year = parseInt(parts[2], 10);
+      return new Date(year, month, day);
+    }
+    return new Date(dateStr);
+  };
+  const posts = [...rawPosts].sort((a, b) => parseBlogDate(b.date) - parseBlogDate(a.date));
 
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['blog'] || {};

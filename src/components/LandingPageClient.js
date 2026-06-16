@@ -492,22 +492,22 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               <div className={styles.frameWrapper}>
                 {/* 4 Pojok Bingkai Responsif */}
                 <img 
-                  src="/hero-corner-tl.png" 
+                  src={content.heroCornerTl || "/hero-corner-tl.png"} 
                   alt="Corner Top Left" 
                   className={`${styles.frameCorner} ${styles.cornerTl}`}
                 />
                 <img 
-                  src="/hero-corner-tr.png" 
+                  src={content.heroCornerTr || "/hero-corner-tr.png"} 
                   alt="Corner Top Right" 
                   className={`${styles.frameCorner} ${styles.cornerTr}`}
                 />
                 <img 
-                  src="/hero-corner-bl.png" 
+                  src={content.heroCornerBl || "/hero-corner-bl.png"} 
                   alt="Corner Bottom Left" 
                   className={`${styles.frameCorner} ${styles.cornerBl}`}
                 />
                 <img 
-                  src="/hero-corner-br.png" 
+                  src={content.heroCornerBr || "/hero-corner-br.png"} 
                   alt="Corner Bottom Right" 
                   className={`${styles.frameCorner} ${styles.cornerBr}`}
                 />
@@ -522,7 +522,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                 >
                   <video
                     className={styles.introVideo}
-                    src="/video-intro-logo.mp4"
+                    src={content.heroVideo || "/video-intro-logo.mp4"}
                     autoPlay
                     muted
                     playsInline
@@ -530,7 +530,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                     onEnded={() => setVideoEnded(true)}
                   />
                   <img
-                    src="/logo.png"
+                    src={content.heroLogo || "/logo.png"}
                     alt="Berseni Logo"
                     className={styles.frameLogo}
                   />
@@ -603,14 +603,14 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
             <div className={styles.showcaseTreeRight} />
             
             {/* Carousel Aktivitas Berseni */}
-            {activitiesData.length > 0 && (
+            {((content && content.activities) || activitiesData).length > 0 && (
               <div className={styles.carouselShowcaseContainer}>
                 <div className={styles.carouselShowcaseHeader}>
                   <h3>{getTranslation('activitiesHeaderTitle')}<span>.</span></h3>
                   <p>{getTranslation('activitiesHeaderSubtitle')}</p>
                 </div>
                 <HeroCarousel 
-                  items={activitiesData} 
+                  items={(content && content.activities) || activitiesData} 
                   onCardClick={handleActivitySelect} 
                 />
               </div>

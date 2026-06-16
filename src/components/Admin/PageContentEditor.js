@@ -4,6 +4,114 @@ import { useState, useEffect } from 'react';
 import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Admin.module.css';
 
+// Component for uploading and editing media URLs / files
+const MediaUploadInput = ({ label, name, value, type, onChange }) => {
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        onChange(name, data.url);
+      } else {
+        alert('Gagal mengunggah file.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Terjadi kesalahan saat mengunggah file.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div style={{ marginBottom: '1.25rem', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: '12px', background: '#F8FAFC', width: '100%' }}>
+      <label style={{ display: 'block', fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--color-text-dark)', marginBottom: '0.5rem' }}>{label}</label>
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        {value ? (
+          <div style={{ position: 'relative', width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #CBD5E1', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#E2E8F0', flexShrink: 0 }}>
+            {type === 'video' ? (
+              <video 
+                src={value} 
+                style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }} 
+                muted 
+                onClick={() => window.open(value, '_blank')}
+                title="Klik untuk lihat video penuh (Preview)"
+              />
+            ) : (
+              <img 
+                src={value} 
+                alt={label} 
+                style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }} 
+                onClick={() => window.open(value, '_blank')}
+                title="Klik untuk lihat gambar penuh (Preview)"
+              />
+            )}
+            <button
+              type="button"
+              style={{ position: 'absolute', top: '2px', right: '2px', background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', cursor: 'pointer', padding: 0 }}
+              onClick={() => onChange(name, '')}
+              title="Hapus Media"
+            >
+              ✕
+            </button>
+          </div>
+        ) : (
+          <div style={{ width: '80px', height: '80px', borderRadius: '8px', border: '2px dashed #CBD5E1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94A3B8', fontSize: '0.75rem', textAlign: 'center', padding: '5px', flexShrink: 0 }}>
+            No Media
+          </div>
+        )}
+        <div style={{ flex: 1 }}>
+          <input
+            type="text"
+            className={styles.adminInput}
+            value={value || ''}
+            onChange={(e) => onChange(name, e.target.value)}
+            placeholder={`Masukkan URL ${type === 'video' ? 'video' : 'gambar'} atau unggah file...`}
+            style={{ marginBottom: '0.5rem' }}
+          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <label className="btn btn-secondary" style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', cursor: 'pointer', display: 'inline-block', margin: 0 }}>
+              {uploading ? 'Mengunggah...' : `Unggah ${type === 'video' ? 'Video' : 'Gambar'}`}
+              <input
+                type="file"
+                accept={type === 'video' ? 'video/*' : 'image/*'}
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+                disabled={uploading}
+              />
+            </label>
+            {value && (
+              <a
+                href={value}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline"
+                style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', textDecoration: 'none', color: 'var(--color-tosca)', borderColor: 'var(--color-tosca)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', height: 'auto', background: 'transparent' }}
+              >
+                📥 Unduh File Asli
+              </a>
+            )}
+            <span style={{ fontSize: '0.75rem', color: '#64748B' }}>Format: {type === 'video' ? 'MP4' : 'PNG, JPG, WEBP'}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function PageContentEditor({ showToast }) {
   const { refreshContent } = useLanguage();
   const [loading, setLoading] = useState(true);
@@ -62,7 +170,7 @@ export default function PageContentEditor({ showToast }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setSaving(true);
 
     try {
@@ -96,7 +204,7 @@ export default function PageContentEditor({ showToast }) {
     );
   }
 
-  // Definisikan struktur sections per page agar render-nya dinamis dan rapi
+  // Configuration of fields and sections for each page
   const pagesConfig = {
     home: {
       title: 'Halaman Utama (Landing Page)',
@@ -109,7 +217,13 @@ export default function PageContentEditor({ showToast }) {
             { name: 'heroTitle_id', label: 'Hero Title (ID - gunakan titik "." untuk teks cursive)', type: 'text', placeholder: 'Experience Art. Feel Indonesia.' },
             { name: 'heroTitle_en', label: 'Hero Title (EN - gunakan titik "." untuk teks cursive)', type: 'text', placeholder: 'Experience Art. Feel Indonesia.' },
             { name: 'heroDescription_id', label: 'Hero Description (ID)', type: 'textarea' },
-            { name: 'heroDescription_en', label: 'Hero Description (EN)', type: 'textarea' }
+            { name: 'heroDescription_en', label: 'Hero Description (EN)', type: 'textarea' },
+            { name: 'heroVideo', label: 'Video Intro (MP4)', type: 'video' },
+            { name: 'heroLogo', label: 'Logo Tengah Video (PNG)', type: 'image' },
+            { name: 'heroCornerTl', label: 'Bingkai Pojok Kiri Atas (PNG)', type: 'image' },
+            { name: 'heroCornerTr', label: 'Bingkai Pojok Kanan Atas (PNG)', type: 'image' },
+            { name: 'heroCornerBl', label: 'Bingkai Pojok Kiri Bawah (PNG)', type: 'image' },
+            { name: 'heroCornerBr', label: 'Bingkai Pojok Kanan Bawah (PNG)', type: 'image' }
           ]
         },
         programs: {
@@ -181,6 +295,11 @@ export default function PageContentEditor({ showToast }) {
             { name: 'ctaBtn_id', label: 'CTA Button Text (ID)', type: 'text' },
             { name: 'ctaBtn_en', label: 'CTA Button Text (EN)', type: 'text' }
           ]
+        },
+        activities: {
+          title: 'Kelola Carousel Aktivitas',
+          fields: [],
+          customRender: 'activities_editor'
         }
       }
     },
@@ -197,7 +316,11 @@ export default function PageContentEditor({ showToast }) {
             { name: 'aboutHeroTitleSpan_id', label: 'Title Highlighted Word (ID)', type: 'text' },
             { name: 'aboutHeroTitleSpan_en', label: 'Title Highlighted Word (EN)', type: 'text' },
             { name: 'aboutHeroDesc_id', label: 'Hero Description (ID)', type: 'textarea' },
-            { name: 'aboutHeroDesc_en', label: 'Hero Description (EN)', type: 'textarea' }
+            { name: 'aboutHeroDesc_en', label: 'Hero Description (EN)', type: 'textarea' },
+            { name: 'aboutCollage1', label: 'Kolase Gambar 1 (Outdoor)', type: 'image' },
+            { name: 'aboutCollage2', label: 'Kolase Gambar 2 (Batik)', type: 'image' },
+            { name: 'aboutCollage3', label: 'Kolase Gambar 3 (Talkshow)', type: 'image' },
+            { name: 'aboutCollage4', label: 'Kolase Gambar 4 (Inclusion)', type: 'image' }
           ]
         },
         story: {
@@ -208,7 +331,8 @@ export default function PageContentEditor({ showToast }) {
             { name: 'aboutSubtitle_id', label: 'Story Subtitle (ID)', type: 'text' },
             { name: 'aboutSubtitle_en', label: 'Story Subtitle (EN)', type: 'text' },
             { name: 'aboutDescription_id', label: 'Story Description (ID - gunakan double enter \\n\\n untuk paragraf baru)', type: 'textarea' },
-            { name: 'aboutDescription_en', label: 'Story Description (EN - gunakan double enter \\n\\n untuk paragraf baru)', type: 'textarea' }
+            { name: 'aboutDescription_en', label: 'Story Description (EN - gunakan double enter \\n\\n untuk paragraf baru)', type: 'textarea' },
+            { name: 'aboutStudioImg', label: 'Gambar Studio Ubud', type: 'image' }
           ]
         },
         visimisi: {
@@ -365,7 +489,8 @@ export default function PageContentEditor({ showToast }) {
             { name: 'collabBrandCallout_en', label: 'Callout Text (EN)', type: 'text' },
             // Button
             { name: 'collabBrandBtn_id', label: 'Button Text (ID)', type: 'text' },
-            { name: 'collabBrandBtn_en', label: 'Button Text (EN)', type: 'text' }
+            { name: 'collabBrandBtn_en', label: 'Button Text (EN)', type: 'text' },
+            { name: 'collabCanvasImg', label: 'Latar Belakang Poster Canvas', type: 'image' }
           ]
         },
         venue: {
@@ -531,6 +656,382 @@ export default function PageContentEditor({ showToast }) {
     );
   };
 
+  // Helper Custom Activities Carousel Editor
+  const ActivitiesEditorSection = () => {
+    const [editingIndex, setEditingIndex] = useState(null); // index or 'new'
+    const [actForm, setActForm] = useState({
+      id: '',
+      title_id: '',
+      title_en: '',
+      category: 'workshop',
+      image: '',
+      summary_id: '',
+      summary_en: '',
+      description_id: '',
+      description_en: '',
+      details_id: '',
+      details_en: '',
+      link: ''
+    });
+
+    const activities = form.activities || [];
+
+    const handleEdit = (idx) => {
+      setEditingIndex(idx);
+      setActForm({
+        id: activities[idx].id || `act-${Date.now()}`,
+        title_id: activities[idx].title_id || '',
+        title_en: activities[idx].title_en || '',
+        category: activities[idx].category || 'workshop',
+        image: activities[idx].image || '',
+        summary_id: activities[idx].summary_id || '',
+        summary_en: activities[idx].summary_en || '',
+        description_id: activities[idx].description_id || '',
+        description_en: activities[idx].description_en || '',
+        details_id: activities[idx].details_id || '',
+        details_en: activities[idx].details_en || '',
+        link: activities[idx].link || 'https://lynk.id/berseni.id'
+      });
+    };
+
+    const handleAddNew = () => {
+      setEditingIndex('new');
+      setActForm({
+        id: `act-${Date.now()}`,
+        title_id: '',
+        title_en: '',
+        category: 'workshop',
+        image: '',
+        summary_id: '',
+        summary_en: '',
+        description_id: '',
+        description_en: '',
+        details_id: '',
+        details_en: '',
+        link: 'https://lynk.id/berseni.id'
+      });
+    };
+
+    const handleDelete = (idx) => {
+      if (confirm('Apakah Anda yakin ingin menghapus aktivitas ini?')) {
+        const updated = activities.filter((_, i) => i !== idx);
+        setForm(prev => ({ ...prev, activities: updated }));
+      }
+    };
+
+    const handleSave = () => {
+      if (!actForm.title_id || !actForm.title_en) {
+        alert('Judul Aktivitas (ID & EN) wajib diisi keduanya!');
+        return;
+      }
+      
+      let updated = [...activities];
+      if (editingIndex === 'new') {
+        updated.push(actForm);
+      } else {
+        updated[editingIndex] = actForm;
+      }
+      
+      setForm(prev => ({ ...prev, activities: updated }));
+      setEditingIndex(null);
+    };
+
+    const handleActFormChange = (e) => {
+      const { name, value } = e.target;
+      setActForm(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleActImageUpload = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setActForm(prev => ({ ...prev, image: data.url }));
+        } else {
+          alert('Gagal mengunggah gambar.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Terjadi kesalahan saat mengunggah.');
+      }
+    };
+
+    if (editingIndex !== null) {
+      return (
+        <div style={{ background: '#F8FAFC', padding: '1.5rem', borderRadius: '12px', border: '1px solid #E2E8F0', marginTop: '1rem' }}>
+          <h4 style={{ fontWeight: 'bold', marginBottom: '1.25rem', color: 'var(--color-tosca)', fontSize: '1rem' }}>
+            {editingIndex === 'new' ? 'Tambah Aktivitas Baru' : 'Sunting Aktivitas'}
+          </h4>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div>
+              <label className={styles.adminLabel}>Judul Aktivitas (ID)</label>
+              <input
+                type="text"
+                name="title_id"
+                value={actForm.title_id}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+                required
+              />
+            </div>
+            <div>
+              <label className={styles.adminLabel}>Judul Aktivitas (EN)</label>
+              <input
+                type="text"
+                name="title_en"
+                value={actForm.title_en}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+                required
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div>
+              <label className={styles.adminLabel}>Kategori</label>
+              <select
+                name="category"
+                value={actForm.category}
+                onChange={handleActFormChange}
+                className={styles.adminSelect}
+              >
+                <option value="workshop">Workshop</option>
+                <option value="exhibition">Exhibition</option>
+                <option value="social">Kegiatan Komunitas</option>
+              </select>
+            </div>
+            <div>
+              <label className={styles.adminLabel}>Link URL Detail / Lynk.id</label>
+              <input
+                type="text"
+                name="link"
+                value={actForm.link}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+              />
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '1.25rem' }}>
+            <label className={styles.adminLabel}>Gambar Aktivitas</label>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              {actForm.image ? (
+                <img 
+                  src={actForm.image} 
+                  alt="Preview" 
+                  style={{ width: '80px', height: '80px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #CBD5E1', cursor: 'pointer' }} 
+                  onClick={() => window.open(actForm.image, '_blank')}
+                  title="Klik untuk lihat gambar penuh (Preview)"
+                />
+              ) : (
+                <div style={{ width: '80px', height: '80px', borderRadius: '8px', border: '2px dashed #CBD5E1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94A3B8', fontSize: '0.75rem', textAlign: 'center' }}>No Image</div>
+              )}
+              <div style={{ flex: 1 }}>
+                <input
+                  type="text"
+                  name="image"
+                  value={actForm.image}
+                  onChange={handleActFormChange}
+                  className={styles.adminInput}
+                  placeholder="URL gambar..."
+                  style={{ marginBottom: '0.5rem' }}
+                />
+                <label className="btn btn-secondary" style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', cursor: 'pointer', display: 'inline-block', margin: 0 }}>
+                  Unggah Gambar
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={handleActImageUpload}
+                  />
+                </label>
+                {actForm.image && (
+                  <a
+                    href={actForm.image}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline"
+                    style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', textDecoration: 'none', color: 'var(--color-tosca)', borderColor: 'var(--color-tosca)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', height: 'auto', background: 'transparent', marginLeft: '0.5rem' }}
+                  >
+                    📥 Unduh Gambar Asli
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div>
+              <label className={styles.adminLabel}>Ringkasan Singkat (ID)</label>
+              <input
+                type="text"
+                name="summary_id"
+                value={actForm.summary_id}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+              />
+            </div>
+            <div>
+              <label className={styles.adminLabel}>Ringkasan Singkat (EN)</label>
+              <input
+                type="text"
+                name="summary_en"
+                value={actForm.summary_en}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div>
+              <label className={styles.adminLabel}>Deskripsi Lengkap (ID)</label>
+              <textarea
+                name="description_id"
+                value={actForm.description_id}
+                onChange={handleActFormChange}
+                className={styles.adminTextarea}
+                rows={3}
+              />
+            </div>
+            <div>
+              <label className={styles.adminLabel}>Deskripsi Lengkap (EN)</label>
+              <textarea
+                name="description_en"
+                value={actForm.description_en}
+                onChange={handleActFormChange}
+                className={styles.adminTextarea}
+                rows={3}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div>
+              <label className={styles.adminLabel}>Detail Aktivitas (ID)</label>
+              <input
+                type="text"
+                name="details_id"
+                value={actForm.details_id}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+                placeholder="misal: Durasi: 3 Jam | Lokasi: Ubud"
+              />
+            </div>
+            <div>
+              <label className={styles.adminLabel}>Detail Aktivitas (EN)</label>
+              <input
+                type="text"
+                name="details_en"
+                value={actForm.details_en}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+                placeholder="e.g. Duration: 3 Hours | Location: Ubud"
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+            <button type="button" className="btn btn-outline" style={{ padding: '0.5rem 1.5rem' }} onClick={() => setEditingIndex(null)}>
+              Batal
+            </button>
+            <button type="button" className="btn btn-primary" style={{ padding: '0.5rem 1.5rem' }} onClick={handleSave}>
+              Simpan Aktivitas
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div style={{ marginTop: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <label className={styles.adminLabel} style={{ marginBottom: 0 }}>Daftar Aktivitas Carousel</label>
+          <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem', borderRadius: '8px' }} onClick={handleAddNew}>
+            + Tambah Aktivitas
+          </button>
+        </div>
+
+        {activities.length === 0 ? (
+          <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', border: '1px dashed #CBD5E1', borderRadius: '12px' }}>
+            Belum ada aktivitas. Silakan klik tombol "+ Tambah Aktivitas" untuk menambahkan.
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {activities.map((act, idx) => (
+              <div key={act.id || idx} style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '0.75rem', border: '1px solid #E2E8F0', borderRadius: '10px', background: '#FFFFFF' }}>
+                <div style={{ position: 'relative', display: 'inline-block', flexShrink: 0 }}>
+                  <img 
+                    src={act.image || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=150'} 
+                    alt="" 
+                    style={{ width: '50px', height: '50px', borderRadius: '6px', objectFit: 'cover', cursor: 'pointer', display: 'block' }} 
+                    onClick={() => window.open(act.image || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=150', '_blank')}
+                    title="Klik untuk lihat gambar penuh (Preview)"
+                  />
+                  {act.image && (
+                    <a
+                      href={act.image}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        position: 'absolute',
+                        bottom: '2px',
+                        right: '2px',
+                        background: 'rgba(20, 120, 155, 0.85)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '3px',
+                        width: '16px',
+                        height: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '9px',
+                        cursor: 'pointer',
+                        textDecoration: 'none'
+                      }}
+                      title="Unduh Gambar"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      📥
+                    </a>
+                  )}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>{act.title_id || 'Tanpa Judul'}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#64748B', textTransform: 'capitalize' }}>
+                    Kategori: {act.category} | Detail: {act.details_id || '-'}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button type="button" className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem', borderRadius: '6px' }} onClick={() => handleEdit(idx)}>
+                    Sunting
+                  </button>
+                  <button type="button" className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem', borderRadius: '6px', color: '#EF4444', borderColor: '#FCA5A5' }} onClick={() => handleDelete(idx)}>
+                    Hapus
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const currentPageConfig = pagesConfig[selectedPage];
 
   return (
@@ -586,25 +1087,38 @@ export default function PageContentEditor({ showToast }) {
           <form onSubmit={handleSubmit}>
             <div className={styles.formGrid}>
               {currentPageConfig.sections[activeSection].fields.map(field => (
-                <div key={field.name} className={field.type === 'textarea' ? styles.formGridFull : ''}>
-                  <label className={styles.adminLabel}>{field.label}</label>
-                  {field.type === 'textarea' ? (
-                    <textarea
+                <div key={field.name} className={(field.type === 'textarea' || field.type === 'image' || field.type === 'video') ? styles.formGridFull : ''}>
+                  {field.type === 'image' || field.type === 'video' ? (
+                    <MediaUploadInput
+                      label={field.label}
                       name={field.name}
                       value={form[field.name] || ''}
-                      onChange={handleChange}
-                      placeholder={field.placeholder || `Masukkan teks ${field.label}...`}
-                      className={styles.adminTextarea}
+                      type={field.type}
+                      onChange={(name, val) => setForm(prev => ({ ...prev, [name]: val }))}
                     />
+                  ) : field.type === 'textarea' ? (
+                    <>
+                      <label className={styles.adminLabel}>{field.label}</label>
+                      <textarea
+                        name={field.name}
+                        value={form[field.name] || ''}
+                        onChange={handleChange}
+                        placeholder={field.placeholder || `Masukkan teks ${field.label}...`}
+                        className={styles.adminTextarea}
+                      />
+                    </>
                   ) : (
-                    <input
-                      type="text"
-                      name={field.name}
-                      value={form[field.name] || ''}
-                      onChange={handleChange}
-                      placeholder={field.placeholder || `Masukkan ${field.label}...`}
-                      className={styles.adminInput}
-                    />
+                    <>
+                      <label className={styles.adminLabel}>{field.label}</label>
+                      <input
+                        type="text"
+                        name={field.name}
+                        value={form[field.name] || ''}
+                        onChange={handleChange}
+                        placeholder={field.placeholder || `Masukkan ${field.label}...`}
+                        className={styles.adminInput}
+                      />
+                    </>
                   )}
                 </div>
               ))}
@@ -613,6 +1127,11 @@ export default function PageContentEditor({ showToast }) {
             {/* Custom render for Visi & Misi list */}
             {currentPageConfig.sections[activeSection].customRender === 'visimisi_list' && (
               <MisiListSection />
+            )}
+
+            {/* Custom render for Activities list */}
+            {currentPageConfig.sections[activeSection].customRender === 'activities_editor' && (
+              <ActivitiesEditorSection />
             )}
 
             <div className={styles.formActions} style={{ marginTop: '2rem' }}>

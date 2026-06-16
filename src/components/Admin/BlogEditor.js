@@ -229,11 +229,45 @@ export default function BlogEditor({ showToast }) {
                 {posts.map((post) => (
                   <tr key={post.slug} className={styles.tableRow}>
                     <td>
-                      <img
-                        src={post.image || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop'}
-                        alt={post.title_id}
-                        className={styles.tableThumb}
-                      />
+                      <div style={{ position: 'relative', display: 'inline-block' }}>
+                        <img
+                          src={post.image || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop'}
+                          alt={post.title_id}
+                          className={styles.tableThumb}
+                          style={{ cursor: 'pointer', display: 'block' }}
+                          onClick={() => window.open(post.image || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop', '_blank')}
+                          title="Klik untuk lihat gambar penuh (Preview)"
+                        />
+                        {post.image && (
+                          <a
+                            href={post.image}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              position: 'absolute',
+                              bottom: '2px',
+                              right: '2px',
+                              background: 'rgba(20, 120, 155, 0.85)',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              width: '18px',
+                              height: '18px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '10px',
+                              cursor: 'pointer',
+                              textDecoration: 'none'
+                            }}
+                            title="Unduh Gambar"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            📥
+                          </a>
+                        )}
+                      </div>
                     </td>
                     <td>
                       <div style={{ fontWeight: 'bold', color: 'var(--color-text-dark)' }}>{post.title_id}</div>
@@ -374,14 +408,47 @@ export default function BlogEditor({ showToast }) {
                   </div>
                   {form.image && (
                     <div style={{ marginTop: '0.75rem', position: 'relative', width: '220px', height: '130px', borderRadius: '10px', overflow: 'hidden', border: '1px solid #E2E8F0' }}>
-                      <img src={form.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img 
+                        src={form.image} 
+                        alt="Preview" 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }} 
+                        onClick={() => window.open(form.image, '_blank')}
+                        title="Klik untuk lihat gambar penuh (Preview)"
+                      />
                       <button
                         type="button"
                         onClick={() => setForm(prev => ({ ...prev, image: '' }))}
                         className={styles.uploadRemove}
+                        title="Hapus gambar"
                       >
                         ✕
                       </button>
+                      <a
+                        href={form.image}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          position: 'absolute',
+                          bottom: '6px',
+                          right: '6px',
+                          background: 'rgba(20, 120, 155, 0.85)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          width: '24px',
+                          height: '24px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '12px',
+                          cursor: 'pointer',
+                          textDecoration: 'none'
+                        }}
+                        title="Download Gambar"
+                      >
+                        📥
+                      </a>
                     </div>
                   )}
                 </div>

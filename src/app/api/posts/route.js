@@ -8,14 +8,33 @@ async function isAdmin() {
   const cookieStore = await cookies();
   const token = cookieStore.get('berseni_session')?.value;
   const session = decryptSession(token);
-  return session && session.role === 'admin';
+  if (!session || session.role !== 'admin') return false;
+
+  const activeSessionId = await db.get('admin_session_id');
+  return session.sessionId === activeSessionId;
 }
 
 // GET: Mengambil semua postingan blog
 export async function GET() {
   try {
     const posts = await db.get('posts') || [];
-    return NextResponse.json(posts);
+    
+    // Sort posts descending by date (DD/MM/YYYY)
+    const parseBlogDate = (dateStr) => {
+      if (!dateStr) return new Date(0);
+      const parts = dateStr.split('/');
+      if (parts.length === 3) {
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const year = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+      }
+      return new Date(dateStr);
+    };
+    
+    const sortedPosts = [...posts].sort((a, b) => parseBlogDate(b.date) - parseBlogDate(a.date));
+    
+    return NextResponse.json(sortedPosts);
   } catch (err) {
     console.error("GET posts error:", err);
     return NextResponse.json({ error: 'Gagal mengambil daftar artikel' }, { status: 500 });

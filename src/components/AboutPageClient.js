@@ -87,25 +87,25 @@ export default function AboutPageClient({ content }) {
             {/* 4 Photo Grid Collage */}
             <div className={styles.collageGrid}>
               <div className={styles.collageCard}>
-                <img src="/activity-outdoor.webp" alt="Melukis di Luar Ruangan" />
+                <img src={data.aboutCollage1 || "/activity-outdoor.webp"} alt="Melukis di Luar Ruangan" />
                 <div className={styles.collageOverlay}>
                   <span>Outdoor Painting</span>
                 </div>
               </div>
               <div className={styles.collageCard}>
-                <img src="/activity-batik.webp" alt="Workshop Membatik Tulis" />
+                <img src={data.aboutCollage2 || "/activity-batik.webp"} alt="Workshop Membatik Tulis" />
                 <div className={styles.collageOverlay}>
                   <span>Batik Workshop</span>
                 </div>
               </div>
               <div className={styles.collageCard}>
-                <img src="/activity-talk.webp" alt="Talkshow Apresiasi Seni" />
+                <img src={data.aboutCollage3 || "/activity-talk.webp"} alt="Talkshow Apresiasi Seni" />
                 <div className={styles.collageOverlay}>
                   <span>Art Appreciation</span>
                 </div>
               </div>
               <div className={styles.collageCard}>
-                <img src="/activity-children.webp" alt="Kelas Seni Anak Inklusi" />
+                <img src={data.aboutCollage4 || "/activity-children.webp"} alt="Kelas Seni Anak Inklusi" />
                 <div className={styles.collageOverlay}>
                   <span>Inclusion Art Class</span>
                 </div>
@@ -193,7 +193,7 @@ export default function AboutPageClient({ content }) {
                   <span className={`${styles.frameCorner} ${styles.botR}`}></span>
 
                   <img 
-                    src="/about-studio.webp" 
+                    src={data.aboutStudioImg || "/about-studio.webp"} 
                     alt="Berseni Art Studio Ubud" 
                     className={styles.visualImage}
                   />

@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { decryptSession } from '@/lib/auth';
+import { db } from '@/lib/db';
 import DashboardClient from '@/components/Admin/DashboardClient';
 
 export const metadata = {
@@ -19,6 +20,12 @@ export default async function AdminPage() {
 
   // Jika session tidak valid atau bukan admin, redirect ke halaman login
   if (!session || session.role !== 'admin') {
+    redirect('/admin/login');
+  }
+
+  // Verifikasi apakah session ID cocok dengan yang aktif di database
+  const activeSessionId = await db.get('admin_session_id');
+  if (session.sessionId !== activeSessionId) {
     redirect('/admin/login');
   }
 

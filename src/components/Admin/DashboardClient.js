@@ -109,6 +109,9 @@ export default function DashboardClient() {
                 <button className="btn btn-secondary" onClick={() => setActiveTab('seo')} style={{ fontSize: '0.85rem' }}>
                   Optimasi SEO & GEO (AI)
                 </button>
+                <a href="/api/backup" download className="btn btn-outline" style={{ fontSize: '0.85rem', borderColor: 'var(--color-tosca)', color: 'var(--color-tosca)' }}>
+                  📥 Ekspor Backup Database (JSON)
+                </a>
                 <a href="/" target="_blank" className="btn btn-outline" style={{ fontSize: '0.85rem' }}>
                   Kunjungi Landing Page ↗
                 </a>

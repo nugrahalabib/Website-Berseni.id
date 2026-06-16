@@ -16,6 +16,7 @@ export default function ProductEditor({ showToast }) {
     title_en: '',
     category: 'artwork',
     price: '',
+    originalPrice: '',
     image: '',
     description_id: '',
     description_en: '',
@@ -23,6 +24,56 @@ export default function ProductEditor({ showToast }) {
     specs_en: '',
     link: ''
   });
+
+  const [draggedIndex, setDraggedIndex] = useState(null);
+
+  const handleDragStart = (e, index) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.currentTarget.style.opacity = '0.5';
+  };
+
+  const handleDragEnd = (e) => {
+    e.currentTarget.style.opacity = '1';
+    setDraggedIndex(null);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (e, targetIndex) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === targetIndex) return;
+
+    const newProducts = [...products];
+    const temp = newProducts[draggedIndex];
+    newProducts.splice(draggedIndex, 1);
+    newProducts.splice(targetIndex, 0, temp);
+
+    setProducts(newProducts);
+    setDraggedIndex(null);
+
+    try {
+      const res = await fetch('/api/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProducts)
+      });
+
+      if (res.ok) {
+        showToast('Urutan produk berhasil diperbarui!');
+        fetchProducts();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Gagal menyimpan urutan baru.');
+        fetchProducts();
+      }
+    } catch (err) {
+      alert('Koneksi bermasalah saat memperbarui urutan.');
+      fetchProducts();
+    }
+  };
 
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef(null);
@@ -134,6 +185,7 @@ export default function ProductEditor({ showToast }) {
       title_en: product.title_en || product.title || '',
       category: product.category,
       price: product.price,
+      originalPrice: product.originalPrice || '',
       image: product.image,
       description_id: product.description_id || product.description || '',
       description_en: product.description_en || product.description || '',
@@ -172,6 +224,7 @@ export default function ProductEditor({ showToast }) {
       title_en: '',
       category: 'artwork',
       price: '',
+      originalPrice: '',
       image: '',
       description_id: '',
       description_en: '',
@@ -315,15 +368,27 @@ export default function ProductEditor({ showToast }) {
             </div>
 
             <div>
-              <label className={styles.adminLabel}>Harga (IDR / Rupiah)</label>
+              <label className={styles.adminLabel}>Harga Promo / Jual (IDR)</label>
               <input
                 type="number"
                 name="price"
                 className={styles.adminInput}
                 value={form.price}
                 onChange={handleChange}
-                placeholder="e.g. 350000"
+                placeholder="e.g. 2500000"
                 required
+              />
+            </div>
+
+            <div>
+              <label className={styles.adminLabel}>Harga Coret / Asli (IDR - Opsional)</label>
+              <input
+                type="number"
+                name="originalPrice"
+                className={styles.adminInput}
+                value={form.originalPrice}
+                onChange={handleChange}
+                placeholder="e.g. 3500000"
               />
             </div>
 
@@ -390,16 +455,40 @@ export default function ProductEditor({ showToast }) {
             <div className={styles.formGridFull}>
               <label className={styles.adminLabel}>Gambar Karya / Banner Kelas</label>
               {form.image ? (
-                <div className={styles.uploadPreview}>
-                  <img src={form.image} alt="Preview" />
-                  <button 
-                    type="button" 
-                    className={styles.uploadRemove}
-                    onClick={() => setForm(prev => ({ ...prev, image: '' }))}
-                    title="Hapus gambar"
-                  >
-                    ✕
-                  </button>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <div className={styles.uploadPreview} style={{ margin: 0, position: 'relative' }}>
+                    <img src={form.image} alt="Preview" style={{ cursor: 'pointer' }} onClick={() => window.open(form.image, '_blank')} title="Klik untuk lihat gambar penuh (Preview)" />
+                    <button 
+                      type="button" 
+                      className={styles.uploadRemove}
+                      onClick={() => setForm(prev => ({ ...prev, image: '' }))}
+                      title="Hapus gambar"
+                    >
+                      ✕
+                    </button>
+                    <a
+                      href={form.image}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ position: 'absolute', bottom: '6px', right: '6px', background: 'rgba(20,120,155,0.85)', color: 'white', border: 'none', borderRadius: '4px', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', cursor: 'pointer', textDecoration: 'none' }}
+                      title="Download Gambar"
+                    >
+                      📥
+                    </a>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <input
+                      type="text"
+                      name="image"
+                      className={styles.adminInput}
+                      value={form.image}
+                      onChange={handleChange}
+                      placeholder="URL Gambar..."
+                      style={{ marginBottom: '0.5rem' }}
+                    />
+                    <span style={{ fontSize: '0.75rem', color: '#64748B' }}>Unggah file baru untuk menimpa, atau ketik/paste URL secara manual.</span>
+                  </div>
                 </div>
               ) : (
                 <div 
@@ -456,7 +545,8 @@ export default function ProductEditor({ showToast }) {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th style={{ width: '80px' }}>Urutan</th>
+                <th style={{ width: '40px' }}>Urut</th>
+                <th style={{ width: '80px' }}>Geser</th>
                 <th>Gambar</th>
                 <th>Nama (ID / EN)</th>
                 <th>Kategori</th>
@@ -468,7 +558,19 @@ export default function ProductEditor({ showToast }) {
             <tbody>
               {products.length > 0 ? (
                 products.map((product, index) => (
-                  <tr key={product.id} className={styles.tableRow}>
+                  <tr 
+                    key={product.id} 
+                    className={styles.tableRow}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragEnd={handleDragEnd}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, index)}
+                    style={{ cursor: 'move' }}
+                  >
+                    <td style={{ textAlign: 'center', cursor: 'grab', fontSize: '1.1rem', color: '#94A3B8' }} title="Tarik baris untuk memindahkan urutan">
+                      ☰
+                    </td>
                     <td>
                       <div style={{ display: 'flex', gap: '0.25rem' }}>
                         <button
@@ -510,14 +612,48 @@ export default function ProductEditor({ showToast }) {
                       </div>
                     </td>
                     <td>
-                      <img 
-                        src={product.image} 
-                        alt="" 
-                        className={styles.tableThumb} 
-                        onError={(e) => {
-                          e.target.src = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop';
-                        }}
-                      />
+                      <div style={{ position: 'relative', display: 'inline-block' }}>
+                        <img 
+                          src={product.image} 
+                          alt="" 
+                          className={styles.tableThumb} 
+                          onError={(e) => {
+                            e.target.src = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop';
+                          }}
+                          style={{ cursor: 'pointer', display: 'block' }}
+                          onClick={() => window.open(product.image, '_blank')}
+                          title="Klik untuk lihat gambar penuh (Preview)"
+                        />
+                        {product.image && (
+                          <a
+                            href={product.image}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              position: 'absolute',
+                              bottom: '2px',
+                              right: '2px',
+                              background: 'rgba(20, 120, 155, 0.85)',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              width: '18px',
+                              height: '18px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '10px',
+                              cursor: 'pointer',
+                              textDecoration: 'none'
+                            }}
+                            title="Unduh Gambar"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            📥
+                          </a>
+                        )}
+                      </div>
                     </td>
                     <td style={{ fontWeight: 700, color: 'var(--color-text-dark)' }}>
                       <div>{product.title_id || product.title}</div>
@@ -533,7 +669,14 @@ export default function ProductEditor({ showToast }) {
                         {getCategoryLabel(product.category)}
                       </span>
                     </td>
-                    <td style={{ fontWeight: 800, color: 'var(--color-maroon)' }}>{formatPrice(product.price)}</td>
+                    <td>
+                      <div style={{ fontWeight: 800, color: 'var(--color-maroon)' }}>{formatPrice(product.price)}</div>
+                      {product.originalPrice > 0 && (
+                        <div style={{ textDecoration: 'line-through', fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 'normal' }}>
+                          {formatPrice(product.originalPrice)}
+                        </div>
+                      )}
+                    </td>
                     <td style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       <a href={product.link} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-tosca)', textDecoration: 'underline', fontSize: '0.85rem' }}>
                         Tautan Shopee/Lynk

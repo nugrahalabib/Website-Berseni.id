@@ -133,7 +133,7 @@ export default function CollaborationPageClient({ content }) {
                   
                   {/* Main Canvas Representation */}
                   <div className={styles.canvasFrame}>
-                    <div className={styles.canvasInner} style={{ backgroundImage: "url('/collage-1.jpg')" }}>
+                    <div className={styles.canvasInner} style={{ backgroundImage: `url('${content?.collabCanvasImg || '/collage-1.jpg'}')` }}>
                       <div className={styles.canvasTitle}>Berseni Studio</div>
                     </div>
                   </div>

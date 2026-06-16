@@ -8,7 +8,10 @@ async function isAdmin() {
   const cookieStore = await cookies();
   const token = cookieStore.get('berseni_session')?.value;
   const session = decryptSession(token);
-  return session && session.role === 'admin';
+  if (!session || session.role !== 'admin') return false;
+
+  const activeSessionId = await db.get('admin_session_id');
+  return session.sessionId === activeSessionId;
 }
 
 // GET: Mengambil semua produk untuk landing page
@@ -30,7 +33,7 @@ export async function POST(request) {
     }
     
     const body = await request.json();
-    const { title_id, title_en, category, price, image, description_id, description_en, specs_id, specs_en, link } = body;
+    const { title_id, title_en, category, price, originalPrice, image, description_id, description_en, specs_id, specs_en, link } = body;
     
     if (!title_id || !title_en || !category || !link) {
       return NextResponse.json({ error: 'Nama (ID & EN), kategori, dan link shopee/lynk harus diisi!' }, { status: 400 });
@@ -44,6 +47,7 @@ export async function POST(request) {
       title_en,
       category,
       price: Number(price) || 0,
+      originalPrice: Number(originalPrice) || 0,
       image: image || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop', // Fallback image
       description_id: description_id || '',
       description_en: description_en || '',
@@ -52,7 +56,7 @@ export async function POST(request) {
       link
     };
     
-    products.push(newProduct);
+    products.unshift(newProduct);
     const success = await db.set('products', products);
     
     if (success) {
@@ -83,7 +87,7 @@ export async function PUT(request) {
       return NextResponse.json({ error: 'Gagal menulis ke database' }, { status: 500 });
     }
     
-    const { id, title_id, title_en, category, price, image, description_id, description_en, specs_id, specs_en, link } = body;
+    const { id, title_id, title_en, category, price, originalPrice, image, description_id, description_en, specs_id, specs_en, link } = body;
     
     if (!id || !title_id || !title_en || !category || !link) {
       return NextResponse.json({ error: 'Data edit tidak lengkap (ID, nama ID & EN, kategori, link wajib ada)' }, { status: 400 });
@@ -102,6 +106,7 @@ export async function PUT(request) {
       title_en,
       category,
       price: Number(price) || 0,
+      originalPrice: Number(originalPrice) || 0,
       image: image || products[index].image,
       description_id: description_id || '',
       description_en: description_en || '',

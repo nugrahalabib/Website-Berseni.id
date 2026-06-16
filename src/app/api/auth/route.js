@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import crypto from 'crypto';
 import { encryptSession, decryptSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 
@@ -10,7 +11,10 @@ export async function GET() {
   const session = decryptSession(token);
   
   if (session && session.role === 'admin') {
-    return NextResponse.json({ authenticated: true });
+    const activeSessionId = await db.get('admin_session_id');
+    if (session.sessionId === activeSessionId) {
+      return NextResponse.json({ authenticated: true });
+    }
   }
   
   return NextResponse.json({ authenticated: false });
@@ -26,7 +30,10 @@ export async function POST(request) {
     const expectedPassword = dbPassword || process.env.ADMIN_PASSWORD || 'admin123';
     
     if (password === expectedPassword) {
-      const token = encryptSession({ role: 'admin' });
+      const sessionId = crypto.randomUUID();
+      await db.set('admin_session_id', sessionId);
+
+      const token = encryptSession({ role: 'admin', sessionId });
       const cookieStore = await cookies();
       
       cookieStore.set('berseni_session', token, {
@@ -61,6 +68,12 @@ export async function PUT(request) {
     
     if (!session || session.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
+    // Check active session ID
+    const activeSessionId = await db.get('admin_session_id');
+    if (session.sessionId !== activeSessionId) {
+      return NextResponse.json({ error: 'Session expired' }, { status: 401 });
     }
     
     const { oldPassword, newPassword } = await request.json();

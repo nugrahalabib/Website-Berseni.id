@@ -8,7 +8,10 @@ async function isAdmin() {
   const cookieStore = await cookies();
   const token = cookieStore.get('berseni_session')?.value;
   const session = decryptSession(token);
-  return session && session.role === 'admin';
+  if (!session || session.role !== 'admin') return false;
+
+  const activeSessionId = await db.get('admin_session_id');
+  return session.sessionId === activeSessionId;
 }
 
 // GET: Mengambil seluruh teks konten landing page
