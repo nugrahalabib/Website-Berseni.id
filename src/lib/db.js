@@ -159,7 +159,8 @@ function initLocalDb() {
         collabBrandBtnLink: "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Brand%2FPerusahaan%20kami%20tertarik%20untuk%20berkolaborasi%20kreatif%20dengan%20Berseni.",
         collabBrandBtnStatus: "active",
         collabVenueBtnLink: "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Saya%20memiliki%20venue%2Ftempat%20yang%20tertarik%20untuk%20berkolaborasi%20dengan%20komunitas%20Berseni.",
-        collabVenueBtnStatus: "active"
+        collabVenueBtnStatus: "active",
+        defaultLanguage: "id"
       },
       products: [
         {
@@ -530,6 +531,10 @@ function initLocalDb() {
         data.content.collabBrandBtnStatus = "active";
         data.content.collabVenueBtnLink = "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Saya%20memiliki%20venue%2Ftempat%20yang%20tertarik%20untuk%20berkolaborasi%20dengan%20komunitas%20Berseni.";
         data.content.collabVenueBtnStatus = "active";
+        updated = true;
+      }
+      if (data.content && !data.content.defaultLanguage) {
+        data.content.defaultLanguage = "id";
         updated = true;
       }
       if (!data.admin_password) {

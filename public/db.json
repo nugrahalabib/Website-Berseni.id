@@ -430,7 +430,8 @@
         "comment_en": "Love the concept of the Berseni community. We can share painting progress in the WhatsApp group and get direct feedback from professional tutors.",
         "borderColor": "var(--color-maroon)"
       }
-    ]
+    ],
+    "defaultLanguage": "id"
   },
   "products": [
     {
@@ -716,5 +717,5 @@
       "geo_faq_a1_en": "Articles are written by Berseni's internal curatorial team, contributing partner artists, and Indonesian art history practitioners to maintain insight quality."
     }
   },
-  "admin_session_id": "6baddfa4-ffc4-45a6-afbe-b573fa4bc9ae"
+  "admin_session_id": "753a5b87-32a0-4bf9-bdfb-0fd1edcf352d"
 }

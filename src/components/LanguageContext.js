@@ -14,6 +14,12 @@ export function LanguageProvider({ children }) {
       if (res.ok) {
         const data = await res.json();
         setDbContent(data);
+        
+        // If there's no saved language preference in localStorage, use default language from DB
+        const savedLang = localStorage.getItem('berseni_lang');
+        if (!savedLang && data.defaultLanguage) {
+          setLanguage(data.defaultLanguage);
+        }
       }
     } catch (e) {
       console.error("Gagal memuat dynamic content overrides:", e);

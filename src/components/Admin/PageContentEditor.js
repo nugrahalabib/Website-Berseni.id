@@ -209,6 +209,15 @@ export default function PageContentEditor({ showToast }) {
     home: {
       title: 'Halaman Utama (Landing Page)',
       sections: {
+        general: {
+          title: 'Pengaturan Umum Situs',
+          fields: [
+            { name: 'defaultLanguage', label: 'Bahasa Default Website (Untuk Pengunjung Baru)', type: 'select', defaultValue: 'id', options: [
+              { value: 'id', label: 'Bahasa Indonesia (ID)' },
+              { value: 'en', label: 'English (EN)' }
+            ]}
+          ]
+        },
         hero: {
           title: 'Hero Banner Utama',
           fields: [
