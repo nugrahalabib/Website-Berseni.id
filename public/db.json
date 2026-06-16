@@ -2,7 +2,7 @@
   "content": {
     "heroTitle_id": "Experience Art. Feel Indonesia.",
     "heroTitle_en": "Experience Art. Feel Indonesia.",
-    "heroSubtitle_id": "Learn. Create. Experience.",
+    "heroSubtitle_id": "Belajar. Melukis. Berseni.",
     "heroSubtitle_en": "Learn. Create. Experience.",
     "heroDescription_id": "Belajar langsung dari seniman profesional Indonesia melalui kelas online interaktif, workshop intim, dan festival seni imersif. Selami warisan budaya lokal yang kaya dan kembangkan kreativitas kontemporer Anda.",
     "heroDescription_en": "Learn directly from professional Indonesian artists through interactive online classes, intimate workshops, and immersive art festivals. Dive into our rich local cultural heritage and develop your contemporary creativity.",
@@ -162,6 +162,23 @@
   ],
   "posts": [
     {
+      "slug": "seni-lukis-modern-indonesia",
+      "title_id": "Seni Lukis Modern Indonesia",
+      "title_en": "Modern Indonesian Painting Art",
+      "date": "16/06/2026",
+      "image": "/images/blog1.jpg",
+      "excerpt_id": "Ringkasan mengenai perkembangan seni lukis modern di Indonesia.",
+      "excerpt_en": "Summary of the development of modern painting art in Indonesia.",
+      "content_id": "Seni lukis modern di Indonesia berkembang sangat pesat dengan pengaruh berbagai aliran.",
+      "content_en": "Modern painting in Indonesia is growing very rapidly with the influence of various genres.",
+      "seoTitle_id": "",
+      "seoTitle_en": "",
+      "seoDescription_id": "",
+      "seoDescription_en": "",
+      "seoKeywords_id": "",
+      "seoKeywords_en": ""
+    },
+    {
       "slug": "melukis-menyenangkan-dan-menghasilkan",
       "title_id": "Melukis : Menyenangkan dan Menghasilkan",
       "title_en": "Painting : Fun and Profitable",
@@ -205,5 +222,68 @@
       "content_id": "Memulai hobi melukis sering kali diawali dengan kebingungan memilih peralatan. Apakah harus memakai cat air, akrilik, atau cat minyak?\n\nUntuk pemula, cat akrilik sangat direkomendasikan karena cepat kering, mudah diencerkan dengan air, dan memiliki warna yang pekat. Kuas jenis flat dan bulat ukuran medium juga menjadi bekal yang cukup untuk memulai goresan pertama Anda di atas kanvas.",
       "content_en": "Starting a painting hobby often begins with confusion over equipment selection. Should you use watercolor, acrylic, or oil paint?\n\nFor beginners, acrylic paint is highly recommended because it dries quickly, is easily diluted with water, and has high color opacity. Flat and round brush types in medium sizes are a sufficient kit to start your first strokes on canvas."
     }
-  ]
+  ],
+  "admin_password": "admin123",
+  "seo_pages": {
+    "home": {
+      "title_id": "Berseni - Galeri Seni & Kelas Melukis Online",
+      "title_en": "Berseni - A World of Art For Everyone",
+      "description_id": "Platform penghubung publik dan seniman Indonesia. Temukan kelas melukis online, workshop offline, dan karya seni terbaik langsung dari para maestro.",
+      "description_en": "A platform connecting the public and Indonesian artists. Discover online painting classes, offline workshops, and the best artwork directly from the maestros.",
+      "keywords_id": "seni, lukis, kelas online, workshop offline, lukisan indonesia, belajar melukis, berseni, shopee, lynk.id",
+      "keywords_en": "art, painting, online classes, offline workshops, indonesian painting, learn painting, berseni, shopee, lynk.id",
+      "geo_region": "ID-JK",
+      "geo_placename": "Jakarta",
+      "geo_position": "-6.2088;106.8456",
+      "geo_icbm": "-6.2088, 106.8456"
+    },
+    "about": {
+      "title_id": "Tentang Kami - Berseni",
+      "title_en": "About Us - Berseni",
+      "description_id": "Temukan kisah kami, visi misi, dan komitmen Berseni dalam menjadi jembatan global utama antara masyarakat umum dan seniman lokal Indonesia.",
+      "description_en": "Discover our story, vision, mission, and commitment in becoming the primary global bridge between the general public and local Indonesian artists.",
+      "keywords_id": "tentang kami, berseni, visi misi, komunitas seni, indonesia, melukis",
+      "keywords_en": "about us, berseni, vision mission, art community, indonesia, painting",
+      "geo_region": "ID-JK",
+      "geo_placename": "Jakarta",
+      "geo_position": "-6.2088;106.8456",
+      "geo_icbm": "-6.2088, 106.8456"
+    },
+    "collaboration": {
+      "title_id": "Kolaborasi Kemitraan - Berseni",
+      "title_en": "Partnership Collaboration - Berseni",
+      "description_id": "Buka peluang kolaborasi kreatif bersama Berseni. Kami terbuka untuk brand, komunitas, dan partner venue untuk menghadirkan pengalaman seni terbaik.",
+      "description_en": "Open creative collaboration opportunities with Berseni. We are open for brands, communities, and venue partners to bring the best art experiences.",
+      "keywords_id": "kolaborasi, kerjasama, venue partner, brand collaboration, berseni, event seni",
+      "keywords_en": "collaboration, partnership, venue partner, brand collaboration, berseni, art event",
+      "geo_region": "ID-JK",
+      "geo_placename": "Jakarta",
+      "geo_position": "-6.2088;106.8456",
+      "geo_icbm": "-6.2088, 106.8456"
+    },
+    "store": {
+      "title_id": "Galeri & Kelas Seni - Berseni Art Market",
+      "title_en": "Gallery & Art Classes - Berseni Art Market",
+      "description_id": "Jelajahi seluruh koleksi karya seni orisinal Indonesia, kelas melukis online (e-course), dan pendaftaran intimate workshop offline dari Berseni.",
+      "description_en": "Explore the entire collection of original Indonesian artworks, online painting classes (e-courses), and offline intimate workshop registrations from Berseni.",
+      "keywords_id": "marketplace seni, karya seni, lukisan, kelas online, workshop offline, belajar melukis, berseni, indonesia",
+      "keywords_en": "art marketplace, artwork, painting, online class, offline workshop, learn painting, berseni, indonesia",
+      "geo_region": "ID-JK",
+      "geo_placename": "Jakarta",
+      "geo_position": "-6.2088;106.8456",
+      "geo_icbm": "-6.2088, 106.8456"
+    },
+    "blog": {
+      "title_id": "Artikel & Catatan Seni - Berseni Blog",
+      "title_en": "Articles & Art Notes - Berseni Blog",
+      "description_id": "Wawasan seputar teknik melukis, sejarah seni rupa, dan proses kreatif dari para seniman Indonesia.",
+      "description_en": "Insights around painting techniques, art history, and creative processes of Indonesian artists.",
+      "keywords_id": "blog seni, teknik melukis, sejarah seni, proses kreatif, seniman indonesia, cat air, akrilik",
+      "keywords_en": "art blog, painting techniques, art history, creative process, indonesian artists, watercolor, acrylic",
+      "geo_region": "ID-JK",
+      "geo_placename": "Jakarta",
+      "geo_position": "-6.2088;106.8456",
+      "geo_icbm": "-6.2088, 106.8456"
+    }
+  }
 }

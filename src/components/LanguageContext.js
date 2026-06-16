@@ -6,6 +6,19 @@ const LanguageContext = createContext();
 
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useState('id');
+  const [dbContent, setDbContent] = useState({});
+
+  const fetchDbContent = async () => {
+    try {
+      const res = await fetch('/api/content');
+      if (res.ok) {
+        const data = await res.json();
+        setDbContent(data);
+      }
+    } catch (e) {
+      console.error("Gagal memuat dynamic content overrides:", e);
+    }
+  };
 
   // Load language preference on mount
   useEffect(() => {
@@ -13,6 +26,7 @@ export function LanguageProvider({ children }) {
     if (savedLang === 'id' || savedLang === 'en') {
       setLanguage(savedLang);
     }
+    fetchDbContent();
   }, []);
 
   const toggleLanguage = () => {
@@ -320,14 +334,24 @@ export function LanguageProvider({ children }) {
   };
 
   const getTranslation = (key) => {
-    if (dict[key] && dict[key][language]) {
+    // 1. Cek override spesifik bahasa dari DB (misal: key_id atau key_en)
+    const localizedKey = `${key}_${language}`;
+    if (dbContent[localizedKey] !== undefined) {
+      return dbContent[localizedKey];
+    }
+    // 2. Cek override global dari DB (misal: key)
+    if (dbContent[key] !== undefined) {
+      return dbContent[key];
+    }
+    // 3. Fallback ke dictionary statis
+    if (dict[key] && dict[key][language] !== undefined) {
       return dict[key][language];
     }
     return key;
   };
 
   return (
-    <LanguageContext.Provider value={{ language, toggleLanguage, setLang, t, getTranslation }}>
+    <LanguageContext.Provider value={{ language, toggleLanguage, setLang, t, getTranslation, refreshContent: fetchDbContent }}>
       {children}
     </LanguageContext.Provider>
   );

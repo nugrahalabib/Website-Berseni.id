@@ -220,9 +220,153 @@ function initLocalDb() {
           content_id: "Memulai hobi melukis sering kali diawali dengan kebingungan memilih peralatan. Apakah harus memakai cat air, akrilik, atau cat minyak?\n\nUntuk pemula, cat akrilik sangat direkomendasikan karena cepat kering, mudah diencerkan dengan air, dan memiliki warna yang pekat. Kuas jenis flat dan bulat ukuran medium juga menjadi bekal yang cukup untuk memulai goresan pertama Anda di atas kanvas.",
           content_en: "Starting a painting hobby often begins with confusion over equipment selection. Should you use watercolor, acrylic, or oil paint?\n\nFor beginners, acrylic paint is highly recommended because it dries quickly, is easily diluted with water, and has high color opacity. Flat and round brush types in medium sizes are a sufficient kit to start your first strokes on canvas."
         }
-      ]
+      ],
+      admin_password: process.env.ADMIN_PASSWORD || 'admin123',
+      seo_pages: {
+        home: {
+          title_id: "Berseni - A World of Art For Everyone",
+          title_en: "Berseni - A World of Art For Everyone",
+          description_id: "Platform penghubung publik dan seniman Indonesia. Temukan kelas melukis online, workshop offline, dan karya seni terbaik langsung dari para maestro.",
+          description_en: "A platform connecting the public and Indonesian artists. Discover online painting classes, offline workshops, and the best artwork directly from the maestros.",
+          keywords_id: "seni, lukis, kelas online, workshop offline, lukisan indonesia, belajar melukis, berseni, shopee, lynk.id",
+          keywords_en: "art, painting, online classes, offline workshops, indonesian painting, learn painting, berseni, shopee, lynk.id",
+          geo_region: "ID-JK",
+          geo_placename: "Jakarta",
+          geo_position: "-6.2088;106.8456",
+          geo_icbm: "-6.2088, 106.8456"
+        },
+        about: {
+          title_id: "Tentang Kami - Berseni",
+          title_en: "About Us - Berseni",
+          description_id: "Temukan kisah kami, visi misi, dan komitmen Berseni dalam menjadi jembatan global utama antara masyarakat umum dan seniman lokal Indonesia.",
+          description_en: "Discover our story, vision, mission, and commitment in becoming the primary global bridge between the general public and local Indonesian artists.",
+          keywords_id: "tentang kami, berseni, visi misi, komunitas seni, indonesia, melukis",
+          keywords_en: "about us, berseni, vision mission, art community, indonesia, painting",
+          geo_region: "ID-JK",
+          geo_placename: "Jakarta",
+          geo_position: "-6.2088;106.8456",
+          geo_icbm: "-6.2088, 106.8456"
+        },
+        collaboration: {
+          title_id: "Kolaborasi Kemitraan - Berseni",
+          title_en: "Partnership Collaboration - Berseni",
+          description_id: "Buka peluang kolaborasi kreatif bersama Berseni. Kami terbuka untuk brand, komunitas, dan partner venue untuk menghadirkan pengalaman seni terbaik.",
+          description_en: "Open creative collaboration opportunities with Berseni. We are open for brands, communities, and venue partners to bring the best art experiences.",
+          keywords_id: "kolaborasi, kerjasama, venue partner, brand collaboration, berseni, event seni",
+          keywords_en: "collaboration, partnership, venue partner, brand collaboration, berseni, art event",
+          geo_region: "ID-JK",
+          geo_placename: "Jakarta",
+          geo_position: "-6.2088;106.8456",
+          geo_icbm: "-6.2088, 106.8456"
+        },
+        store: {
+          title_id: "Galeri & Kelas Seni - Berseni Art Market",
+          title_en: "Gallery & Art Classes - Berseni Art Market",
+          description_id: "Jelajahi seluruh koleksi karya seni orisinal Indonesia, kelas melukis online (e-course), dan pendaftaran intimate workshop offline dari Berseni.",
+          description_en: "Explore the entire collection of original Indonesian artworks, online painting classes (e-courses), and offline intimate workshop registrations from Berseni.",
+          keywords_id: "marketplace seni, karya seni, lukisan, kelas online, workshop offline, belajar melukis, berseni, indonesia",
+          keywords_en: "art marketplace, artwork, painting, online class, offline workshop, learn painting, berseni, indonesia",
+          geo_region: "ID-JK",
+          geo_placename: "Jakarta",
+          geo_position: "-6.2088;106.8456",
+          geo_icbm: "-6.2088, 106.8456"
+        },
+        blog: {
+          title_id: "Artikel & Catatan Seni - Berseni Blog",
+          title_en: "Articles & Art Notes - Berseni Blog",
+          description_id: "Wawasan seputar teknik melukis, sejarah seni rupa, dan proses kreatif dari para seniman Indonesia.",
+          description_en: "Insights around painting techniques, art history, and creative processes of Indonesian artists.",
+          keywords_id: "blog seni, teknik melukis, sejarah seni, proses kreatif, seniman indonesia, cat air, akrilik",
+          keywords_en: "art blog, painting techniques, art history, creative process, indonesian artists, watercolor, acrylic",
+          geo_region: "ID-JK",
+          geo_placename: "Jakarta",
+          geo_position: "-6.2088;106.8456",
+          geo_icbm: "-6.2088, 106.8456"
+        }
+      }
     };
     fs.writeFileSync(localDbPath, JSON.stringify(seedData, null, 2), 'utf-8');
+  } else {
+    // Jalankan migrasi jika file lokal sudah ada agar keys baru seo_pages & admin_password terisi
+    try {
+      const fileData = fs.readFileSync(localDbPath, 'utf-8');
+      const data = JSON.parse(fileData);
+      let updated = false;
+      if (!data.admin_password) {
+        data.admin_password = process.env.ADMIN_PASSWORD || 'admin123';
+        updated = true;
+      }
+      if (!data.seo_pages) {
+        data.seo_pages = {
+          home: {
+            title_id: "Berseni - A World of Art For Everyone",
+            title_en: "Berseni - A World of Art For Everyone",
+            description_id: "Platform penghubung publik dan seniman Indonesia. Temukan kelas melukis online, workshop offline, dan karya seni terbaik langsung dari para maestro.",
+            description_en: "A platform connecting the public and Indonesian artists. Discover online painting classes, offline workshops, and the best artwork directly from the maestros.",
+            keywords_id: "seni, lukis, kelas online, workshop offline, lukisan indonesia, belajar melukis, berseni, shopee, lynk.id",
+            keywords_en: "art, painting, online classes, offline workshops, indonesian painting, learn painting, berseni, shopee, lynk.id",
+            geo_region: "ID-JK",
+            geo_placename: "Jakarta",
+            geo_position: "-6.2088;106.8456",
+            geo_icbm: "-6.2088, 106.8456"
+          },
+          about: {
+            title_id: "Tentang Kami - Berseni",
+            title_en: "About Us - Berseni",
+            description_id: "Temukan kisah kami, visi misi, dan komitmen Berseni dalam menjadi jembatan global utama antara masyarakat umum dan seniman lokal Indonesia.",
+            description_en: "Discover our story, vision, mission, and commitment in becoming the primary global bridge between the general public and local Indonesian artists.",
+            keywords_id: "tentang kami, berseni, visi misi, komunitas seni, indonesia, melukis",
+            keywords_en: "about us, berseni, vision mission, art community, indonesia, painting",
+            geo_region: "ID-JK",
+            geo_placename: "Jakarta",
+            geo_position: "-6.2088;106.8456",
+            geo_icbm: "-6.2088, 106.8456"
+          },
+          collaboration: {
+            title_id: "Kolaborasi Kemitraan - Berseni",
+            title_en: "Partnership Collaboration - Berseni",
+            description_id: "Buka peluang kolaborasi kreatif bersama Berseni. Kami terbuka untuk brand, komunitas, dan partner venue untuk menghadirkan pengalaman seni terbaik.",
+            description_en: "Open creative collaboration opportunities with Berseni. We are open for brands, communities, and venue partners to bring the best art experiences.",
+            keywords_id: "kolaborasi, kerjasama, venue partner, brand collaboration, berseni, event seni",
+            keywords_en: "collaboration, partnership, venue partner, brand collaboration, berseni, art event",
+            geo_region: "ID-JK",
+            geo_placename: "Jakarta",
+            geo_position: "-6.2088;106.8456",
+            geo_icbm: "-6.2088, 106.8456"
+          },
+          store: {
+            title_id: "Galeri & Kelas Seni - Berseni Art Market",
+            title_en: "Gallery & Art Classes - Berseni Art Market",
+            description_id: "Jelajahi seluruh koleksi karya seni orisinal Indonesia, kelas melukis online (e-course), dan pendaftaran intimate workshop offline dari Berseni.",
+            description_en: "Explore the entire collection of original Indonesian artworks, online painting classes (e-courses), and offline intimate workshop registrations from Berseni.",
+            keywords_id: "marketplace seni, karya seni, lukisan, kelas online, workshop offline, belajar melukis, berseni, indonesia",
+            keywords_en: "art marketplace, artwork, painting, online class, offline workshop, learn painting, berseni, indonesia",
+            geo_region: "ID-JK",
+            geo_placename: "Jakarta",
+            geo_position: "-6.2088;106.8456",
+            geo_icbm: "-6.2088, 106.8456"
+          },
+          blog: {
+            title_id: "Artikel & Catatan Seni - Berseni Blog",
+            title_en: "Articles & Art Notes - Berseni Blog",
+            description_id: "Wawasan seputar teknik melukis, sejarah seni rupa, dan proses kreatif dari para seniman Indonesia.",
+            description_en: "Insights around painting techniques, art history, and creative processes of Indonesian artists.",
+            keywords_id: "blog seni, teknik melukis, sejarah seni, proses kreatif, seniman indonesia, cat air, akrilik",
+            keywords_en: "art blog, painting techniques, art history, creative process, indonesian artists, watercolor, acrylic",
+            geo_region: "ID-JK",
+            geo_placename: "Jakarta",
+            geo_position: "-6.2088;106.8456",
+            geo_icbm: "-6.2088, 106.8456"
+          }
+        };
+        updated = true;
+      }
+      if (updated) {
+        fs.writeFileSync(localDbPath, JSON.stringify(data, null, 2), 'utf-8');
+      }
+    } catch (e) {
+      console.error("Gagal migrasi database lokal:", e);
+    }
   }
 }
 
