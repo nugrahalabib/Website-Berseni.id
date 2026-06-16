@@ -300,6 +300,11 @@ export default function PageContentEditor({ showToast }) {
           title: 'Kelola Carousel Aktivitas',
           fields: [],
           customRender: 'activities_editor'
+        },
+        partners: {
+          title: 'Kelola Logo Partner (Dipercaya Oleh)',
+          fields: [],
+          customRender: 'partners_editor'
         }
       }
     },
@@ -1032,6 +1037,143 @@ export default function PageContentEditor({ showToast }) {
     );
   };
 
+  // Helper Custom Partners List Editor
+  const PartnersEditorSection = () => {
+    const [newLogoUrl, setNewLogoUrl] = useState('');
+    const [uploading, setUploading] = useState(false);
+
+    const partners = form.partners || [];
+
+    const handleFileUpload = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      setUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          // Add to partners list immediately
+          setForm(prev => ({
+            ...prev,
+            partners: [...(prev.partners || []), data.url]
+          }));
+        } else {
+          alert('Gagal mengunggah gambar.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Terjadi kesalahan saat mengunggah gambar.');
+      } finally {
+        setUploading(false);
+      }
+    };
+
+    const handleAddUrl = () => {
+      if (!newLogoUrl.trim()) return;
+      setForm(prev => ({
+        ...prev,
+        partners: [...(prev.partners || []), newLogoUrl.trim()]
+      }));
+      setNewLogoUrl('');
+    };
+
+    const handleDelete = (idx) => {
+      if (confirm('Apakah Anda yakin ingin menghapus logo partner ini?')) {
+        const updated = partners.filter((_, i) => i !== idx);
+        setForm(prev => ({ ...prev, partners: updated }));
+      }
+    };
+
+    const moveItem = (idx, direction) => {
+      const updated = [...partners];
+      if (direction === 'up' && idx > 0) {
+        const temp = updated[idx];
+        updated[idx] = updated[idx - 1];
+        updated[idx - 1] = temp;
+      } else if (direction === 'down' && idx < updated.length - 1) {
+        const temp = updated[idx];
+        updated[idx] = updated[idx + 1];
+        updated[idx + 1] = temp;
+      }
+      setForm(prev => ({ ...prev, partners: updated }));
+    };
+
+    return (
+      <div style={{ marginTop: '1rem', borderTop: '1px dashed #E2E8F0', paddingTop: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <label className={styles.adminLabel} style={{ marginBottom: 0 }}>Daftar Logo Partner (Dipercaya Oleh)</label>
+        </div>
+        
+        {/* Tambah Partner Baru */}
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', background: '#F8FAFC', padding: '1rem', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+          <div style={{ flex: 1, minWidth: '150px' }}>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#64748B' }}>Unggah File Logo Baru</label>
+            <label className="btn btn-secondary" style={{ display: 'inline-block', padding: '0.4rem 1rem', cursor: 'pointer', margin: 0, fontSize: '0.8rem', borderRadius: '8px' }}>
+              {uploading ? 'Mengunggah...' : 'Pilih File Gambar'}
+              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileUpload} disabled={uploading} />
+            </label>
+          </div>
+          <div style={{ flex: 2, minWidth: '220px' }}>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#64748B' }}>Atau Masukkan URL Gambar</label>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <input
+                type="text"
+                className={styles.adminInput}
+                value={newLogoUrl}
+                onChange={(e) => setNewLogoUrl(e.target.value)}
+                placeholder="https://example.com/logo.png"
+                style={{ margin: 0, height: '36px', fontSize: '0.85rem' }}
+              />
+              <button type="button" className="btn btn-primary" onClick={handleAddUrl} style={{ padding: '0.4rem 1.25rem', backgroundColor: 'var(--color-tosca)', color: 'white', borderRadius: '8px', fontSize: '0.8rem', height: '36px' }}>Tambah</button>
+            </div>
+          </div>
+        </div>
+
+        {/* List of Partners */}
+        {partners.length === 0 ? (
+          <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', border: '1px dashed #CBD5E1', borderRadius: '12px' }}>
+            Belum ada logo partner yang ditambahkan. Silakan unggah di atas.
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1rem' }}>
+            {partners.map((url, idx) => (
+              <div key={idx} style={{ border: '1px solid #E2E8F0', borderRadius: '10px', padding: '0.75rem', background: '#FFFFFF', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+                <span style={{ position: 'absolute', top: '5px', left: '10px', fontSize: '0.7rem', fontWeight: 'bold', color: '#94A3B8' }}>#{idx + 1}</span>
+                
+                {/* Logo Image Preview */}
+                <div style={{ width: '100%', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F8FAFC', borderRadius: '6px', border: '1px solid #E2E8F0', padding: '4px', cursor: 'pointer', marginBottom: '0.75rem', overflow: 'hidden' }} onClick={() => window.open(url, '_blank')} title="Klik untuk preview ukuran penuh">
+                  <img src={url} alt={`Partner ${idx + 1}`} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: '0.25rem', width: '100%', justifyContent: 'center', marginBottom: '0.5rem' }}>
+                  <button type="button" className="btn btn-outline" style={{ padding: '2px 6px', fontSize: '0.7rem', height: 'auto', background: 'transparent' }} onClick={() => moveItem(idx, 'up')} disabled={idx === 0} title="Geser Kiri">←</button>
+                  <button type="button" className="btn btn-outline" style={{ padding: '2px 6px', fontSize: '0.7rem', height: 'auto', background: 'transparent' }} onClick={() => moveItem(idx, 'down')} disabled={idx === partners.length - 1} title="Geser Kanan">→</button>
+                </div>
+                
+                <div style={{ display: 'flex', gap: '0.25rem', width: '100%', justifyContent: 'center' }}>
+                  <a href={url} download target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '3px 6px', fontSize: '0.65rem', textDecoration: 'none', color: 'var(--color-tosca)', borderColor: 'var(--color-tosca)', display: 'inline-flex', alignItems: 'center', height: 'auto', background: 'transparent' }} title="Unduh gambar asli">
+                    📥
+                  </a>
+                  <button type="button" className="btn btn-outline" style={{ padding: '3px 6px', fontSize: '0.65rem', color: '#EF4444', borderColor: '#FCA5A5', height: 'auto', background: 'transparent' }} onClick={() => handleDelete(idx)} title="Hapus Partner">
+                    Hapus
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const currentPageConfig = pagesConfig[selectedPage];
 
   return (
@@ -1132,6 +1274,11 @@ export default function PageContentEditor({ showToast }) {
             {/* Custom render for Activities list */}
             {currentPageConfig.sections[activeSection].customRender === 'activities_editor' && (
               <ActivitiesEditorSection />
+            )}
+
+            {/* Custom render for Partners list */}
+            {currentPageConfig.sections[activeSection].customRender === 'partners_editor' && (
+              <PartnersEditorSection />
             )}
 
             <div className={styles.formActions} style={{ marginTop: '2rem' }}>

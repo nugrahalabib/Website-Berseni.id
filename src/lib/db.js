@@ -45,7 +45,17 @@ function initLocalDb() {
         ],
         statsUsers: "20k+",
         statsDescription_id: "Pengguna Berseni",
-        statsDescription_en: "Berseni Users"
+        statsDescription_en: "Berseni Users",
+        partners: [
+          "/support/1.png",
+          "/support/2.png",
+          "/support/3.png",
+          "/support/4.png",
+          "/support/5.png",
+          "/support/6.png",
+          "/support/7.png",
+          "/support/8.png"
+        ]
       },
       products: [
         {
@@ -292,6 +302,19 @@ function initLocalDb() {
       const fileData = fs.readFileSync(localDbPath, 'utf-8');
       const data = JSON.parse(fileData);
       let updated = false;
+      if (data.content && !data.content.partners) {
+        data.content.partners = [
+          "/support/1.png",
+          "/support/2.png",
+          "/support/3.png",
+          "/support/4.png",
+          "/support/5.png",
+          "/support/6.png",
+          "/support/7.png",
+          "/support/8.png"
+        ];
+        updated = true;
+      }
       if (!data.admin_password) {
         data.admin_password = process.env.ADMIN_PASSWORD || 'admin123';
         updated = true;

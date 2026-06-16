@@ -316,6 +316,16 @@
         "details_en": "Duration: Full Day | Location: Jakarta City Park | Open for public",
         "link": "https://lynk.id/berseni.id"
       }
+    ],
+    "partners": [
+      "/support/1.png",
+      "/support/2.png",
+      "/support/3.png",
+      "/support/4.png",
+      "/support/5.png",
+      "/support/6.png",
+      "/support/7.png",
+      "/support/8.png"
     ]
   },
   "products": [
@@ -601,5 +611,6 @@
       "geo_faq_a1_id": "Artikel ditulis oleh tim kurator internal Berseni, seniman mitra kontributor, serta praktisi sejarah seni rupa Indonesia untuk menjaga kualitas wawasan.",
       "geo_faq_a1_en": "Articles are written by Berseni's internal curatorial team, contributing partner artists, and Indonesian art history practitioners to maintain insight quality."
     }
-  }
+  },
+  "admin_session_id": "8b272aef-989a-440b-b73c-509d4ec1c16c"
 }

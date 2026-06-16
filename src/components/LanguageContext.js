@@ -351,7 +351,7 @@ export function LanguageProvider({ children }) {
   };
 
   return (
-    <LanguageContext.Provider value={{ language, toggleLanguage, setLang, t, getTranslation, refreshContent: fetchDbContent }}>
+    <LanguageContext.Provider value={{ language, toggleLanguage, setLang, t, getTranslation, dbContent, refreshContent: fetchDbContent }}>
       {children}
     </LanguageContext.Provider>
   );

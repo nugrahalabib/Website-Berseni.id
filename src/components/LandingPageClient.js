@@ -163,7 +163,17 @@ const reviewsRow2 = [
 ];
 
 export default function LandingPageClient({ initialContent, initialProducts, initialPosts = [] }) {
-  const { language, t, getTranslation } = useLanguage();
+  const { language, t, getTranslation, dbContent } = useLanguage();
+  const partnersList = dbContent?.partners || initialContent?.partners || [
+    "/support/1.png",
+    "/support/2.png",
+    "/support/3.png",
+    "/support/4.png",
+    "/support/5.png",
+    "/support/6.png",
+    "/support/7.png",
+    "/support/8.png"
+  ];
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState(null);
@@ -645,10 +655,10 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               {/* Render the logo set 3 times for a seamless loop */}
               {Array.from({ length: 3 }).map((_, loopIdx) => (
                 <div key={loopIdx} className={styles.partnersGroup}>
-                  {Array.from({ length: 8 }).map((_, imgIdx) => (
+                  {partnersList.map((partnerUrl, imgIdx) => (
                     <img 
                       key={`${loopIdx}-${imgIdx}`} 
-                      src={`/support/${imgIdx + 1}.png`} 
+                      src={partnerUrl} 
                       alt={`Partner ${imgIdx + 1}`} 
                       className={styles.partnerLogo} 
                     />
