@@ -8,12 +8,70 @@ import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/About.module.css';
 
 export default function AboutPageClient({ content }) {
-  const { language, t, getTranslation } = useLanguage();
+  const { language, t, getTranslation, dbContent } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const renderDynamicButton = (text, defaultLink, linkKey, statusKey, className, extraProps = {}) => {
+    const link = dbContent?.[linkKey] !== undefined ? dbContent[linkKey] : defaultLink;
+    const status = dbContent?.[statusKey] || 'active';
+
+    if (status === 'hidden') return null;
+
+    const isDisabled = status === 'disabled';
+    const finalStyle = isDisabled 
+      ? { ...(extraProps.style || {}), opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' }
+      : (extraProps.style || {});
+
+    const onClickHandler = (e) => {
+      if (isDisabled) {
+        e.preventDefault();
+        return;
+      }
+      if (extraProps.onClick) {
+        extraProps.onClick(e);
+      }
+    };
+
+    if (isDisabled) {
+      return (
+        <span className={className} style={finalStyle}>
+          {text}
+        </span>
+      );
+    }
+
+    const isExternal = link.startsWith('http') || link.startsWith('mailto') || link.startsWith('tel') || link.startsWith('https://wa.me');
+
+    if (isExternal) {
+      return (
+        <a 
+          href={link} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className={className} 
+          style={finalStyle}
+          onClick={onClickHandler}
+        >
+          {text}
+        </a>
+      );
+    }
+
+    return (
+      <Link 
+        href={link} 
+        className={className} 
+        style={finalStyle}
+        onClick={onClickHandler}
+      >
+        {text}
+      </Link>
+    );
+  };
 
   // Content fallbacks
   const data = content || {
@@ -129,9 +187,7 @@ export default function AboutPageClient({ content }) {
                   {getTranslation('aboutCommitmentDesc')}
                 </p>
                 <div className={styles.featureButtons}>
-                  <Link href="/#products" className="btn btn-secondary">
-                    {getTranslation('aboutCommitBtn')}
-                  </Link>
+                  {renderDynamicButton(getTranslation('aboutCommitBtn'), '/#products', 'aboutCommitBtnLink', 'aboutCommitBtnStatus', 'btn btn-secondary')}
                 </div>
               </div>
 
@@ -339,12 +395,22 @@ export default function AboutPageClient({ content }) {
               {getTranslation('aboutCtaDesc')}
             </p>
             <div className={styles.ctaButtons}>
-              <Link href="/#products" className="btn btn-primary" style={{ backgroundColor: 'var(--color-kunyit)', color: 'var(--color-black)' }}>
-                {getTranslation('aboutCtaBtn1')}
-              </Link>
-              <Link href="/#programs" className="btn btn-outline" style={{ borderColor: 'var(--color-white)', color: 'var(--color-white)' }}>
-                {getTranslation('aboutCtaBtn2')}
-              </Link>
+              {renderDynamicButton(
+                getTranslation('aboutCtaBtn1'),
+                '/#products',
+                'aboutCtaBtn1Link',
+                'aboutCtaBtn1Status',
+                'btn btn-primary',
+                { style: { backgroundColor: 'var(--color-kunyit)', color: 'var(--color-black)' } }
+              )}
+              {renderDynamicButton(
+                getTranslation('aboutCtaBtn2'),
+                '/#programs',
+                'aboutCtaBtn2Link',
+                'aboutCtaBtn2Status',
+                'btn btn-outline',
+                { style: { borderColor: 'var(--color-white)', color: 'var(--color-white)' } }
+              )}
             </div>
           </div>
         </section>

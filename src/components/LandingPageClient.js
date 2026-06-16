@@ -219,6 +219,87 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
     track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   };
 
+  const renderDynamicButton = (text, defaultLink, linkKey, statusKey, className, extraProps = {}) => {
+    const link = dbContent?.[linkKey] !== undefined ? dbContent[linkKey] : defaultLink;
+    const status = dbContent?.[statusKey] || 'active';
+
+    if (status === 'hidden') return null;
+
+    const isDisabled = status === 'disabled';
+    const finalStyle = isDisabled 
+      ? { ...(extraProps.style || {}), opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' }
+      : (extraProps.style || {});
+
+    const onClickHandler = (e) => {
+      if (isDisabled) {
+        e.preventDefault();
+        return;
+      }
+      if (extraProps.onClick) {
+        if (link.startsWith('filter:')) {
+          e.preventDefault();
+          const filter = link.split(':')[1];
+          extraProps.onClick(filter);
+        } else {
+          extraProps.onClick(e);
+        }
+      }
+    };
+
+    if (isDisabled) {
+      return (
+        <span className={className} style={finalStyle}>
+          {text}
+          {extraProps.children}
+        </span>
+      );
+    }
+
+    if (link.startsWith('filter:') && extraProps.onClick) {
+      return (
+        <a 
+          href="#products" 
+          onClick={onClickHandler} 
+          className={className}
+          style={finalStyle}
+        >
+          {text}
+          {extraProps.children}
+        </a>
+      );
+    }
+
+    const isExternal = link.startsWith('http') || link.startsWith('mailto') || link.startsWith('tel') || link.startsWith('https://wa.me');
+
+    if (isExternal) {
+      return (
+        <a 
+          href={link} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className={className} 
+          style={finalStyle}
+          onClick={onClickHandler}
+        >
+          {text}
+          {extraProps.children}
+        </a>
+      );
+    }
+
+    return (
+      <Link 
+        href={link} 
+        className={className} 
+        style={finalStyle}
+        onClick={onClickHandler}
+      >
+        {text}
+        {extraProps.children}
+      </Link>
+    );
+  };
+
   // Countdown timer logic (resets to 1hr on refresh or end)
   useEffect(() => {
     const targetTime = Date.now() + 60 * 60 * 1000;
@@ -594,8 +675,8 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
             <h1 className={styles.heroTitle}>{renderHeroTitle(t(content, 'heroTitle'))}</h1>
             <p className={styles.heroDesc}>{t(content, 'heroDescription')}</p>
             <div className={styles.heroCTAs}>
-              <a href="#products" className="btn btn-primary">{getTranslation('heroBtnGallery')}</a>
-              <a href="#about" className="btn btn-outline">{getTranslation('heroBtnAbout')}</a>
+              {renderDynamicButton(getTranslation('heroBtnGallery'), '#products', 'heroBtn1Link', 'heroBtn1Status', 'btn btn-primary')}
+              {renderDynamicButton(getTranslation('heroBtnAbout'), '/about', 'heroBtn2Link', 'heroBtn2Status', 'btn btn-outline')}
             </div>
           </div>
 
@@ -708,12 +789,14 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               </div>
               <h3>{getTranslation('prog1Title')}</h3>
               <p>{getTranslation('prog1Desc')}</p>
-              <a href="#products" onClick={() => setSelectedFilter('offline')} className={styles.learnMoreBtn}>
-                {getTranslation('prog1Btn')}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </a>
+              {renderDynamicButton(getTranslation('prog1Btn'), 'filter:offline', 'prog1Link', 'prog1Status', styles.learnMoreBtn, {
+                onClick: setSelectedFilter,
+                children: (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                )
+              })}
             </div>
           </div>
  
@@ -732,12 +815,14 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               </div>
               <h3>{getTranslation('prog2Title')}</h3>
               <p>{getTranslation('prog2Desc')}</p>
-              <a href="#products" onClick={() => setSelectedFilter('online')} className={styles.learnMoreBtn}>
-                {getTranslation('prog2Btn')}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </a>
+              {renderDynamicButton(getTranslation('prog2Btn'), 'filter:online', 'prog2Link', 'prog2Status', styles.learnMoreBtn, {
+                onClick: setSelectedFilter,
+                children: (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                )
+              })}
             </div>
           </div>
  
@@ -756,12 +841,14 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               </div>
               <h3>{getTranslation('prog3Title')}</h3>
               <p>{getTranslation('prog3Desc')}</p>
-              <a href="#products" onClick={() => setSelectedFilter('artwork')} className={styles.learnMoreBtn}>
-                {getTranslation('prog3Btn')}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </a>
+              {renderDynamicButton(getTranslation('prog3Btn'), 'filter:artwork', 'prog3Link', 'prog3Status', styles.learnMoreBtn, {
+                onClick: setSelectedFilter,
+                children: (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -880,9 +967,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
 
             {/* View All Button to navigate to Store */}
             <div className={styles.viewAllContainer}>
-              <Link href="/store" className="btn btn-secondary">
-                {getTranslation('viewAll')}
-              </Link>
+              {renderDynamicButton(getTranslation('viewAll'), '/store', 'galleryBtnLink', 'galleryBtnStatus', 'btn btn-secondary')}
             </div>
           </>
         ) : (
@@ -1043,9 +1128,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
 
             {/* View All Button to navigate to Blog page */}
             <div className={styles.viewAllBlogContainer}>
-              <Link href="/blog" className="btn btn-secondary">
-                {getTranslation('viewAllArticles')}
-              </Link>
+              {renderDynamicButton(getTranslation('viewAllArticles'), '/blog', 'blogBtnLink', 'blogBtnStatus', 'btn btn-secondary')}
             </div>
           </>
         ) : (
@@ -1063,19 +1146,16 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
         <div className={styles.ctaInner}>
           <h2>{getTranslation('ctaTitle')}</h2>
           <p>{getTranslation('ctaSubtitle')}</p>
-          <a 
-            href={
-              language === 'id'
-                ? "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Saya%20tertarik%20untuk%20bergabung%20sebagai%20early%20supporter%20dan%20ingin%20mendapatkan%20info%20terbaru%20mengenai%20karya%20seni%20dan%20workshop."
-                : "https://wa.me/6281234567890?text=Hello%20Berseni%21%20I%20am%20interested%20in%20joining%20as%20an%20early%20supporter%20and%20want%20to%20get%20the%20latest%20info%20about%20artworks%20and%20workshops."
-            }
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-primary"
-            style={{ backgroundColor: 'var(--color-kunyit)', color: 'var(--color-black)', boxShadow: '0 4px 14px rgba(250, 164, 51, 0.4)' }}
-          >
-            {getTranslation('ctaBtn')}
-          </a>
+          {renderDynamicButton(
+            getTranslation('ctaBtn'),
+            language === 'id'
+              ? "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Saya%20tertarik%20untuk%20bergabung%20sebagai%20early%20supporter%20dan%20ingin%20mendapatkan%20info%20terbaru%20mengenai%20karya%20seni%20dan%20workshop."
+              : "https://wa.me/6281234567890?text=Hello%20Berseni%21%20I%20am%20interested%20in%20joining%20as%20an%20early%20supporter%20and%20want%20to%20get%20the%20latest%20info%20about%20artworks%20and%20workshops.",
+            'ctaBtnLink',
+            'ctaBtnStatus',
+            'btn btn-primary',
+            { style: { backgroundColor: 'var(--color-kunyit)', color: 'var(--color-black)', boxShadow: '0 4px 14px rgba(250, 164, 51, 0.4)' } }
+          )}
         </div>
       </section>
 

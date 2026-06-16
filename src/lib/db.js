@@ -59,7 +59,33 @@ function initLocalDb() {
         blogAboutTitle_id: "Tentang Berseni",
         blogAboutTitle_en: "About Berseni",
         blogAboutDesc_id: "Berseni adalah platform kolaboratif dan komunitas seni rupa terbesar di Indonesia, menjembatani seniman lokal dan masyarakat umum untuk saling belajar, berkarya, dan mengapresiasi keindahan seni bersama-sama.",
-        blogAboutDesc_en: "Berseni is a collaborative platform and the largest visual art community in Indonesia, bridging local artists and the general public to learn, create, and appreciate the beauty of art together."
+        blogAboutDesc_en: "Berseni is a collaborative platform and the largest visual art community in Indonesia, bridging local artists and the general public to learn, create, and appreciate the beauty of art together.",
+        heroBtn1Link: "#products",
+        heroBtn1Status: "active",
+        heroBtn2Link: "/about",
+        heroBtn2Status: "active",
+        prog1Link: "filter:offline",
+        prog1Status: "active",
+        prog2Link: "filter:online",
+        prog2Status: "active",
+        prog3Link: "filter:artwork",
+        prog3Status: "active",
+        galleryBtnLink: "/store",
+        galleryBtnStatus: "active",
+        blogBtnLink: "/blog",
+        blogBtnStatus: "active",
+        ctaBtnLink: "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Saya%20tertarik%20untuk%20bergabung%20sebagai%20early%20supporter%20dan%20ingin%20mendapatkan%20info%20terbaru%20mengenai%20karya%20seni%20dan%20workshop.",
+        ctaBtnStatus: "active",
+        aboutCommitBtnLink: "/#products",
+        aboutCommitBtnStatus: "active",
+        aboutCtaBtn1Link: "/#products",
+        aboutCtaBtn1Status: "active",
+        aboutCtaBtn2Link: "/#programs",
+        aboutCtaBtn2Status: "active",
+        collabBrandBtnLink: "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Brand%2FPerusahaan%20kami%20tertarik%20untuk%20berkolaborasi%20kreatif%20dengan%20Berseni.",
+        collabBrandBtnStatus: "active",
+        collabVenueBtnLink: "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Saya%20memiliki%20venue%2Ftempat%20yang%20tertarik%20untuk%20berkolaborasi%20dengan%20komunitas%20Berseni.",
+        collabVenueBtnStatus: "active"
       },
       products: [
         {
@@ -324,6 +350,35 @@ function initLocalDb() {
         data.content.blogAboutTitle_en = "About Berseni";
         data.content.blogAboutDesc_id = "Berseni adalah platform kolaboratif dan komunitas seni rupa terbesar di Indonesia, menjembatani seniman lokal dan masyarakat umum untuk saling belajar, berkarya, dan mengapresiasi keindahan seni bersama-sama.";
         data.content.blogAboutDesc_en = "Berseni is a collaborative platform and the largest visual art community in Indonesia, bridging local artists and the general public to learn, create, and appreciate the beauty of art together.";
+        updated = true;
+      }
+      if (data.content && !data.content.heroBtn1Link) {
+        data.content.heroBtn1Link = "#products";
+        data.content.heroBtn1Status = "active";
+        data.content.heroBtn2Link = "/about";
+        data.content.heroBtn2Status = "active";
+        data.content.prog1Link = "filter:offline";
+        data.content.prog1Status = "active";
+        data.content.prog2Link = "filter:online";
+        data.content.prog2Status = "active";
+        data.content.prog3Link = "filter:artwork";
+        data.content.prog3Status = "active";
+        data.content.galleryBtnLink = "/store";
+        data.content.galleryBtnStatus = "active";
+        data.content.blogBtnLink = "/blog";
+        data.content.blogBtnStatus = "active";
+        data.content.ctaBtnLink = "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Saya%20tertarik%20untuk%20bergabung%20sebagai%20early%20supporter%20dan%20ingin%20mendapatkan%20info%20terbaru%20mengenai%20karya%20seni%20dan%20workshop.";
+        data.content.ctaBtnStatus = "active";
+        data.content.aboutCommitBtnLink = "/#products";
+        data.content.aboutCommitBtnStatus = "active";
+        data.content.aboutCtaBtn1Link = "/#products";
+        data.content.aboutCtaBtn1Status = "active";
+        data.content.aboutCtaBtn2Link = "/#programs";
+        data.content.aboutCtaBtn2Status = "active";
+        data.content.collabBrandBtnLink = "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Brand%2FPerusahaan%20kami%20tertarik%20untuk%20berkolaborasi%20kreatif%20dengan%20Berseni.";
+        data.content.collabBrandBtnStatus = "active";
+        data.content.collabVenueBtnLink = "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Saya%20memiliki%20venue%2Ftempat%20yang%20tertarik%20untuk%20berkolaborasi%20dengan%20komunitas%20Berseni.";
+        data.content.collabVenueBtnStatus = "active";
         updated = true;
       }
       if (!data.admin_password) {

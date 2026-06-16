@@ -218,6 +218,18 @@ export default function PageContentEditor({ showToast }) {
             { name: 'heroTitle_en', label: 'Hero Title (EN - gunakan titik "." untuk teks cursive)', type: 'text', placeholder: 'Experience Art. Feel Indonesia.' },
             { name: 'heroDescription_id', label: 'Hero Description (ID)', type: 'textarea' },
             { name: 'heroDescription_en', label: 'Hero Description (EN)', type: 'textarea' },
+            { name: 'heroBtn1Link', label: 'Tujuan Tombol Kiri Hero ("Lihat Galeri & Kelas") (Link/Section)', type: 'text', placeholder: '#products' },
+            { name: 'heroBtn1Status', label: 'Status Tombol Kiri Hero', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]},
+            { name: 'heroBtn2Link', label: 'Tujuan Tombol Kanan Hero ("Tentang Kami") (Link/Section)', type: 'text', placeholder: '/about' },
+            { name: 'heroBtn2Status', label: 'Status Tombol Kanan Hero', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]},
             { name: 'heroVideo', label: 'Video Intro (MP4)', type: 'video' },
             { name: 'heroLogo', label: 'Logo Tengah Video (PNG)', type: 'image' },
             { name: 'heroCornerTl', label: 'Bingkai Pojok Kiri Atas (PNG)', type: 'image' },
@@ -240,6 +252,12 @@ export default function PageContentEditor({ showToast }) {
             { name: 'prog1Desc_en', label: 'Program 1 Description (EN)', type: 'textarea' },
             { name: 'prog1Btn_id', label: 'Program 1 Button Text (ID)', type: 'text' },
             { name: 'prog1Btn_en', label: 'Program 1 Button Text (EN)', type: 'text' },
+            { name: 'prog1Link', label: 'Tujuan Tombol Program 1 ("Workshop Offline")', type: 'text', placeholder: 'filter:offline' },
+            { name: 'prog1Status', label: 'Status Tombol Program 1', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]},
             // Program 2
             { name: 'prog2Title_id', label: 'Program 2 Title (ID)', type: 'text' },
             { name: 'prog2Title_en', label: 'Program 2 Title (EN)', type: 'text' },
@@ -247,13 +265,25 @@ export default function PageContentEditor({ showToast }) {
             { name: 'prog2Desc_en', label: 'Program 2 Description (EN)', type: 'textarea' },
             { name: 'prog2Btn_id', label: 'Program 2 Button Text (ID)', type: 'text' },
             { name: 'prog2Btn_en', label: 'Program 2 Button Text (EN)', type: 'text' },
+            { name: 'prog2Link', label: 'Tujuan Tombol Program 2 ("Kelas Video Online")', type: 'text', placeholder: 'filter:online' },
+            { name: 'prog2Status', label: 'Status Tombol Program 2', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]},
             // Program 3
             { name: 'prog3Title_id', label: 'Program 3 Title (ID)', type: 'text' },
             { name: 'prog3Title_en', label: 'Program 3 Title (EN)', type: 'text' },
             { name: 'prog3Desc_id', label: 'Program 3 Description (ID)', type: 'textarea' },
             { name: 'prog3Desc_en', label: 'Program 3 Description (EN)', type: 'textarea' },
             { name: 'prog3Btn_id', label: 'Program 3 Button Text (ID)', type: 'text' },
-            { name: 'prog3Btn_en', label: 'Program 3 Button Text (EN)', type: 'text' }
+            { name: 'prog3Btn_en', label: 'Program 3 Button Text (EN)', type: 'text' },
+            { name: 'prog3Link', label: 'Tujuan Tombol Program 3 ("Karya Seni & Perlengkapan")', type: 'text', placeholder: 'filter:artwork' },
+            { name: 'prog3Status', label: 'Status Tombol Program 3', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]}
           ]
         },
         gallery_header: {
@@ -262,7 +292,19 @@ export default function PageContentEditor({ showToast }) {
             { name: 'galleryTitle_id', label: 'Gallery Section Title (ID)', type: 'text' },
             { name: 'galleryTitle_en', label: 'Gallery Section Title (EN)', type: 'text' },
             { name: 'gallerySubtitle_id', label: 'Gallery Section Subtitle (ID)', type: 'textarea' },
-            { name: 'gallerySubtitle_en', label: 'Gallery Section Subtitle (EN)', type: 'textarea' }
+            { name: 'gallerySubtitle_en', label: 'Gallery Section Subtitle (EN)', type: 'textarea' },
+            { name: 'galleryBtnLink', label: 'Tujuan Tombol "Lihat Selengkapnya" Galeri', type: 'text', placeholder: '/store' },
+            { name: 'galleryBtnStatus', label: 'Status Tombol Galeri', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]},
+            { name: 'blogBtnLink', label: 'Tujuan Tombol "Lihat Semua Artikel" Blog', type: 'text', placeholder: '/blog' },
+            { name: 'blogBtnStatus', label: 'Status Tombol Blog', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]}
           ]
         },
         promo: {
@@ -293,7 +335,13 @@ export default function PageContentEditor({ showToast }) {
             { name: 'ctaSubtitle_id', label: 'CTA Subtitle (ID)', type: 'textarea' },
             { name: 'ctaSubtitle_en', label: 'CTA Subtitle (EN)', type: 'textarea' },
             { name: 'ctaBtn_id', label: 'CTA Button Text (ID)', type: 'text' },
-            { name: 'ctaBtn_en', label: 'CTA Button Text (EN)', type: 'text' }
+            { name: 'ctaBtn_en', label: 'CTA Button Text (EN)', type: 'text' },
+            { name: 'ctaBtnLink', label: 'Tujuan Link Tombol WhatsApp CTA', type: 'text', placeholder: 'https://wa.me/...' },
+            { name: 'ctaBtnStatus', label: 'Status Tombol WhatsApp CTA', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]}
           ]
         },
         activities: {
@@ -389,6 +437,12 @@ export default function PageContentEditor({ showToast }) {
             { name: 'aboutCommitmentDesc_en', label: 'Commitment Description (EN)', type: 'textarea' },
             { name: 'aboutCommitBtn_id', label: 'Commitment Button Text (ID)', type: 'text' },
             { name: 'aboutCommitBtn_en', label: 'Commitment Button Text (EN)', type: 'text' },
+            { name: 'aboutCommitBtnLink', label: 'Tujuan Tombol Komitmen ("Jelajahi Program")', type: 'text', placeholder: '/#products' },
+            { name: 'aboutCommitBtnStatus', label: 'Status Tombol Komitmen', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]},
             // Commit Point 1
             { name: 'aboutCommit1Title_id', label: 'Commit Point 1 Title (ID)', type: 'text' },
             { name: 'aboutCommit1Title_en', label: 'Commit Point 1 Title (EN)', type: 'text' },
@@ -440,8 +494,20 @@ export default function PageContentEditor({ showToast }) {
             { name: 'aboutCtaDesc_en', label: 'CTA Description (EN)', type: 'textarea' },
             { name: 'aboutCtaBtn1_id', label: 'CTA Button 1 Text (ID)', type: 'text' },
             { name: 'aboutCtaBtn1_en', label: 'CTA Button 1 Text (EN)', type: 'text' },
+            { name: 'aboutCtaBtn1Link', label: 'Tujuan Tombol 1 ("Buka Kelas & Galeri") CTA', type: 'text', placeholder: '/#products' },
+            { name: 'aboutCtaBtn1Status', label: 'Status Tombol 1 CTA', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]},
             { name: 'aboutCtaBtn2_id', label: 'CTA Button 2 Text (ID)', type: 'text' },
-            { name: 'aboutCtaBtn2_en', label: 'CTA Button 2 Text (EN)', type: 'text' }
+            { name: 'aboutCtaBtn2_en', label: 'CTA Button 2 Text (EN)', type: 'text' },
+            { name: 'aboutCtaBtn2Link', label: 'Tujuan Tombol 2 ("Lihat Aktivitas") CTA', type: 'text', placeholder: '/#programs' },
+            { name: 'aboutCtaBtn2Status', label: 'Status Tombol 2 CTA', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]}
           ]
         }
       }
@@ -495,6 +561,12 @@ export default function PageContentEditor({ showToast }) {
             // Button
             { name: 'collabBrandBtn_id', label: 'Button Text (ID)', type: 'text' },
             { name: 'collabBrandBtn_en', label: 'Button Text (EN)', type: 'text' },
+            { name: 'collabBrandBtnLink', label: 'Tujuan Link Tombol WhatsApp Brand Collab', type: 'text', placeholder: 'https://wa.me/...' },
+            { name: 'collabBrandBtnStatus', label: 'Status Tombol Brand Collab', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]},
             { name: 'collabCanvasImg', label: 'Latar Belakang Poster Canvas', type: 'image' }
           ]
         },
@@ -529,7 +601,13 @@ export default function PageContentEditor({ showToast }) {
             { name: 'collabVenueCtaDesc_en', label: 'CTA Callout Desc (EN)', type: 'textarea' },
             // Button
             { name: 'collabVenueBtn_id', label: 'Button Text (ID)', type: 'text' },
-            { name: 'collabVenueBtn_en', label: 'Button Text (EN)', type: 'text' }
+            { name: 'collabVenueBtn_en', label: 'Button Text (EN)', type: 'text' },
+            { name: 'collabVenueBtnLink', label: 'Tujuan Link Tombol WhatsApp Venue Collab', type: 'text', placeholder: 'https://wa.me/...' },
+            { name: 'collabVenueBtnStatus', label: 'Status Tombol Venue Collab', type: 'select', defaultValue: 'active', options: [
+              { value: 'active', label: 'Tampilkan & Aktif' },
+              { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
+              { value: 'hidden', label: 'Sembunyikan Tombol' }
+            ]}
           ]
         }
       }
@@ -1257,6 +1335,21 @@ export default function PageContentEditor({ showToast }) {
                         placeholder={field.placeholder || `Masukkan teks ${field.label}...`}
                         className={styles.adminTextarea}
                       />
+                    </>
+                  ) : field.type === 'select' ? (
+                    <>
+                      <label className={styles.adminLabel}>{field.label}</label>
+                      <select
+                        name={field.name}
+                        value={form[field.name] || field.defaultValue || ''}
+                        onChange={handleChange}
+                        className={styles.adminSelect}
+                        style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #CBD5E1', outline: 'none' }}
+                      >
+                        {field.options.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
                     </>
                   ) : (
                     <>
