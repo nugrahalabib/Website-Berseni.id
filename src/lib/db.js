@@ -60,6 +60,80 @@ function initLocalDb() {
         blogAboutTitle_en: "About Berseni",
         blogAboutDesc_id: "Berseni adalah platform kolaboratif dan komunitas seni rupa terbesar di Indonesia, menjembatani seniman lokal dan masyarakat umum untuk saling belajar, berkarya, dan mengapresiasi keindahan seni bersama-sama.",
         blogAboutDesc_en: "Berseni is a collaborative platform and the largest visual art community in Indonesia, bridging local artists and the general public to learn, create, and appreciate the beauty of art together.",
+        testimonials: [
+          {
+            id: "testi-1",
+            name: "Ahmad Fauzi",
+            avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop",
+            rating: 5,
+            comment_id: "Kelas Basic Oil Realism sangat direkomendasikan! Penjelasan Mas Srinthil mudah dipahami bahkan untuk saya yang baru mulai melukis.",
+            comment_en: "Basic Oil Realism class is highly recommended! Mas Srinthil's explanation is easy to understand even for me who just started painting.",
+            borderColor: "var(--color-tosca)"
+          },
+          {
+            id: "testi-2",
+            name: "Riana Lestari",
+            avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop",
+            rating: 5,
+            comment_id: "Puas banget ikutan workshop Meowna Lisa kemarin! Mentornya sabar, vibes studionya asyik, dan bisa bawa pulang lukisan kucing buatan sendiri.",
+            comment_en: "Extremely satisfied with the Meowna Lisa workshop! The mentor was patient, the studio vibe was fun, and I could bring home my own cat painting.",
+            borderColor: "var(--color-maroon)"
+          },
+          {
+            id: "testi-3",
+            name: "Budi Santoso",
+            avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&auto=format&fit=crop",
+            rating: 5,
+            comment_id: "Karya lukis orisinalnya sangat indah dan bersertifikat COA resmi. Dipajang di ruang tamu langsung bikin suasana rumah jadi lebih estetik.",
+            comment_en: "The original paintings are stunning and come with an official COA. Hanging it in the living room instantly makes the house look aesthetic.",
+            borderColor: "var(--color-kunyit)"
+          },
+          {
+            id: "testi-4",
+            name: "Siti Rahma",
+            avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150&auto=format&fit=crop",
+            rating: 4,
+            comment_id: "Pendaftaran kelas online sangat mudah via Lynk.id. Video pembelajarannya HD dan aksesnya seumur hidup. Sangat worth it!",
+            comment_en: "Registering for the online class was very easy via Lynk.id. The instructional videos are HD with lifetime access. Highly worth it!",
+            borderColor: "var(--color-tosca)"
+          },
+          {
+            id: "testi-5",
+            name: "Dewi Kartika",
+            avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&auto=format&fit=crop",
+            rating: 5,
+            comment_id: "Workshop Summer in Pink di Yello Hotel kemarin seru banget! Dapet snack enak, alat lukis lengkap, dan dapet kenalan baru sesama pencinta seni.",
+            comment_en: "The Summer in Pink workshop at Yello Hotel was so much fun! Got delicious snacks, complete painting tools, and met new friends who love art.",
+            borderColor: "var(--color-maroon)"
+          },
+          {
+            id: "testi-6",
+            name: "Hendra Wijaya",
+            avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=150&auto=format&fit=crop",
+            rating: 5,
+            comment_id: "Lukisan 'It's OK Offline' yang saya beli kualitas cat dan detail kanvasnya luar biasa. Pengirimannya aman menggunakan packing kayu.",
+            comment_en: "The quality of the paint and canvas detail on the 'It's OK Offline' painting I bought is amazing. Shipping was safe using a wooden crate.",
+            borderColor: "var(--color-kunyit)"
+          },
+          {
+            id: "testi-7",
+            name: "Linda Permata",
+            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop",
+            rating: 4,
+            comment_id: "Baru pertama kali melukis di workshop Tweet your Heart, ternyata menyenangkan sekali. Step-by-step-nya dipandu telaten oleh seniman.",
+            comment_en: "First time painting at the Tweet your Heart workshop, and it turned out to be super fun. The artist guided us step-by-step with patience.",
+            borderColor: "var(--color-tosca)"
+          },
+          {
+            id: "testi-8",
+            name: "Rico Pratama",
+            avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=150&auto=format&fit=crop",
+            rating: 5,
+            comment_id: "Suka sekali dengan konsep komunitas Berseni. Bisa sharing progress lukisan di grup WhatsApp dan dapet arahan langsung dari tutor profesional.",
+            comment_en: "Love the concept of the Berseni community. We can share painting progress in the WhatsApp group and get direct feedback from professional tutors.",
+            borderColor: "var(--color-maroon)"
+          }
+        ],
         heroBtn1Link: "#products",
         heroBtn1Status: "active",
         heroBtn2Link: "/about",
@@ -350,6 +424,83 @@ function initLocalDb() {
         data.content.blogAboutTitle_en = "About Berseni";
         data.content.blogAboutDesc_id = "Berseni adalah platform kolaboratif dan komunitas seni rupa terbesar di Indonesia, menjembatani seniman lokal dan masyarakat umum untuk saling belajar, berkarya, dan mengapresiasi keindahan seni bersama-sama.";
         data.content.blogAboutDesc_en = "Berseni is a collaborative platform and the largest visual art community in Indonesia, bridging local artists and the general public to learn, create, and appreciate the beauty of art together.";
+        updated = true;
+      }
+      if (data.content && !data.content.testimonials) {
+        data.content.testimonials = [
+          {
+            id: "testi-1",
+            name: "Ahmad Fauzi",
+            avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop",
+            rating: 5,
+            comment_id: "Kelas Basic Oil Realism sangat direkomendasikan! Penjelasan Mas Srinthil mudah dipahami bahkan untuk saya yang baru mulai melukis.",
+            comment_en: "Basic Oil Realism class is highly recommended! Mas Srinthil's explanation is easy to understand even for me who just started painting.",
+            borderColor: "var(--color-tosca)"
+          },
+          {
+            id: "testi-2",
+            name: "Riana Lestari",
+            avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop",
+            rating: 5,
+            comment_id: "Puas banget ikutan workshop Meowna Lisa kemarin! Mentornya sabar, vibes studionya asyik, dan bisa bawa pulang lukisan kucing buatan sendiri.",
+            comment_en: "Extremely satisfied with the Meowna Lisa workshop! The mentor was patient, the studio vibe was fun, and I could bring home my own cat painting.",
+            borderColor: "var(--color-maroon)"
+          },
+          {
+            id: "testi-3",
+            name: "Budi Santoso",
+            avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&auto=format&fit=crop",
+            rating: 5,
+            comment_id: "Karya lukis orisinalnya sangat indah dan bersertifikat COA resmi. Dipajang di ruang tamu langsung bikin suasana rumah jadi lebih estetik.",
+            comment_en: "The original paintings are stunning and come with an official COA. Hanging it in the living room instantly makes the house look aesthetic.",
+            borderColor: "var(--color-kunyit)"
+          },
+          {
+            id: "testi-4",
+            name: "Siti Rahma",
+            avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150&auto=format&fit=crop",
+            rating: 4,
+            comment_id: "Pendaftaran kelas online sangat mudah via Lynk.id. Video pembelajarannya HD dan aksesnya seumur hidup. Sangat worth it!",
+            comment_en: "Registering for the online class was very easy via Lynk.id. The instructional videos are HD with lifetime access. Highly worth it!",
+            borderColor: "var(--color-tosca)"
+          },
+          {
+            id: "testi-5",
+            name: "Dewi Kartika",
+            avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&auto=format&fit=crop",
+            rating: 5,
+            comment_id: "Workshop Summer in Pink di Yello Hotel kemarin seru banget! Dapet snack enak, alat lukis lengkap, dan dapet kenalan baru sesama pencinta seni.",
+            comment_en: "The Summer in Pink workshop at Yello Hotel was so much fun! Got delicious snacks, complete painting tools, and met new friends who love art.",
+            borderColor: "var(--color-maroon)"
+          },
+          {
+            id: "testi-6",
+            name: "Hendra Wijaya",
+            avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=150&auto=format&fit=crop",
+            rating: 5,
+            comment_id: "Lukisan 'It's OK Offline' yang saya beli kualitas cat dan detail kanvasnya luar biasa. Pengirimannya aman menggunakan packing kayu.",
+            comment_en: "The quality of the paint and canvas detail on the 'It's OK Offline' painting I bought is amazing. Shipping was safe using a wooden crate.",
+            borderColor: "var(--color-kunyit)"
+          },
+          {
+            id: "testi-7",
+            name: "Linda Permata",
+            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop",
+            rating: 4,
+            comment_id: "Baru pertama kali melukis di workshop Tweet your Heart, ternyata menyenangkan sekali. Step-by-step-nya dipandu telaten oleh seniman.",
+            comment_en: "First time painting at the Tweet your Heart workshop, and it turned out to be super fun. The artist guided us step-by-step with patience.",
+            borderColor: "var(--color-tosca)"
+          },
+          {
+            id: "testi-8",
+            name: "Rico Pratama",
+            avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=150&auto=format&fit=crop",
+            rating: 5,
+            comment_id: "Suka sekali dengan konsep komunitas Berseni. Bisa sharing progress lukisan di grup WhatsApp dan dapet arahan langsung dari tutor profesional.",
+            comment_en: "Love the concept of the Berseni community. We can share painting progress in the WhatsApp group and get direct feedback from professional tutors.",
+            borderColor: "var(--color-maroon)"
+          }
+        ];
         updated = true;
       }
       if (data.content && !data.content.heroBtn1Link) {

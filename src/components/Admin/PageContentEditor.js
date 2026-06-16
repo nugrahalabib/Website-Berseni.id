@@ -319,13 +319,14 @@ export default function PageContentEditor({ showToast }) {
           ]
         },
         testimonials: {
-          title: 'Header Testimonial',
+          title: 'Kelola Testimonial (Apa Kata Mereka)',
           fields: [
             { name: 'testimonialsTitle_id', label: 'Testimonials Title (ID)', type: 'text' },
             { name: 'testimonialsTitle_en', label: 'Testimonials Title (EN)', type: 'text' },
             { name: 'testimonialsSubtitle_id', label: 'Testimonials Subtitle (ID)', type: 'textarea' },
             { name: 'testimonialsSubtitle_en', label: 'Testimonials Subtitle (EN)', type: 'textarea' }
-          ]
+          ],
+          customRender: 'testimonials_editor'
         },
         cta: {
           title: 'CTA Section WhatsApp',
@@ -1261,6 +1262,304 @@ export default function PageContentEditor({ showToast }) {
     );
   };
 
+  // Helper Custom Testimonials Editor
+  const TestimonialsEditorSection = () => {
+    const [editingIndex, setEditingIndex] = useState(null); // index or 'new'
+    const [testiForm, setTestiForm] = useState({
+      id: '',
+      name: '',
+      avatar: '',
+      rating: 5,
+      comment_id: '',
+      comment_en: '',
+      borderColor: 'var(--color-tosca)'
+    });
+
+    const testimonials = form.testimonials || [];
+
+    const handleEdit = (idx) => {
+      setEditingIndex(idx);
+      setTestiForm({
+        id: testimonials[idx].id || `testi-${Date.now()}`,
+        name: testimonials[idx].name || '',
+        avatar: testimonials[idx].avatar || '',
+        rating: testimonials[idx].rating || 5,
+        comment_id: testimonials[idx].comment_id || '',
+        comment_en: testimonials[idx].comment_en || '',
+        borderColor: testimonials[idx].borderColor || 'var(--color-tosca)'
+      });
+    };
+
+    const handleAddNew = () => {
+      setEditingIndex('new');
+      setTestiForm({
+        id: `testi-${Date.now()}`,
+        name: '',
+        avatar: '',
+        rating: 5,
+        comment_id: '',
+        comment_en: '',
+        borderColor: 'var(--color-tosca)'
+      });
+    };
+
+    const handleDelete = (idx) => {
+      if (confirm('Apakah Anda yakin ingin menghapus testimonial ini?')) {
+        const updated = testimonials.filter((_, i) => i !== idx);
+        setForm(prev => ({ ...prev, testimonials: updated }));
+      }
+    };
+
+    const handleSave = () => {
+      if (!testiForm.name || !testiForm.comment_id || !testiForm.comment_en) {
+        alert('Nama reviewer dan isi komentar (ID & EN) wajib diisi!');
+        return;
+      }
+      
+      let updated = [...testimonials];
+      if (editingIndex === 'new') {
+        updated.push(testiForm);
+      } else {
+        updated[editingIndex] = testiForm;
+      }
+      
+      setForm(prev => ({ ...prev, testimonials: updated }));
+      setEditingIndex(null);
+    };
+
+    const handleFormChange = (e) => {
+      const { name, value } = e.target;
+      setTestiForm(prev => ({ ...prev, [name]: name === 'rating' ? parseInt(value) : value }));
+    };
+
+    const handleAvatarUpload = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setTestiForm(prev => ({ ...prev, avatar: data.url }));
+        } else {
+          alert('Gagal mengunggah avatar.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Terjadi kesalahan saat mengunggah.');
+      }
+    };
+
+    return (
+      <div style={{ marginTop: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <label className={styles.adminLabel} style={{ marginBottom: 0 }}>Daftar Testimonial (reviews)</label>
+          <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem', borderRadius: '8px' }} onClick={handleAddNew}>
+            + Tambah Testimonial
+          </button>
+        </div>
+
+        {editingIndex !== null && (
+          <div style={{ background: '#F8FAFC', padding: '1.5rem', borderRadius: '12px', border: '1px solid #E2E8F0', marginTop: '1rem', marginBottom: '1.5rem' }}>
+            <h4 style={{ fontWeight: 'bold', marginBottom: '1.25rem', color: 'var(--color-tosca)', fontSize: '1rem' }}>
+              {editingIndex === 'new' ? 'Tambah Testimonial Baru' : 'Sunting Testimonial'}
+            </h4>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div>
+                <label className={styles.adminLabel}>Nama Reviewer</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={testiForm.name}
+                  onChange={handleFormChange}
+                  className={styles.adminInput}
+                  required
+                />
+              </div>
+              <div>
+                <label className={styles.adminLabel}>Rating (Bintang)</label>
+                <select
+                  name="rating"
+                  value={testiForm.rating}
+                  onChange={handleFormChange}
+                  className={styles.adminSelect}
+                >
+                  <option value={5}>⭐⭐⭐⭐⭐ (5 Bintang)</option>
+                  <option value={4}>⭐⭐⭐⭐ (4 Bintang)</option>
+                  <option value={3}>⭐⭐⭐ (3 Bintang)</option>
+                  <option value={2}>⭐⭐ (2 Bintang)</option>
+                  <option value={1}>⭐ (1 Bintang)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div>
+                <label className={styles.adminLabel}>Warna Border Card</label>
+                <select
+                  name="borderColor"
+                  value={testiForm.borderColor}
+                  onChange={handleFormChange}
+                  className={styles.adminSelect}
+                >
+                  <option value="var(--color-tosca)">Tosca (Hijau Tosca)</option>
+                  <option value="var(--color-maroon)">Maroon (Merah Maroon)</option>
+                  <option value="var(--color-kunyit)">Kunyit (Kuning Kunyit)</option>
+                </select>
+              </div>
+              <div>
+                {/* Spacer */}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '1.25rem' }}>
+              <label className={styles.adminLabel}>Foto Avatar Reviewer</label>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                {testiForm.avatar ? (
+                  <img 
+                    src={testiForm.avatar} 
+                    alt="Preview" 
+                    style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #CBD5E1', cursor: 'pointer' }} 
+                    onClick={() => window.open(testiForm.avatar, '_blank')}
+                    title="Klik untuk lihat gambar penuh (Preview)"
+                  />
+                ) : (
+                  <div style={{ width: '80px', height: '80px', borderRadius: '50%', border: '2px dashed #CBD5E1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94A3B8', fontSize: '0.75rem', textAlign: 'center' }}>No Avatar</div>
+                )}
+                <div style={{ flex: 1 }}>
+                  <input
+                    type="text"
+                    name="avatar"
+                    value={testiForm.avatar}
+                    onChange={handleFormChange}
+                    className={styles.adminInput}
+                    placeholder="URL avatar gambar..."
+                    style={{ marginBottom: '0.5rem' }}
+                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <label className="btn btn-secondary" style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', cursor: 'pointer', display: 'inline-block', margin: 0 }}>
+                      Unggah Foto Avatar
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={handleAvatarUpload}
+                      />
+                    </label>
+                    {testiForm.avatar && (
+                      <a
+                        href={testiForm.avatar}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-outline"
+                        style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', textDecoration: 'none', color: 'var(--color-tosca)', borderColor: 'var(--color-tosca)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', height: 'auto', background: 'transparent' }}
+                      >
+                        📥 Unduh Foto
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div>
+                <label className={styles.adminLabel}>Isi Ulasan / Komentar (ID)</label>
+                <textarea
+                  name="comment_id"
+                  value={testiForm.comment_id}
+                  onChange={handleFormChange}
+                  className={styles.adminTextarea}
+                  rows={3}
+                  required
+                />
+              </div>
+              <div>
+                <label className={styles.adminLabel}>Isi Ulasan / Komentar (EN)</label>
+                <textarea
+                  name="comment_en"
+                  value={testiForm.comment_en}
+                  onChange={handleFormChange}
+                  className={styles.adminTextarea}
+                  rows={3}
+                  required
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+              <button type="button" className="btn btn-outline" style={{ padding: '0.5rem 1.5rem' }} onClick={() => setEditingIndex(null)}>
+                Batal
+              </button>
+              <button type="button" className="btn btn-primary" style={{ padding: '0.5rem 1.5rem' }} onClick={handleSave}>
+                Simpan Testimonial
+              </button>
+            </div>
+          </div>
+        )}
+
+        {testimonials.length === 0 ? (
+          <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', border: '1px dashed #CBD5E1', borderRadius: '12px' }}>
+            Belum ada testimonial. Silakan klik tombol "+ Tambah Testimonial" untuk menambahkan.
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {testimonials.map((testi, idx) => (
+              <div key={testi.id || idx} style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '0.75rem', border: '1px solid #E2E8F0', borderRadius: '10px', background: '#FFFFFF' }}>
+                <div style={{ position: 'relative', display: 'inline-block', flexShrink: 0 }}>
+                  <img 
+                    src={testi.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150'} 
+                    alt="" 
+                    style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', cursor: 'pointer', display: 'block' }} 
+                    onClick={() => window.open(testi.avatar, '_blank')}
+                    title="Klik untuk lihat gambar penuh (Preview)"
+                  />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <strong style={{ fontSize: '0.9rem', color: '#1E293B' }}>{testi.name}</strong>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--color-kunyit)' }}>
+                      {'⭐'.repeat(testi.rating || 5)}
+                    </span>
+                    <span 
+                      style={{ 
+                        display: 'inline-block', 
+                        width: '10px', 
+                        height: '10px', 
+                        borderRadius: '50%', 
+                        backgroundColor: testi.borderColor === 'var(--color-tosca)' ? 'var(--color-tosca)' : testi.borderColor === 'var(--color-maroon)' ? 'var(--color-maroon)' : 'var(--color-kunyit)' 
+                      }} 
+                      title={`Border: ${testi.borderColor}`}
+                    />
+                  </div>
+                  <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: '#64748B', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                    {testi.comment_id}
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
+                  <button type="button" className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', height: 'auto', background: 'transparent' }} onClick={() => handleEdit(idx)}>
+                    Edit
+                  </button>
+                  <button type="button" className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', color: '#EF4444', borderColor: '#FCA5A5', height: 'auto', background: 'transparent' }} onClick={() => handleDelete(idx)}>
+                    Hapus
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const currentPageConfig = pagesConfig[selectedPage];
 
   return (
@@ -1381,6 +1680,11 @@ export default function PageContentEditor({ showToast }) {
             {/* Custom render for Partners list */}
             {currentPageConfig.sections[activeSection].customRender === 'partners_editor' && (
               <PartnersEditorSection />
+            )}
+
+            {/* Custom render for Testimonials list */}
+            {currentPageConfig.sections[activeSection].customRender === 'testimonials_editor' && (
+              <TestimonialsEditorSection />
             )}
 
             <div className={styles.formActions} style={{ marginTop: '2rem' }}>
