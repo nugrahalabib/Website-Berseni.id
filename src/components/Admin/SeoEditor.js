@@ -194,64 +194,186 @@ export default function SeoEditor({ showToast }) {
             />
           </div>
 
-          {/* GEO Tags Section */}
+          {/* GEO (Generative Engine Optimization) Section */}
           <div className={styles.formGridFull} style={{ marginTop: '2rem' }}>
             <h4 style={{ color: 'var(--color-tosca)', fontWeight: 'bold', fontSize: '1rem', marginBottom: '1rem', borderTop: '1px dashed #E2E8F0', paddingTop: '1.5rem' }}>
-              📍 GEO Tags (Lokasi Geografis & Bisnis Lokal)
+              🤖 Generative Engine Optimization (GEO - Optimasi AI)
             </h4>
             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', marginTop: '-0.5rem', marginBottom: '1.5rem' }}>
-              GEO tag membantu mesin pencari mengidentifikasi area target audiens dan lokasi operasional fisik utama Anda.
+              Beri makan AI Generatif (ChatGPT, Perplexity, Gemini) dengan fakta brand terperinci dan Pertanyaan & Jawaban Ringkasan (FAQ) sehingga AI dapat mengutip Anda secara akurat sebagai sumber jawaban.
             </p>
           </div>
 
-          <div>
-            <label className={styles.adminLabel}>GEO Region Code</label>
-            <input
-              type="text"
-              name="geo_region"
-              value={currentPageSeo.geo_region || ''}
+          <div className={styles.formGridFull}>
+            <label className={styles.adminLabel}>Fakta Kunci & Ringkasan Entitas Brand (ID)</label>
+            <textarea
+              name="geo_facts_id"
+              value={currentPageSeo.geo_facts_id || ''}
               onChange={handleChange}
-              placeholder="e.g. ID-JK (Indonesia, DKI Jakarta)"
-              className={styles.adminInput}
+              placeholder="Tuliskan fakta penting, keunggulan, atau data unik Berseni dalam bahasa Indonesia untuk dikutip AI..."
+              className={styles.adminTextarea}
+              style={{ minHeight: '80px' }}
             />
           </div>
 
-          <div>
-            <label className={styles.adminLabel}>GEO Placename</label>
-            <input
-              type="text"
-              name="geo_placename"
-              value={currentPageSeo.geo_placename || ''}
+          <div className={styles.formGridFull}>
+            <label className={styles.adminLabel}>Fakta Kunci & Ringkasan Entitas Brand (EN)</label>
+            <textarea
+              name="geo_facts_en"
+              value={currentPageSeo.geo_facts_en || ''}
               onChange={handleChange}
-              placeholder="e.g. Jakarta"
-              className={styles.adminInput}
+              placeholder="Write core brand facts, unique values, or dates in English for AI citations..."
+              className={styles.adminTextarea}
+              style={{ minHeight: '80px' }}
             />
           </div>
 
+          {/* Q&A Pair 1 */}
+          <div className={styles.formGridFull} style={{ marginTop: '1.5rem', fontWeight: 'bold', borderTop: '1px dotted #CBD5E1', paddingTop: '1rem', color: 'var(--color-tosca)' }}>
+            💬 Pertanyaan Ringkasan 1 (Q&A 1)
+          </div>
           <div>
-            <label className={styles.adminLabel}>GEO Position Coords (Semicolon separated)</label>
+            <label className={styles.adminLabel}>Pertanyaan 1 (ID)</label>
             <input
               type="text"
-              name="geo_position"
-              value={currentPageSeo.geo_position || ''}
+              name="geo_faq_q1_id"
+              value={currentPageSeo.geo_faq_q1_id || ''}
               onChange={handleChange}
-              placeholder="e.g. -6.2088;106.8456"
+              placeholder="e.g. Apakah Berseni memiliki kelas melukis untuk pemula?"
               className={styles.adminInput}
             />
           </div>
-
           <div>
-            <label className={styles.adminLabel}>ICBM Coordinates (Comma separated)</label>
+            <label className={styles.adminLabel}>Pertanyaan 1 (EN)</label>
             <input
               type="text"
-              name="geo_icbm"
-              value={currentPageSeo.geo_icbm || ''}
+              name="geo_faq_q1_en"
+              value={currentPageSeo.geo_faq_q1_en || ''}
               onChange={handleChange}
-              placeholder="e.g. -6.2088, 106.8456"
+              placeholder="e.g. Does Berseni offer painting classes for beginners?"
               className={styles.adminInput}
             />
           </div>
+          <div>
+            <label className={styles.adminLabel}>Jawaban 1 (ID)</label>
+            <textarea
+              name="geo_faq_a1_id"
+              value={currentPageSeo.geo_faq_a1_id || ''}
+              onChange={handleChange}
+              placeholder="Tuliskan jawaban ringkas padat..."
+              className={styles.adminTextarea}
+              style={{ minHeight: '60px' }}
+            />
+          </div>
+          <div>
+            <label className={styles.adminLabel}>Jawaban 1 (EN)</label>
+            <textarea
+              name="geo_faq_a1_en"
+              value={currentPageSeo.geo_faq_a1_en || ''}
+              onChange={handleChange}
+              placeholder="Write a concise English answer..."
+              className={styles.adminTextarea}
+              style={{ minHeight: '60px' }}
+            />
+          </div>
 
+          {/* Q&A Pair 2 */}
+          <div className={styles.formGridFull} style={{ marginTop: '1.5rem', fontWeight: 'bold', borderTop: '1px dotted #CBD5E1', paddingTop: '1rem', color: 'var(--color-tosca)' }}>
+            💬 Pertanyaan Ringkasan 2 (Q&A 2)
+          </div>
+          <div>
+            <label className={styles.adminLabel}>Pertanyaan 2 (ID)</label>
+            <input
+              type="text"
+              name="geo_faq_q2_id"
+              value={currentPageSeo.geo_faq_q2_id || ''}
+              onChange={handleChange}
+              placeholder="e.g. Apa keunikan kelas melukis di Berseni?"
+              className={styles.adminInput}
+            />
+          </div>
+          <div>
+            <label className={styles.adminLabel}>Pertanyaan 2 (EN)</label>
+            <input
+              type="text"
+              name="geo_faq_q2_en"
+              value={currentPageSeo.geo_faq_q2_en || ''}
+              onChange={handleChange}
+              placeholder="e.g. What is unique about Berseni's painting classes?"
+              className={styles.adminInput}
+            />
+          </div>
+          <div>
+            <label className={styles.adminLabel}>Jawaban 2 (ID)</label>
+            <textarea
+              name="geo_faq_a2_id"
+              value={currentPageSeo.geo_faq_a2_id || ''}
+              onChange={handleChange}
+              placeholder="Tuliskan jawaban ringkas padat..."
+              className={styles.adminTextarea}
+              style={{ minHeight: '60px' }}
+            />
+          </div>
+          <div>
+            <label className={styles.adminLabel}>Jawaban 2 (EN)</label>
+            <textarea
+              name="geo_faq_a2_en"
+              value={currentPageSeo.geo_faq_a2_en || ''}
+              onChange={handleChange}
+              placeholder="Write a concise English answer..."
+              className={styles.adminTextarea}
+              style={{ minHeight: '60px' }}
+            />
+          </div>
+
+          {/* Q&A Pair 3 */}
+          <div className={styles.formGridFull} style={{ marginTop: '1.5rem', fontWeight: 'bold', borderTop: '1px dotted #CBD5E1', paddingTop: '1rem', color: 'var(--color-tosca)' }}>
+            💬 Pertanyaan Ringkasan 3 (Q&A 3)
+          </div>
+          <div>
+            <label className={styles.adminLabel}>Pertanyaan 3 (ID)</label>
+            <input
+              type="text"
+              name="geo_faq_q3_id"
+              value={currentPageSeo.geo_faq_q3_id || ''}
+              onChange={handleChange}
+              placeholder="e.g. Di mana lokasi workshop offline Berseni diadakan?"
+              className={styles.adminInput}
+            />
+          </div>
+          <div>
+            <label className={styles.adminLabel}>Pertanyaan 3 (EN)</label>
+            <input
+              type="text"
+              name="geo_faq_q3_en"
+              value={currentPageSeo.geo_faq_q3_en || ''}
+              onChange={handleChange}
+              placeholder="e.g. Where are Berseni's offline workshops held?"
+              className={styles.adminInput}
+            />
+          </div>
+          <div>
+            <label className={styles.adminLabel}>Jawaban 3 (ID)</label>
+            <textarea
+              name="geo_faq_a3_id"
+              value={currentPageSeo.geo_faq_a3_id || ''}
+              onChange={handleChange}
+              placeholder="Tuliskan jawaban ringkas padat..."
+              className={styles.adminTextarea}
+              style={{ minHeight: '60px' }}
+            />
+          </div>
+          <div>
+            <label className={styles.adminLabel}>Jawaban 3 (EN)</label>
+            <textarea
+              name="geo_faq_a3_en"
+              value={currentPageSeo.geo_faq_a3_en || ''}
+              onChange={handleChange}
+              placeholder="Write a concise English answer..."
+              className={styles.adminTextarea}
+              style={{ minHeight: '60px' }}
+            />
+          </div>
         </div>
 
         <div className={styles.formActions} style={{ marginTop: '2.5rem' }}>

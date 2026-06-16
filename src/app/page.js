@@ -51,6 +51,15 @@ export default async function Home() {
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['home'] || {};
 
+  const brandFacts = (pageSeo.geo_facts_id || pageSeo.geo_facts_en) ? {
+    "@type": "CreativeWork",
+    "name": "Core Brand Facts & AI Citation Reference",
+    "text": [
+      { "@value": pageSeo.geo_facts_id || "", "@language": "id" },
+      { "@value": pageSeo.geo_facts_en || "", "@language": "en" }
+    ]
+  } : null;
+
   const homePageJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -67,9 +76,10 @@ export default async function Home() {
     "isPartOf": {
       "@id": `${SITE_URL}/#website`
     },
-    "about": {
-      "@id": `${SITE_URL}/#organization`
-    },
+    "about": [
+      { "@id": `${SITE_URL}/#organization` },
+      ...(brandFacts ? [brandFacts] : [])
+    ],
     "inLanguage": ["id-ID", "en-US"]
   };
 
@@ -106,10 +116,69 @@ export default async function Home() {
     }))
   };
 
+  // Dynamic Q&A FAQ mapping for GEO citation search
+  const faqList = [];
+  if (pageSeo.geo_faq_q1_id && pageSeo.geo_faq_a1_id) {
+    faqList.push({
+      "@type": "Question",
+      "name": [
+        { "@value": pageSeo.geo_faq_q1_id, "@language": "id" },
+        { "@value": pageSeo.geo_faq_q1_en || pageSeo.geo_faq_q1_id, "@language": "en" }
+      ],
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": [
+          { "@value": pageSeo.geo_faq_a1_id, "@language": "id" },
+          { "@value": pageSeo.geo_faq_a1_en || pageSeo.geo_faq_a1_id, "@language": "en" }
+        ]
+      }
+    });
+  }
+  if (pageSeo.geo_faq_q2_id && pageSeo.geo_faq_a2_id) {
+    faqList.push({
+      "@type": "Question",
+      "name": [
+        { "@value": pageSeo.geo_faq_q2_id, "@language": "id" },
+        { "@value": pageSeo.geo_faq_q2_en || pageSeo.geo_faq_q2_id, "@language": "en" }
+      ],
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": [
+          { "@value": pageSeo.geo_faq_a2_id, "@language": "id" },
+          { "@value": pageSeo.geo_faq_a2_en || pageSeo.geo_faq_a2_id, "@language": "en" }
+        ]
+      }
+    });
+  }
+  if (pageSeo.geo_faq_q3_id && pageSeo.geo_faq_a3_id) {
+    faqList.push({
+      "@type": "Question",
+      "name": [
+        { "@value": pageSeo.geo_faq_q3_id, "@language": "id" },
+        { "@value": pageSeo.geo_faq_q3_en || pageSeo.geo_faq_q3_id, "@language": "en" }
+      ],
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": [
+          { "@value": pageSeo.geo_faq_a3_id, "@language": "id" },
+          { "@value": pageSeo.geo_faq_a3_en || pageSeo.geo_faq_a3_id, "@language": "en" }
+        ]
+      }
+    });
+  }
+
+  const faqJsonLd = faqList.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${SITE_URL}/#faq`,
+    "mainEntity": faqList
+  } : null;
+
   return (
     <>
       <JsonLd data={homePageJsonLd} />
       <JsonLd data={productListJsonLd} />
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <LandingPageClient 
         initialContent={content} 
         initialProducts={products} 
@@ -118,5 +187,6 @@ export default async function Home() {
     </>
   );
 }
+
 
 

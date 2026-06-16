@@ -107,7 +107,7 @@ export default function DashboardClient() {
                   Edit Konten Website
                 </button>
                 <button className="btn btn-secondary" onClick={() => setActiveTab('seo')} style={{ fontSize: '0.85rem' }}>
-                  Ubah Meta Tags & GEO
+                  Optimasi SEO & GEO (AI)
                 </button>
                 <a href="/" target="_blank" className="btn btn-outline" style={{ fontSize: '0.85rem' }}>
                   Kunjungi Landing Page ↗
@@ -142,7 +142,8 @@ export default function DashboardClient() {
       case 'blog':
         return 'Kelola artikel blog kreatif, catatan seni, dan parameter SEO masing-masing tulisan.';
       case 'seo':
-        return 'Konfigurasi metadata penelusuran (SEO) dan tag regional geografis (GEO) tiap halaman.';
+        return 'Konfigurasi metadata penelusuran (SEO) dan Optimasi AI Generatif (GEO) tiap halaman.';
+
       case 'account':
         return 'Ubah password admin demi keamanan portal web.';
       default:
@@ -218,7 +219,7 @@ export default function DashboardClient() {
               <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              SEO & GEO Tags
+              Optimasi SEO & GEO (AI)
             </li>
             <li
               className={`${styles.menuItem} ${activeTab === 'account' ? styles.menuItemActive : ''}`}
