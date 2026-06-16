@@ -48,13 +48,22 @@ export default async function Home() {
   const products = await db.get('products') || [];
   const posts = await db.get('posts') || [];
 
+  const seoPages = await db.get('seo_pages') || {};
+  const pageSeo = seoPages['home'] || {};
+
   const homePageJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
     "@id": `${SITE_URL}/#webpage`,
     "url": SITE_URL,
-    "name": "Berseni - Galeri Seni & Kelas Melukis Online",
-    "description": "Platform penghubung publik dan seniman Indonesia. Temukan kelas melukis online, workshop offline, dan karya seni terbaik langsung dari para maestro.",
+    "name": [
+      { "@value": pageSeo.title_id || "Berseni - Galeri Seni & Kelas Melukis Online", "@language": "id" },
+      { "@value": pageSeo.title_en || "Berseni - Art Gallery & Online Painting Classes", "@language": "en" }
+    ],
+    "description": [
+      { "@value": pageSeo.description_id || "Platform penghubung publik dan seniman Indonesia. Temukan kelas melukis online, workshop offline, dan karya seni terbaik langsung dari para maestro.", "@language": "id" },
+      { "@value": pageSeo.description_en || "A platform connecting the public and Indonesian artists. Discover online painting classes, offline workshops, and the best artwork directly from the maestros.", "@language": "en" }
+    ],
     "isPartOf": {
       "@id": `${SITE_URL}/#website`
     },
@@ -67,15 +76,24 @@ export default async function Home() {
   const productListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": "Koleksi Karya & Kelas Seni Pilihan",
+    "name": [
+      { "@value": "Koleksi Karya & Kelas Seni Pilihan", "@language": "id" },
+      { "@value": "Featured Artworks & Painting Classes", "@language": "en" }
+    ],
     "numberOfItems": products.length,
     "itemListElement": products.map((prod, index) => ({
       "@type": "ListItem",
       "position": index + 1,
       "item": {
         "@type": "Product",
-        "name": prod.title_id || prod.title_en,
-        "description": prod.description_id || prod.description_en,
+        "name": [
+          { "@value": prod.title_id || prod.title_en, "@language": "id" },
+          { "@value": prod.title_en || prod.title_id, "@language": "en" }
+        ],
+        "description": [
+          { "@value": prod.description_id || prod.description_en, "@language": "id" },
+          { "@value": prod.description_en || prod.description_id, "@language": "en" }
+        ],
         "image": prod.image.startsWith('http') ? prod.image : `${SITE_URL}${prod.image}`,
         "offers": {
           "@type": "Offer",
@@ -100,4 +118,5 @@ export default async function Home() {
     </>
   );
 }
+
 

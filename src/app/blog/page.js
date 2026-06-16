@@ -58,16 +58,20 @@ export default async function BlogPage() {
 
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['blog'] || {};
-  const title = pageSeo.title_id || "Artikel & Catatan Seni - Berseni Blog";
-  const description = pageSeo.description_id || "Wawasan seputar teknik melukis, sejarah seni rupa, dan proses kreatif dari para seniman Indonesia.";
 
   const blogPageJsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
     "@id": `${SITE_URL}/blog#blog`,
     "url": `${SITE_URL}/blog`,
-    "name": title,
-    "description": description,
+    "name": [
+      { "@value": pageSeo.title_id || "Artikel & Catatan Seni - Berseni Blog", "@language": "id" },
+      { "@value": pageSeo.title_en || "Articles & Art Notes - Berseni Blog", "@language": "en" }
+    ],
+    "description": [
+      { "@value": pageSeo.description_id || "Wawasan seputar teknik melukis, sejarah seni rupa, dan proses kreatif dari para seniman Indonesia.", "@language": "id" },
+      { "@value": pageSeo.description_en || "Insights around painting techniques, art history, and creative processes of Indonesian artists.", "@language": "en" }
+    ],
     "isPartOf": {
       "@id": `${SITE_URL}/#website`
     },
@@ -76,8 +80,14 @@ export default async function BlogPage() {
     },
     "blogPost": posts.map((post) => ({
       "@type": "BlogPosting",
-      "headline": post.title_id || post.title_en,
-      "description": post.excerpt_id || post.excerpt_en,
+      "headline": [
+        { "@value": post.title_id || post.title_en, "@language": "id" },
+        { "@value": post.title_en || post.title_id, "@language": "en" }
+      ],
+      "description": [
+        { "@value": post.excerpt_id || post.excerpt_en, "@language": "id" },
+        { "@value": post.excerpt_en || post.excerpt_id, "@language": "en" }
+      ],
       "datePublished": post.date ? convertDate(post.date) : undefined,
       "image": post.image.startsWith('http') ? post.image : `${SITE_URL}${post.image}`,
       "url": `${SITE_URL}/blog/${post.slug}`
@@ -92,5 +102,6 @@ export default async function BlogPage() {
     </>
   );
 }
+
 
 

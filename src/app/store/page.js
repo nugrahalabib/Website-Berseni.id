@@ -50,16 +50,20 @@ export default async function StorePage() {
 
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['store'] || {};
-  const title = pageSeo.title_id || "Galeri & Kelas Seni - Berseni Art Market";
-  const description = pageSeo.description_id || "Jelajahi seluruh koleksi karya seni orisinal Indonesia, kelas melukis online (e-course), dan pendaftaran intimate workshop offline dari Berseni.";
 
   const storePageJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "@id": `${SITE_URL}/store#webpage`,
     "url": `${SITE_URL}/store`,
-    "name": title,
-    "description": description,
+    "name": [
+      { "@value": pageSeo.title_id || "Galeri & Kelas Seni - Berseni Art Market", "@language": "id" },
+      { "@value": pageSeo.title_en || "Gallery & Art Classes - Berseni Art Market", "@language": "en" }
+    ],
+    "description": [
+      { "@value": pageSeo.description_id || "Jelajahi seluruh koleksi karya seni orisinal Indonesia, kelas melukis online (e-course), dan pendaftaran intimate workshop offline dari Berseni.", "@language": "id" },
+      { "@value": pageSeo.description_en || "Explore the entire collection of original Indonesian artworks, online painting classes (e-courses), and offline intimate workshop registrations from Berseni.", "@language": "en" }
+    ],
     "isPartOf": {
       "@id": `${SITE_URL}/#website`
     },
@@ -68,14 +72,24 @@ export default async function StorePage() {
     },
     "mainEntity": {
       "@type": "ItemList",
+      "name": [
+        { "@value": "Katalog Karya Seni & Kelas Melukis", "@language": "id" },
+        { "@value": "Artwork Catalog & Painting Classes", "@language": "en" }
+      ],
       "numberOfItems": products.length,
       "itemListElement": products.map((prod, index) => ({
         "@type": "ListItem",
         "position": index + 1,
         "item": {
           "@type": "Product",
-          "name": prod.title_id || prod.title_en,
-          "description": prod.description_id || prod.description_en,
+          "name": [
+            { "@value": prod.title_id || prod.title_en, "@language": "id" },
+            { "@value": prod.title_en || prod.title_id, "@language": "en" }
+          ],
+          "description": [
+            { "@value": prod.description_id || prod.description_en, "@language": "id" },
+            { "@value": prod.description_en || prod.description_id, "@language": "en" }
+          ],
           "image": prod.image.startsWith('http') ? prod.image : `${SITE_URL}${prod.image}`,
           "offers": {
             "@type": "Offer",
@@ -100,4 +114,5 @@ export default async function StorePage() {
     </>
   );
 }
+
 

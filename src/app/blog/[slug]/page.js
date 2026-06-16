@@ -73,8 +73,6 @@ export default async function BlogPostPage({ params }) {
     notFound();
   }
 
-  const title = post.title_id || post.title_en;
-  const description = post.excerpt_id || post.excerpt_en;
   const postImage = post.image ? (post.image.startsWith('http') ? post.image : `${SITE_URL}${post.image}`) : `${SITE_URL}/og-image.jpg`;
 
   const blogPostJsonLd = {
@@ -85,8 +83,14 @@ export default async function BlogPostPage({ params }) {
       "@type": "WebPage",
       "@id": `${SITE_URL}/blog/${slug}`
     },
-    "headline": title,
-    "description": description,
+    "headline": [
+      { "@value": post.title_id || post.title_en, "@language": "id" },
+      { "@value": post.title_en || post.title_id, "@language": "en" }
+    ],
+    "description": [
+      { "@value": post.excerpt_id || post.excerpt_en, "@language": "id" },
+      { "@value": post.excerpt_en || post.excerpt_id, "@language": "en" }
+    ],
     "image": postImage,
     "datePublished": post.date ? convertDate(post.date) : undefined,
     "author": {
@@ -98,7 +102,10 @@ export default async function BlogPostPage({ params }) {
       "@id": `${SITE_URL}/#organization`
     },
     "mainEntityOfPage": `${SITE_URL}/blog/${slug}`,
-    "articleBody": post.content_id || post.content_en,
+    "articleBody": [
+      { "@value": post.content_id || post.content_en, "@language": "id" },
+      { "@value": post.content_en || post.content_id, "@language": "en" }
+    ],
     "inLanguage": ["id-ID", "en-US"]
   };
 
@@ -109,5 +116,6 @@ export default async function BlogPostPage({ params }) {
     </>
   );
 }
+
 
 

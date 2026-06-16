@@ -49,16 +49,20 @@ export default async function CollaborationPage() {
 
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['collaboration'] || {};
-  const title = pageSeo.title_id || "Kolaborasi Kemitraan - Berseni";
-  const description = pageSeo.description_id || "Buka peluang kolaborasi kreatif bersama Berseni. Kami terbuka untuk brand, komunitas, dan partner venue untuk menghadirkan pengalaman seni terbaik.";
 
   const collaborationPageJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
     "@id": `${SITE_URL}/collaboration#webpage`,
     "url": `${SITE_URL}/collaboration`,
-    "name": title,
-    "description": description,
+    "name": [
+      { "@value": pageSeo.title_id || "Kolaborasi Kemitraan - Berseni", "@language": "id" },
+      { "@value": pageSeo.title_en || "Partnership Collaboration - Berseni", "@language": "en" }
+    ],
+    "description": [
+      { "@value": pageSeo.description_id || "Buka peluang kolaborasi kreatif bersama Berseni. Kami terbuka untuk brand, komunitas, dan partner venue untuk menghadirkan pengalaman seni terbaik.", "@language": "id" },
+      { "@value": pageSeo.description_en || "Open creative collaboration opportunities with Berseni. We are open for brands, communities, and venue partners to bring the best art experiences.", "@language": "en" }
+    ],
     "isPartOf": {
       "@id": `${SITE_URL}/#website`
     },
@@ -77,4 +81,5 @@ export default async function CollaborationPage() {
     </>
   );
 }
+
 

@@ -92,8 +92,16 @@ const organizationJsonLd = {
   alternateName: "Berseni",
   url: SITE_URL,
   logo: `${SITE_URL}/logo.png`,
-  description:
-    "Platform edukasi seni rupa Indonesia yang menghubungkan masyarakat umum dengan seniman profesional melalui kelas online, workshop offline, dan karya seni orisinal.",
+  description: [
+    {
+      "@value": "Platform edukasi seni rupa Indonesia yang menghubungkan masyarakat umum dengan seniman profesional melalui kelas online, workshop offline, dan karya seni orisinal.",
+      "@language": "id"
+    },
+    {
+      "@value": "Indonesian visual art education platform connecting the general public with professional artists through online classes, offline workshops, and original artwork.",
+      "@language": "en"
+    }
+  ],
   foundingDate: "2026",
   sameAs: [
     "https://www.instagram.com/berseni.id",
@@ -102,12 +110,12 @@ const organizationJsonLd = {
   ],
   contactPoint: {
     "@type": "ContactPoint",
-    contactType: "customer service",
-    availableLanguage: ["Indonesian", "English"],
+    "contactType": "customer service",
+    "availableLanguage": ["Indonesian", "English"],
   },
   areaServed: {
     "@type": "Country",
-    name: "Indonesia",
+    "name": "Indonesia",
   },
   knowsAbout: [
     "Seni Lukis",
@@ -127,8 +135,16 @@ const websiteJsonLd = {
   "@id": `${SITE_URL}/#website`,
   url: SITE_URL,
   name: "Berseni.id",
-  description:
-    "Platform edukasi seni rupa Indonesia — kelas melukis online, workshop offline, dan galeri karya seni orisinal.",
+  description: [
+    {
+      "@value": "Platform edukasi seni rupa Indonesia — kelas melukis online, workshop offline, dan galeri karya seni orisinal.",
+      "@language": "id"
+    },
+    {
+      "@value": "Indonesian visual art education platform — online painting classes, offline workshops, and original art gallery.",
+      "@language": "en"
+    }
+  ],
   publisher: {
     "@id": `${SITE_URL}/#organization`,
   },
@@ -150,3 +166,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+

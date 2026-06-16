@@ -49,16 +49,20 @@ export default async function AboutPage() {
 
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['about'] || {};
-  const title = pageSeo.title_id || "Tentang Kami - Berseni";
-  const description = pageSeo.description_id || "Temukan kisah kami, visi misi, dan komitmen Berseni dalam menjadi jembatan global utama antara masyarakat umum dan seniman lokal Indonesia.";
 
   const aboutPageJsonLd = {
     "@context": "https://schema.org",
     "@type": "AboutPage",
     "@id": `${SITE_URL}/about#webpage`,
     "url": `${SITE_URL}/about`,
-    "name": title,
-    "description": description,
+    "name": [
+      { "@value": pageSeo.title_id || "Tentang Kami - Berseni", "@language": "id" },
+      { "@value": pageSeo.title_en || "About Us - Berseni", "@language": "en" }
+    ],
+    "description": [
+      { "@value": pageSeo.description_id || "Temukan kisah kami, visi misi, dan komitmen Berseni dalam menjadi jembatan global utama antara masyarakat umum dan seniman lokal Indonesia.", "@language": "id" },
+      { "@value": pageSeo.description_en || "Discover our story, vision, mission, and commitment in becoming the primary global bridge between the general public and local Indonesian artists.", "@language": "en" }
+    ],
     "isPartOf": {
       "@id": `${SITE_URL}/#website`
     },
@@ -80,4 +84,5 @@ export default async function AboutPage() {
     </>
   );
 }
+
 
