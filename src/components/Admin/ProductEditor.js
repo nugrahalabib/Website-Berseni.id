@@ -9,15 +9,18 @@ export default function ProductEditor({ showToast }) {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   
-  // State untuk form tambah/edit
+  // State untuk form tambah/edit (Bilingual ID & EN)
   const [form, setForm] = useState({
     id: '', // Kosong jika tambah baru
-    title: '',
+    title_id: '',
+    title_en: '',
     category: 'artwork',
     price: '',
     image: '',
-    description: '',
-    specs: '',
+    description_id: '',
+    description_en: '',
+    specs_id: '',
+    specs_en: '',
     link: ''
   });
 
@@ -84,7 +87,7 @@ export default function ProductEditor({ showToast }) {
               resolve(compressedFile);
             },
             'image/webp',
-            0.8 // Kualitas kompresi 80% (sangat hemat berkas)
+            0.8 // Kualitas kompresi 80%
           );
         };
       };
@@ -127,12 +130,15 @@ export default function ProductEditor({ showToast }) {
   const handleEdit = (product) => {
     setForm({
       id: product.id,
-      title: product.title,
+      title_id: product.title_id || product.title || '',
+      title_en: product.title_en || product.title || '',
       category: product.category,
       price: product.price,
       image: product.image,
-      description: product.description || '',
-      specs: product.specs || '',
+      description_id: product.description_id || product.description || '',
+      description_en: product.description_en || product.description || '',
+      specs_id: product.specs_id || product.specs || '',
+      specs_en: product.specs_en || product.specs || '',
       link: product.link
     });
     setIsEditing(true);
@@ -162,12 +168,15 @@ export default function ProductEditor({ showToast }) {
   const handleCancel = () => {
     setForm({
       id: '',
-      title: '',
+      title_id: '',
+      title_en: '',
       category: 'artwork',
       price: '',
       image: '',
-      description: '',
-      specs: '',
+      description_id: '',
+      description_en: '',
+      specs_id: '',
+      specs_en: '',
       link: ''
     });
     setIsEditing(false);
@@ -228,20 +237,33 @@ export default function ProductEditor({ showToast }) {
       {/* 1. Form Editor Tambah/Edit */}
       <div className={styles.editorCard}>
         <h2 className={styles.editorTitle}>
-          {isEditing ? `Edit Item: ${form.title}` : 'Tambah Karya Seni / Kelas Baru'}
+          {isEditing ? `Edit Item: ${form.title_id || form.title_en}` : 'Tambah Karya Seni / Kelas Baru (Bilingual)'}
         </h2>
 
         <form onSubmit={handleSubmit}>
           <div className={styles.formGrid}>
             <div>
-              <label className={styles.adminLabel}>Nama Karya / Nama Kelas</label>
+              <label className={styles.adminLabel}>Nama Karya / Nama Kelas (ID)</label>
               <input
                 type="text"
-                name="title"
+                name="title_id"
                 className={styles.adminInput}
-                value={form.title}
+                value={form.title_id}
                 onChange={handleChange}
                 placeholder="e.g. Workshop Melukis Bersama"
+                required
+              />
+            </div>
+            
+            <div>
+              <label className={styles.adminLabel}>Nama Karya / Nama Kelas (EN)</label>
+              <input
+                type="text"
+                name="title_en"
+                className={styles.adminInput}
+                value={form.title_en}
+                onChange={handleChange}
+                placeholder="e.g. Painting Workshop Together"
                 required
               />
             </div>
@@ -273,7 +295,7 @@ export default function ProductEditor({ showToast }) {
               />
             </div>
 
-            <div>
+            <div className={styles.formGridFull}>
               <label className={styles.adminLabel}>Tautan Shopee / Lynk.id</label>
               <input
                 type="url"
@@ -286,31 +308,54 @@ export default function ProductEditor({ showToast }) {
               />
             </div>
 
-            <div className={styles.formGridFull}>
-              <label className={styles.adminLabel}>Deskripsi Singkat</label>
+            <div>
+              <label className={styles.adminLabel}>Deskripsi Singkat (ID)</label>
               <textarea
-                name="description"
+                name="description_id"
                 className={styles.adminTextarea}
-                value={form.description}
+                value={form.description_id}
                 onChange={handleChange}
                 placeholder="Tuliskan latar belakang, makna karya, atau silabus kelas..."
               />
             </div>
+            
+            <div>
+              <label className={styles.adminLabel}>Deskripsi Singkat (EN)</label>
+              <textarea
+                name="description_en"
+                className={styles.adminTextarea}
+                value={form.description_en}
+                onChange={handleChange}
+                placeholder="Write the background, artwork meaning, or class syllabus in English..."
+              />
+            </div>
 
             <div>
-              <label className={styles.adminLabel}>Spesifikasi / Detail Teknis</label>
+              <label className={styles.adminLabel}>Spesifikasi / Detail Teknis (ID)</label>
               <input
                 type="text"
-                name="specs"
+                name="specs_id"
                 className={styles.adminInput}
-                value={form.specs}
+                value={form.specs_id}
                 onChange={handleChange}
-                placeholder="e.g. Canvas 60x60cm / 5 Modul Video"
+                placeholder="e.g. Kanvas 60x60cm / 5 Modul Video"
+              />
+            </div>
+            
+            <div>
+              <label className={styles.adminLabel}>Spesifikasi / Detail Teknis (EN)</label>
+              <input
+                type="text"
+                name="specs_en"
+                className={styles.adminInput}
+                value={form.specs_en}
+                onChange={handleChange}
+                placeholder="e.g. Canvas 60x60cm / 5 Video Modules"
               />
             </div>
 
             {/* Upload Area */}
-            <div>
+            <div className={styles.formGridFull}>
               <label className={styles.adminLabel}>Gambar Karya / Banner Kelas</label>
               {form.image ? (
                 <div className={styles.uploadPreview}>
@@ -380,7 +425,7 @@ export default function ProductEditor({ showToast }) {
             <thead>
               <tr>
                 <th>Gambar</th>
-                <th>Nama</th>
+                <th>Nama (ID / EN)</th>
                 <th>Kategori</th>
                 <th>Harga</th>
                 <th>Tautan</th>
@@ -401,7 +446,12 @@ export default function ProductEditor({ showToast }) {
                         }}
                       />
                     </td>
-                    <td style={{ fontWeight: 700, color: 'var(--color-text-dark)' }}>{product.title}</td>
+                    <td style={{ fontWeight: 700, color: 'var(--color-text-dark)' }}>
+                      <div>{product.title_id || product.title}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 'normal' }}>
+                        {product.title_en || product.title}
+                      </div>
+                    </td>
                     <td>
                       <span className={`${styles.tableBadge} ${
                         product.category === 'artwork' ? styles.badgeArtwork :

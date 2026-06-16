@@ -1,8 +1,10 @@
 import Link from 'next/link';
+import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Components.module.css';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { language, getTranslation } = useLanguage();
 
   return (
     <footer className={styles.footer}>
@@ -11,42 +13,39 @@ export default function Footer() {
           {/* Brand & About */}
           <div className={styles.footerCol}>
             <div className={styles.footerBrandText}>Berseni</div>
-            <div className={styles.footerTagline}>A World of Art for Everyone</div>
+            <div className={styles.footerTagline}>{getTranslation('footerTagline')}</div>
             <p className={styles.footerDesc}>
-              Menghubungkan publik dengan seniman Indonesia secara nyata. Temukan keindahan budaya Nusantara melalui kelas online, workshop offline, dan koleksi karya seni pilihan.
+              {getTranslation('footerDesc')}
             </p>
           </div>
 
-
-
-
           {/* Quick Links */}
           <div className={styles.footerCol}>
-            <h4>Navigasi</h4>
+            <h4>{getTranslation('footerNavTitle')}</h4>
             <ul className={styles.footerLinks}>
               <li>
                 <Link href="/" className={styles.footerLink}>
-                  Home
+                  {getTranslation('navHome')}
                 </Link>
               </li>
               <li>
-                <a href="#about" className={styles.footerLink}>
-                  About Us
-                </a>
+                <Link href="/store" className={styles.footerLink}>
+                  {getTranslation('navStore')}
+                </Link>
               </li>
               <li>
-                <a href="#programs" className={styles.footerLink}>
-                  Programs
-                </a>
+                <Link href="/about" className={styles.footerLink}>
+                  {getTranslation('navAbout')}
+                </Link>
               </li>
               <li>
-                <a href="#products" className={styles.footerLink}>
-                  Works & Classes
-                </a>
+                <Link href="/collaboration" className={styles.footerLink}>
+                  {getTranslation('navCollab')}
+                </Link>
               </li>
               <li>
                 <Link href="/blog" className={styles.footerLink}>
-                  Blog
+                  {getTranslation('navBlog')}
                 </Link>
               </li>
             </ul>
@@ -54,9 +53,11 @@ export default function Footer() {
 
           {/* Connect & Socials */}
           <div className={styles.footerCol}>
-            <h4>Hubungi Kami</h4>
+            <h4>{getTranslation('footerContactTitle')}</h4>
             <p className={styles.footerDesc} style={{ marginBottom: '1rem' }}>
-              Punya pertanyaan seputar workshop, lukisan, atau kelas? Jangan ragu untuk menghubungi kami.
+              {language === 'id' 
+                ? 'Punya pertanyaan seputar workshop, lukisan, atau kelas? Jangan ragu untuk menghubungi kami.' 
+                : 'Have questions about workshops, paintings, or classes? Do not hesitate to contact us.'}
             </p>
             <div className={styles.socials}>
               {/* WhatsApp */}
@@ -117,9 +118,9 @@ export default function Footer() {
         <div className={styles.footerDivider}></div>
 
         <div className={styles.footerBottom}>
-          <p>&copy; {currentYear} Berseni. All rights reserved.</p>
+          <p>{language === 'id' ? `Hak Cipta © ${currentYear} Berseni. Hak cipta dilindungi undang-undang.` : `Copyright © ${currentYear} Berseni. All rights reserved.`}</p>
           <p>
-            Powered by <span className={styles.rainbowText}>Semesta Indonesia</span>
+            Powered by <span className={styles.rainbowText}>AgentBuff</span>
           </p>
         </div>
       </div>

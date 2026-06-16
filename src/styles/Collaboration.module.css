@@ -1,0 +1,604 @@
+.pageContainer {
+  background-color: var(--color-cream-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainContent {
+  flex-grow: 1;
+  margin-top: 80px; /* Offset fixed navbar */
+}
+
+/* 1. HERO SECTION */
+.heroSection {
+  position: relative;
+  padding: 6.5rem 1.5rem;
+  background: linear-gradient(180deg, #FAF7F0 0%, var(--color-cream-bg) 100%);
+  text-align: center;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(20, 120, 155, 0.05);
+}
+
+.heroGlowContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.glowBlob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.05;
+  width: 350px;
+  height: 350px;
+}
+
+.glowTosca {
+  background-color: var(--color-tosca);
+  top: -120px;
+  left: 10%;
+}
+
+.glowKunyit {
+  background-color: var(--color-kunyit);
+  bottom: -120px;
+  right: 10%;
+}
+
+.glowMaroon {
+  background-color: var(--color-maroon);
+  top: 30%;
+  left: 45%;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 5;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.heroSubtitle {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--color-maroon);
+  letter-spacing: 3px;
+  display: block;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.heroTitle span {
+  font-family: var(--font-cursive);
+  color: var(--color-tosca);
+  text-transform: none;
+  font-size: 3.8rem;
+  margin-left: 0.5rem;
+  display: inline-block;
+  transform: rotate(-2deg);
+}
+
+.heroDesc {
+  font-size: 1.15rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+/* 2. COLLABORATION SECTIONS */
+.collabSection {
+  padding: 7rem 1.5rem;
+  background-color: var(--color-white);
+  position: relative;
+}
+
+.sectionInner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.brandCollabGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.brandContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandHeader {
+  margin-bottom: 2rem;
+}
+
+.sectionBadge {
+  display: inline-block;
+  padding: 0.45rem 1.1rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background-color: rgba(171, 34, 35, 0.08);
+  color: var(--color-maroon);
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 8px rgba(171, 34, 35, 0.05);
+}
+
+.brandHeader h2 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.5px;
+}
+
+.underline {
+  width: 60px;
+  height: 4px;
+  background-color: var(--color-maroon);
+  border-radius: 2px;
+}
+
+.toscaUnderline {
+  background-color: var(--color-tosca);
+}
+
+.sectionIntro {
+  font-size: 1.15rem;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  margin-bottom: 2.5rem;
+}
+
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.featureItem {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.iconBox {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.maroonIcon {
+  background-color: rgba(171, 34, 35, 0.07);
+  color: var(--color-maroon);
+}
+
+.toscaIcon {
+  background-color: rgba(20, 120, 155, 0.07);
+  color: var(--color-tosca);
+}
+
+.kunyitIcon {
+  background-color: rgba(250, 164, 51, 0.07);
+  color: var(--color-kunyit);
+}
+
+.featureText h4 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  margin-bottom: 0.35rem;
+}
+
+.featureText p {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+/* BRAND VISUAL - FLOATING ARTWORK COLLAGE */
+.brandVisual {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.mockupContainer {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: 480px;
+}
+
+.mockupPattern {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 90px;
+  height: 90px;
+  background-image: radial-gradient(var(--color-kunyit) 20%, transparent 20%);
+  background-size: 15px 15px;
+  opacity: 0.25;
+  z-index: 1;
+}
+
+.canvasFrame {
+  position: absolute;
+  top: 12%;
+  left: 12%;
+  width: 76%;
+  height: 76%;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 14px solid #E2E8F0;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.05),
+    0 25px 55px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  background-color: #f8fafc;
+  transform: rotate(-1deg);
+}
+
+.canvasInner {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.canvasTitle {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  padding: 5px 14px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.floatingItems {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.floatCard {
+  position: absolute;
+  background: var(--color-white);
+  border-radius: 16px;
+  box-shadow: 
+    0 6px 15px rgba(0,0,0,0.04),
+    0 15px 35px rgba(20, 120, 155, 0.08);
+  border: 1px solid rgba(20, 120, 155, 0.06);
+  padding: 1.25rem;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
+}
+
+.floatCard:hover {
+  transform: translateY(-6px) rotate(1deg);
+  box-shadow: 
+    0 10px 25px rgba(0,0,0,0.06),
+    0 25px 45px rgba(20, 120, 155, 0.12);
+}
+
+.toteCard {
+  left: -8%;
+  bottom: 6%;
+  width: 140px;
+  padding: 1.8rem 1rem 1rem 1rem;
+  border-top: 5px solid var(--color-tosca);
+  transform: rotate(-3deg);
+}
+
+.bagHandle {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 46px;
+  height: 22px;
+  border: 3.5px solid var(--color-tosca);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+}
+
+.toteTitle {
+  font-family: var(--font-cursive);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-tosca);
+  line-height: 1.15;
+  margin-bottom: 0.15rem;
+  text-align: center;
+}
+
+.toteHeart {
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 0.35rem;
+}
+
+.mugCard {
+  right: -2%;
+  top: 5%;
+  width: 110px;
+  height: 95px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 5px solid var(--color-kunyit);
+  position: relative;
+  transform: rotate(4deg);
+}
+
+.mugHandle {
+  position: absolute;
+  right: -14px;
+  top: 25px;
+  width: 22px;
+  height: 42px;
+  border: 4.5px solid #CBD5E1;
+  border-left: none;
+  border-radius: 0 14px 14px 0;
+}
+
+.mugBrand {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.thanksCard {
+  right: -6%;
+  bottom: 12%;
+  width: 170px;
+  text-align: center;
+  border-bottom: 4px solid var(--color-maroon);
+  transform: rotate(2deg);
+}
+
+.thanksCard p {
+  font-size: 0.82rem;
+  color: var(--color-text-dark);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* CALLOUT BLOCK */
+.brandCalloutBox {
+  margin-top: 5.5rem;
+  text-align: center;
+  background-color: var(--color-cream-bg);
+  padding: 3.5rem 2rem;
+  border-radius: 28px;
+  border: 1px solid rgba(20, 120, 155, 0.08);
+  box-shadow: inset 0 2px 8px rgba(20, 120, 155, 0.01);
+}
+
+.brandCalloutBox p {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  line-height: 1.45;
+  letter-spacing: -0.2px;
+}
+
+/* 3. VENUE COLLABORATION SECTION */
+.venueSectionBg {
+  background-color: var(--color-cream-bg);
+  border-top: 1px solid rgba(20, 120, 155, 0.06);
+}
+
+.venueHeader {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 4.5rem auto;
+}
+
+.venueHeader h2 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.5px;
+}
+
+.venueSubtitle {
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  margin-top: 1.5rem;
+}
+
+.venueSubtitle strong {
+  color: var(--color-tosca);
+  font-weight: 800;
+}
+
+.venueBenefitsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  margin-bottom: 5rem;
+}
+
+.benefitCard {
+  background: var(--color-white);
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  border: 1px solid rgba(20, 120, 155, 0.05);
+  box-shadow: 0 10px 30px rgba(20, 120, 155, 0.02);
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.benefitCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(20, 120, 155, 0.08);
+}
+
+.benefitIconBox {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem auto;
+  color: var(--color-white);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+}
+
+.toscaBg {
+  background-color: var(--color-tosca);
+  box-shadow: 0 6px 15px rgba(20, 120, 155, 0.25);
+}
+
+.maroonBg {
+  background-color: var(--color-maroon);
+  box-shadow: 0 6px 15px rgba(171, 34, 35, 0.25);
+}
+
+.kunyitBg {
+  background-color: var(--color-kunyit);
+  box-shadow: 0 6px 15px rgba(250, 164, 51, 0.25);
+}
+
+.benefitCard h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  margin-bottom: 0.85rem;
+}
+
+.benefitCard p {
+  font-size: 0.94rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* LET'S GROW TOGETHER BANNER */
+.venueCtaBanner {
+  background: linear-gradient(135deg, var(--color-tosca) 0%, #0d5d79 100%);
+  color: var(--color-white);
+  border-radius: 28px;
+  padding: 4.5rem 3.5rem;
+  text-align: center;
+  box-shadow: 0 15px 45px rgba(20, 120, 155, 0.18);
+  position: relative;
+  overflow: hidden;
+}
+
+.venueCtaBanner h3 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: var(--color-white);
+  letter-spacing: -0.5px;
+}
+
+.venueCtaBanner p {
+  font-size: 1.15rem;
+  max-width: 720px;
+  margin: 0 auto 2.5rem auto;
+  line-height: 1.65;
+  opacity: 0.92;
+  color: var(--color-white);
+}
+
+/* RESPONSIVE LAYOUT */
+@media (max-width: 990px) {
+  .brandCollabGrid {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+  
+  .brandVisual {
+    order: 2;
+    margin-top: 1rem;
+  }
+  
+  .brandContent {
+    order: 1;
+  }
+  
+  .venueBenefitsGrid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin: 0 auto 3.5rem auto;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .heroSection {
+    padding: 4.5rem 1.5rem;
+  }
+  
+  .heroTitle {
+    font-size: 2.2rem;
+  }
+  
+  .heroTitle span {
+    font-size: 2.8rem;
+  }
+  
+  .brandHeader h2,
+  .venueHeader h2 {
+    font-size: 1.85rem;
+  }
+  
+  .venueCtaBanner {
+    padding: 3rem 1.5rem;
+  }
+  
+  .venueCtaBanner h3 {
+    font-size: 1.8rem;
+  }
+  
+  .venueCtaBanner p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+}

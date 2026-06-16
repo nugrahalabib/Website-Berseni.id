@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Components.module.css';
 
 export default function Navbar() {
@@ -11,6 +12,7 @@ export default function Navbar() {
   const [isAdmin, setIsAdmin] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { language, toggleLanguage, getTranslation } = useLanguage();
 
   // Efek scroll navbar
   useEffect(() => {
@@ -52,11 +54,11 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'About Us', path: '#about' },
-    { name: 'Programs', path: '#programs' },
-    { name: 'Works & Classes', path: '#products' },
-    { name: 'Blog', path: '/blog' },
+    { name: getTranslation('navHome'), path: '/' },
+    { name: getTranslation('navStore'), path: '/store' },
+    { name: getTranslation('navAbout'), path: '/about' },
+    { name: getTranslation('navCollab'), path: '/collaboration' },
+    { name: getTranslation('navBlog'), path: '/blog' },
   ];
 
   return (
@@ -114,6 +116,31 @@ export default function Navbar() {
               </Link>
             );
           })}
+          
+          {/* Language Switcher Desktop */}
+          <button onClick={toggleLanguage} className={styles.langSwitchBtn} aria-label="Switch Language">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-tosca)' }}>
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            <span style={{ opacity: language === 'id' ? 1 : 0.3, transition: 'opacity 0.2s', display: 'inline-flex', alignItems: 'center', marginLeft: '2px' }}>
+              <svg width="18" height="12" viewBox="0 0 3 2" style={{ borderRadius: '2px', border: '1px solid rgba(0,0,0,0.1)' }}>
+                <rect width="3" height="1" fill="#e22a2b"/>
+                <rect width="3" height="1" y="1" fill="#ffffff"/>
+              </svg>
+            </span>
+            <span style={{ color: 'rgba(20, 120, 155, 0.25)', fontSize: '0.85rem' }}>|</span>
+            <span style={{ opacity: language === 'en' ? 1 : 0.3, transition: 'opacity 0.2s', display: 'inline-flex', alignItems: 'center' }}>
+              <svg width="18" height="12" viewBox="0 0 60 30" style={{ borderRadius: '2px', border: '1px solid rgba(0,0,0,0.1)' }}>
+                <rect width="60" height="30" fill="#012169"/>
+                <path d="M0 0 L60 30 M60 0 L0 30" stroke="#fff" strokeWidth="6"/>
+                <path d="M0 0 L60 30 M60 0 L0 30" stroke="#C8102E" strokeWidth="4"/>
+                <path d="M30 0 V30 M0 15 H60" stroke="#fff" strokeWidth="10"/>
+                <path d="M30 0 V30 M0 15 H60" stroke="#C8102E" strokeWidth="6"/>
+              </svg>
+            </span>
+          </button>
         </div>
 
         {/* Hamburger Menu Toggle (Mobile) */}
@@ -147,6 +174,31 @@ export default function Navbar() {
             </a>
           );
         })}
+
+        {/* Language Switcher Mobile */}
+        <button onClick={toggleLanguage} className={styles.mobileLangSwitchBtn}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-tosca)' }}>
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+          <span style={{ opacity: language === 'id' ? 1 : 0.3, transition: 'opacity 0.2s', display: 'inline-flex', alignItems: 'center', marginLeft: '4px' }}>
+            <svg width="22" height="14" viewBox="0 0 3 2" style={{ borderRadius: '2px', border: '1px solid rgba(0,0,0,0.1)' }}>
+              <rect width="3" height="1" fill="#e22a2b"/>
+              <rect width="3" height="1" y="1" fill="#ffffff"/>
+            </svg>
+          </span>
+          <span style={{ color: 'rgba(20, 120, 155, 0.3)', fontSize: '1rem' }}>|</span>
+          <span style={{ opacity: language === 'en' ? 1 : 0.3, transition: 'opacity 0.2s', display: 'inline-flex', alignItems: 'center' }}>
+            <svg width="22" height="14" viewBox="0 0 60 30" style={{ borderRadius: '2px', border: '1px solid rgba(0,0,0,0.1)' }}>
+              <rect width="60" height="30" fill="#012169"/>
+              <path d="M0 0 L60 30 M60 0 L0 30" stroke="#fff" strokeWidth="6"/>
+              <path d="M0 0 L60 30 M60 0 L0 30" stroke="#C8102E" strokeWidth="4"/>
+              <path d="M30 0 V30 M0 15 H60" stroke="#fff" strokeWidth="10"/>
+              <path d="M30 0 V30 M0 15 H60" stroke="#C8102E" strokeWidth="6"/>
+            </svg>
+          </span>
+        </button>
       </div>
     </nav>
   );

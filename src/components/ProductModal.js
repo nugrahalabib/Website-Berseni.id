@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Components.module.css';
 
 export default function ProductModal({ product, onClose }) {
+  const { language, t, getTranslation } = useLanguage();
+
   // Tutup modal dengan menekan tombol Escape
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -27,19 +30,19 @@ export default function ProductModal({ product, onClose }) {
 
   const getCategoryLabel = (cat) => {
     switch (cat) {
-      case 'artwork': return 'Karya Seni Lukis';
-      case 'online': return 'Kelas Video Online';
-      case 'offline': return 'Workshop Offline / Event';
-      default: return 'Koleksi Berseni';
+      case 'artwork': return language === 'id' ? 'Karya Seni' : 'Artwork';
+      case 'online': return language === 'id' ? 'Kelas Video Online' : 'Online Video Class';
+      case 'offline': return language === 'id' ? 'Workshop Offline / Event' : 'Offline Workshop / Event';
+      default: return language === 'id' ? 'Koleksi Berseni' : 'Berseni Collection';
     }
   };
 
   const getCTAText = (cat) => {
     switch (cat) {
-      case 'artwork': return 'Beli Karya di Shopee';
-      case 'online': return 'Daftar Kelas (Lynk.id)';
-      case 'offline': return 'Pesan Tiket (Lynk.id)';
-      default: return 'Beli Sekarang';
+      case 'artwork': return language === 'id' ? 'Beli Karya Sekarang' : 'Buy Artwork Now';
+      case 'online': return language === 'id' ? 'Daftar Kelas Sekarang' : 'Register Class Now';
+      case 'offline': return language === 'id' ? 'Pesan Tiket Sekarang' : 'Book Tickets Now';
+      default: return language === 'id' ? 'Beli Sekarang' : 'Buy Now';
     }
   };
 
@@ -52,7 +55,7 @@ export default function ProductModal({ product, onClose }) {
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={handleContentClick}>
         {/* Close button */}
-        <button className={styles.modalClose} onClick={onClose} aria-label="Tutup">
+        <button className={styles.modalClose} onClick={onClose} aria-label={getTranslation('closeBtn')}>
           <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -64,7 +67,7 @@ export default function ProductModal({ product, onClose }) {
           <div className={styles.modalImageCol}>
             <img
               src={product.image}
-              alt={product.title}
+              alt={t(product, 'title')}
               className={styles.modalImage}
               onError={(e) => {
                 e.target.src = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop';
@@ -75,16 +78,21 @@ export default function ProductModal({ product, onClose }) {
           {/* Column 2: Details */}
           <div className={styles.modalInfoCol}>
             <span className={styles.modalCategory}>{getCategoryLabel(product.category)}</span>
-            <h2 className={styles.modalTitle}>{product.title}</h2>
-            <div className={styles.modalPrice}>{formatPrice(product.price)}</div>
+            <h2 className={styles.modalTitle}>{t(product, 'title')}</h2>
+            <div className={styles.modalPriceContainer}>
+              {product.originalPrice && (
+                <span className={styles.modalOriginalPrice}>{formatPrice(product.originalPrice)}</span>
+              )}
+              <span className={styles.modalPrice}>{formatPrice(product.price)}</span>
+            </div>
 
-            <h4 className={styles.modalDescTitle}>Deskripsi</h4>
-            <p className={styles.modalDesc}>{product.description}</p>
+            <h4 className={styles.modalDescTitle}>{language === 'id' ? 'Deskripsi' : 'Description'}</h4>
+            <p className={styles.modalDesc}>{t(product, 'description')}</p>
 
-            {product.specs && (
+            {t(product, 'specs') && (
               <>
-                <h4 className={styles.modalDescTitle}>Spesifikasi / Detail</h4>
-                <div className={styles.modalSpecs}>{product.specs}</div>
+                <h4 className={styles.modalDescTitle}>{language === 'id' ? 'Spesifikasi / Detail' : 'Specifications / Details'}</h4>
+                <div className={styles.modalSpecs}>{t(product, 'specs')}</div>
               </>
             )}
 

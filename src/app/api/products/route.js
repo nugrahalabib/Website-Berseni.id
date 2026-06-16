@@ -30,22 +30,25 @@ export async function POST(request) {
     }
     
     const body = await request.json();
-    const { title, category, price, image, description, specs, link } = body;
+    const { title_id, title_en, category, price, image, description_id, description_en, specs_id, specs_en, link } = body;
     
-    if (!title || !category || !link) {
-      return NextResponse.json({ error: 'Nama, kategori, dan link shopee/lynk harus diisi!' }, { status: 400 });
+    if (!title_id || !title_en || !category || !link) {
+      return NextResponse.json({ error: 'Nama (ID & EN), kategori, dan link shopee/lynk harus diisi!' }, { status: 400 });
     }
     
     const products = await db.get('products') || [];
     
     const newProduct = {
       id: `prod-${Date.now()}`,
-      title,
+      title_id,
+      title_en,
       category,
       price: Number(price) || 0,
       image: image || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop', // Fallback image
-      description: description || '',
-      specs: specs || '',
+      description_id: description_id || '',
+      description_en: description_en || '',
+      specs_id: specs_id || '',
+      specs_en: specs_en || '',
       link
     };
     
@@ -70,10 +73,10 @@ export async function PUT(request) {
     }
     
     const body = await request.json();
-    const { id, title, category, price, image, description, specs, link } = body;
+    const { id, title_id, title_en, category, price, image, description_id, description_en, specs_id, specs_en, link } = body;
     
-    if (!id || !title || !category || !link) {
-      return NextResponse.json({ error: 'Data edit tidak lengkap (ID, nama, kategori, link wajib ada)' }, { status: 400 });
+    if (!id || !title_id || !title_en || !category || !link) {
+      return NextResponse.json({ error: 'Data edit tidak lengkap (ID, nama ID & EN, kategori, link wajib ada)' }, { status: 400 });
     }
     
     let products = await db.get('products') || [];
@@ -85,12 +88,15 @@ export async function PUT(request) {
     
     products[index] = {
       ...products[index],
-      title,
+      title_id,
+      title_en,
       category,
       price: Number(price) || 0,
       image: image || products[index].image,
-      description: description || '',
-      specs: specs || '',
+      description_id: description_id || '',
+      description_en: description_en || '',
+      specs_id: specs_id || '',
+      specs_en: specs_en || '',
       link
     };
     

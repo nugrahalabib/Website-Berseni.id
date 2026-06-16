@@ -1,10 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Components.module.css';
 
 export default function HeroCarousel({ items = [], onCardClick }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const { t, language } = useLanguage();
+
+  // Hook to check viewport size for responsive 3D card layout
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    setIsMobile(mediaQuery.matches);
+    
+    const handler = (e) => setIsMobile(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
 
   // Auto slide
   useEffect(() => {
@@ -37,25 +50,31 @@ export default function HeroCarousel({ items = [], onCardClick }) {
 
   const getCardStyle = (index) => {
     const total = items.length;
-    // Hitung jarak terpendek melingkar
+    // Calculate circular shortest distance
     let diff = index - activeIndex;
     
-    // Sesuaikan agar berputar melingkar
     if (diff > total / 2) diff -= total;
     if (diff < -total / 2) diff += total;
 
     const absDiff = Math.abs(diff);
 
-    // Hitung posisi
-    let translateX = diff * 190; // Jarak horizontal antar kartu
-    let translateZ = -absDiff * 80; // Dorong ke belakang untuk depth 3D
-    let rotateY = diff * -25; // Putar arah Y untuk melengkung ke dalam
-    let opacity = absDiff > 2 ? 0 : 1 - absDiff * 0.35; // Semakin jauh semakin transparan
-    let zIndex = 100 - absDiff; // Kartu tengah paling depan
+    // Responsive card metrics
+    const spacing = isMobile ? 110 : 190;
+    const depth = isMobile ? 50 : 80;
+    const rotateYVal = isMobile ? -20 : -25;
 
-    // Khusus kartu aktif (tengah)
+    // Position
+    let translateX = diff * spacing;
+    let translateZ = -absDiff * depth;
+    let rotateY = diff * rotateYVal;
+    
+    // Increased side opacity so all 5 cards are clearly visible in the queue
+    let opacity = 1 - absDiff * 0.22;
+    let zIndex = 100 - absDiff;
+
+    // Active card focus styling
     if (diff === 0) {
-      translateZ = 50;
+      translateZ = isMobile ? 30 : 50;
       rotateY = 0;
       opacity = 1;
     }
@@ -69,6 +88,7 @@ export default function HeroCarousel({ items = [], onCardClick }) {
   };
 
   const formatPrice = (price) => {
+    if (price === undefined || price === null) return '';
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
@@ -81,17 +101,24 @@ export default function HeroCarousel({ items = [], onCardClick }) {
       case 'artwork': return 'var(--color-maroon)';
       case 'online': return 'var(--color-tosca)';
       case 'offline': return 'var(--color-kunyit)';
+      case 'workshop': return 'var(--color-maroon)';
+      case 'exhibition': return 'var(--color-tosca)';
+      case 'social': return 'var(--color-kunyit)';
       default: return 'var(--color-text-dark)';
     }
   };
 
   const getCategoryLabel = (cat) => {
-    switch (cat) {
-      case 'artwork': return 'Lukisan';
-      case 'online': return 'Kelas Online';
-      case 'offline': return 'Workshop Offline';
-      default: return 'Karya';
-    }
+    const labels = {
+      artwork: { id: 'Lukisan', en: 'Artwork' },
+      online: { id: 'Kelas Online', en: 'Online Class' },
+      offline: { id: 'Workshop Offline', en: 'Offline Workshop' },
+      workshop: { id: 'Workshop', en: 'Workshop' },
+      exhibition: { id: 'Pameran', en: 'Exhibition' },
+      social: { id: 'Kegiatan', en: 'Community Event' }
+    };
+    const currentLang = language || 'id';
+    return (labels[cat] && labels[cat][currentLang]) || (labels[cat] ? labels[cat].id : cat);
   };
 
   return (
@@ -118,7 +145,7 @@ export default function HeroCarousel({ items = [], onCardClick }) {
               <div className={styles.carouselImageWrapper}>
                 <img
                   src={item.image}
-                  alt={item.title}
+                  alt={t(item, 'title')}
                   className={styles.carouselImage}
                   onError={(e) => {
                     e.target.src = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop';
@@ -128,9 +155,13 @@ export default function HeroCarousel({ items = [], onCardClick }) {
 
               {/* Info Body */}
               <div className={styles.carouselInfo}>
-                <h3 className={styles.carouselTitle}>{item.title}</h3>
+                <h3 className={styles.carouselTitle}>{t(item, 'title')}</h3>
                 <div className={styles.carouselFooter}>
-                  <span className={styles.carouselPrice}>{formatPrice(item.price)}</span>
+                  {item.price !== undefined && item.price !== null ? (
+                    <span className={styles.carouselPrice}>{formatPrice(item.price)}</span>
+                  ) : (
+                    <span className={styles.carouselSummary}>{t(item, 'summary')}</span>
+                  )}
                   <span className={styles.carouselBtn}>
                     Detail 
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
@@ -160,3 +191,4 @@ export default function HeroCarousel({ items = [], onCardClick }) {
     </div>
   );
 }
+

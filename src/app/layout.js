@@ -1,5 +1,8 @@
 import { Montserrat, Dancing_Script } from "next/font/google";
+import { LanguageProvider } from "@/components/LanguageContext";
 import "./globals.css";
+
+import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -22,7 +25,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="id" className={`${montserrat.variable} ${dancingScript.variable}`}>
-      <body>{children}</body>
+      <body>
+        <LanguageProvider>
+          {children}
+          <FloatingWhatsApp />
+        </LanguageProvider>
+      </body>
     </html>
   );
 }

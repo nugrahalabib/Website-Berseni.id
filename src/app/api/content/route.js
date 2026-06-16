@@ -35,8 +35,8 @@ export async function POST(request) {
     const body = await request.json();
     
     // Validasi sederhana untuk memastikan data memiliki field dasar yang dibutuhkan
-    if (!body.heroTitle || !body.heroDescription) {
-      return NextResponse.json({ error: 'Field utama (heroTitle & heroDescription) harus diisi!' }, { status: 400 });
+    if (!body.heroTitle_id || !body.heroTitle_en || !body.heroDescription_id || !body.heroDescription_en) {
+      return NextResponse.json({ error: 'Field utama Hero (Indonesian & English) harus diisi!' }, { status: 400 });
     }
     
     const success = await db.set('content', body);

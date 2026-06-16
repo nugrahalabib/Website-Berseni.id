@@ -8,11 +8,13 @@ export default async function Home() {
   // Ambil teks halaman dan daftar produk dari database (Vercel KV / local json fallback)
   const content = await db.get('content');
   const products = await db.get('products') || [];
+  const posts = await db.get('posts') || [];
 
   return (
     <LandingPageClient 
       initialContent={content} 
       initialProducts={products} 
+      initialPosts={posts}
     />
   );
 }

@@ -1,8 +1,11 @@
 'use client';
 
+import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Components.module.css';
 
 export default function ProductCard({ product, onClick }) {
+  const { language, t, getTranslation } = useLanguage();
+
   const formatPrice = (price) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -22,9 +25,9 @@ export default function ProductCard({ product, onClick }) {
 
   const getCategoryLabel = (cat) => {
     switch (cat) {
-      case 'artwork': return 'Lukisan';
-      case 'online': return 'Kelas Online';
-      case 'offline': return 'Workshop Offline';
+      case 'artwork': return language === 'id' ? 'Karya Seni' : 'Artwork';
+      case 'online': return language === 'id' ? 'Kelas Online' : 'Online Class';
+      case 'offline': return language === 'id' ? 'Workshop Offline' : 'Offline Workshop';
       default: return 'Karya';
     }
   };
@@ -41,7 +44,7 @@ export default function ProductCard({ product, onClick }) {
         </span>
         <img
           src={product.image}
-          alt={product.title}
+          alt={t(product, 'title')}
           className={styles.cardImage}
           loading="lazy"
           onError={(e) => {
@@ -52,13 +55,18 @@ export default function ProductCard({ product, onClick }) {
 
       {/* Info Body */}
       <div className={styles.cardBody}>
-        <h3 className={styles.cardTitle}>{product.title}</h3>
-        <p className={styles.cardDesc}>{product.description}</p>
+        <h3 className={styles.cardTitle}>{t(product, 'title')}</h3>
+        <p className={styles.cardDesc}>{t(product, 'description')}</p>
         
         <div className={styles.cardFooter}>
-          <span className={styles.cardPrice}>{formatPrice(product.price)}</span>
+          <div className={styles.priceContainer}>
+            {product.originalPrice && (
+              <span className={styles.cardOriginalPrice}>{formatPrice(product.originalPrice)}</span>
+            )}
+            <span className={styles.cardPrice}>{formatPrice(product.price)}</span>
+          </div>
           <span className={styles.cardDetailBtn}>
-            Detail
+            {getTranslation('detailLabel')}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
