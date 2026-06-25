@@ -365,23 +365,23 @@ export default function AboutPageClient({ content }) {
           <div className={styles.container}>
             <div className={styles.statsGrid}>
               <div className={styles.statCard}>
-                <span className={styles.statNumber}>{data.statsUsers}</span>
-                <span className={styles.statLabel}>{t(data, 'statsDescription')}</span>
+                <span className={styles.statNumber}>{data.statsUsers || "20k+"}</span>
+                <span className={styles.statLabel}>{t(data, 'aboutStats1Label') || t(data, 'statsDescription') || "Pengguna Berseni"}</span>
               </div>
               
               <div className={styles.statCard}>
-                <span className={styles.statNumber}>100%</span>
-                <span className={styles.statLabel}>{getTranslation('aboutStats2Label')}</span>
+                <span className={styles.statNumber}>{data.stats2Number || "100%"}</span>
+                <span className={styles.statLabel}>{t(data, 'aboutStats2Label') || "Karya Orisinal Nusantara"}</span>
               </div>
               
               <div className={styles.statCard}>
-                <span className={styles.statNumber}>15+</span>
-                <span className={styles.statLabel}>{getTranslation('aboutStats3Label')}</span>
+                <span className={styles.statNumber}>{data.stats3Number || "15+"}</span>
+                <span className={styles.statLabel}>{t(data, 'aboutStats3Label') || "Maestro Seniman Mitra"}</span>
               </div>
 
               <div className={styles.statCard}>
-                <span className={styles.statNumber}>50+</span>
-                <span className={styles.statLabel}>{getTranslation('aboutStats4Label')}</span>
+                <span className={styles.statNumber}>{data.stats4Number || "50+"}</span>
+                <span className={styles.statLabel}>{t(data, 'aboutStats4Label') || "Program & Aktivitas Komunitas"}</span>
               </div>
             </div>
           </div>

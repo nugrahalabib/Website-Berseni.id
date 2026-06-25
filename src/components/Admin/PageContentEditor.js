@@ -470,6 +470,19 @@ export default function PageContentEditor({ showToast }) {
           fields: [],
           customRender: 'partners_editor'
         },
+        footer: {
+          title: 'Pengaturan Kaki Halaman (Footer) & Medsos',
+          fields: [
+            { name: 'footerDesc_id', label: 'Deskripsi Singkat Footer (ID)', type: 'textarea' },
+            { name: 'footerDesc_en', label: 'Deskripsi Singkat Footer (EN)', type: 'textarea' },
+            { name: 'footerContactDesc_id', label: 'Teks Ajakan Kontak Hubungi Kami (ID)', type: 'textarea' },
+            { name: 'footerContactDesc_en', label: 'Teks Ajakan Kontak Hubungi Kami (EN)', type: 'textarea' },
+            { name: 'footerLinkWa', label: 'Tautan WhatsApp (https://wa.me/...)', type: 'text' },
+            { name: 'footerLinkIg', label: 'Tautan Instagram', type: 'text' },
+            { name: 'footerLinkTiktok', label: 'Tautan TikTok', type: 'text' },
+            { name: 'footerLinkYoutube', label: 'Tautan YouTube', type: 'text' }
+          ]
+        },
         backgrounds: {
           title: '🎨 Warna Latar Belakang Section & Navbar',
           fields: [
@@ -601,15 +614,18 @@ export default function PageContentEditor({ showToast }) {
           ]
         },
         statistics_labels: {
-          title: 'Statistics Section Labels',
+          title: 'Statistics Section Content & Labels',
           fields: [
-            { name: 'statsUsers', label: 'Unified Stats Number (Unified)', type: 'text' },
+            { name: 'statsUsers', label: 'Stats 1 Number (e.g. 20k+)', type: 'text' },
             { name: 'aboutStats1Label_id', label: 'Stats 1 Label - User (ID)', type: 'text' },
             { name: 'aboutStats1Label_en', label: 'Stats 1 Label - User (EN)', type: 'text' },
+            { name: 'stats2Number', label: 'Stats 2 Number (e.g. 100%)', type: 'text' },
             { name: 'aboutStats2Label_id', label: 'Stats 2 Label - Karya (ID)', type: 'text' },
             { name: 'aboutStats2Label_en', label: 'Stats 2 Label - Karya (EN)', type: 'text' },
+            { name: 'stats3Number', label: 'Stats 3 Number (e.g. 15+)', type: 'text' },
             { name: 'aboutStats3Label_id', label: 'Stats 3 Label - Maestro (ID)', type: 'text' },
             { name: 'aboutStats3Label_en', label: 'Stats 3 Label - Maestro (EN)', type: 'text' },
+            { name: 'stats4Number', label: 'Stats 4 Number (e.g. 50+)', type: 'text' },
             { name: 'aboutStats4Label_id', label: 'Stats 4 Label - Aktivitas (ID)', type: 'text' },
             { name: 'aboutStats4Label_en', label: 'Stats 4 Label - Aktivitas (EN)', type: 'text' }
           ]

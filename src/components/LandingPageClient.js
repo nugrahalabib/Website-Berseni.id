@@ -927,8 +927,8 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className={styles.videoReviewCard}
-                      style={{ borderTop: `4px solid ${review.borderColor}` }}
                     >
+                      <div style={{ height: '4px', backgroundColor: review.borderColor, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, borderRadius: '24px 24px 0 0' }} />
                       <img src={review.videoThumbnail} alt="Video Review Thumbnail" className={styles.videoCardImage} />
                       <div className={styles.videoCardPlayOverlay}>
                         <div className={styles.playButtonIconLarge}>
@@ -970,8 +970,8 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                   <div 
                     key={`row1-text-${review.id}-${idx}`} 
                     className={styles.reviewCard}
-                    style={{ borderTop: `4px solid ${review.borderColor}` }}
                   >
+                    <div style={{ height: '4px', backgroundColor: review.borderColor, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, borderRadius: '24px 24px 0 0' }} />
                     <div className={styles.reviewHeader}>
                       <img src={review.avatar} alt={review.name} className={styles.reviewAvatar} />
                       <div className={styles.reviewMeta}>
@@ -1002,8 +1002,8 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                   <div 
                     key={`row2-${review.id}-${idx}`} 
                     className={styles.reviewCard}
-                    style={{ borderTop: `4px solid ${review.borderColor}` }}
                   >
+                    <div style={{ height: '4px', backgroundColor: review.borderColor, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, borderRadius: '24px 24px 0 0' }} />
                     <div className={styles.reviewHeader}>
                       <img src={review.avatar} alt={review.name} className={styles.reviewAvatar} />
                       <div className={styles.reviewMeta}>

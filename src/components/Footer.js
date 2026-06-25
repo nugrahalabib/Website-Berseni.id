@@ -4,7 +4,7 @@ import styles from '@/styles/Components.module.css';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const { language, getTranslation } = useLanguage();
+  const { language, getTranslation, dbContent, t } = useLanguage();
 
   return (
     <footer className={styles.footer}>
@@ -15,7 +15,7 @@ export default function Footer() {
             <div className={styles.footerBrandText}>Berseni</div>
             <div className={styles.footerTagline}>{getTranslation('footerTagline')}</div>
             <p className={styles.footerDesc}>
-              {getTranslation('footerDesc')}
+              {t(dbContent, 'footerDesc') || getTranslation('footerDesc')}
             </p>
           </div>
 
@@ -60,14 +60,14 @@ export default function Footer() {
           <div className={styles.footerCol}>
             <h4>{getTranslation('footerContactTitle')}</h4>
             <p className={styles.footerDesc} style={{ marginBottom: '1rem' }}>
-              {language === 'id' 
+              {t(dbContent, 'footerContactDesc') || (language === 'id' 
                 ? 'Punya pertanyaan seputar workshop, lukisan, atau kelas? Jangan ragu untuk menghubungi kami.' 
-                : 'Have questions about workshops, paintings, or classes? Do not hesitate to contact us.'}
+                : 'Have questions about workshops, paintings, or classes? Do not hesitate to contact us.')}
             </p>
             <div className={styles.socials}>
               {/* WhatsApp */}
               <a
-                href="https://wa.me/6281234567890" 
+                href={dbContent?.footerLinkWa || "https://wa.me/6281234567890"} 
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
@@ -80,7 +80,7 @@ export default function Footer() {
 
               {/* Instagram */}
               <a
-                href="https://www.instagram.com/berseni.id/"
+                href={dbContent?.footerLinkIg || "https://www.instagram.com/berseni.id/"}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -93,7 +93,7 @@ export default function Footer() {
 
               {/* TikTok */}
               <a
-                href="https://www.tiktok.com/@berseni.id"
+                href={dbContent?.footerLinkTiktok || "https://www.tiktok.com/@berseni.id"}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok"
@@ -106,7 +106,7 @@ export default function Footer() {
 
               {/* YouTube */}
               <a
-                href="https://www.youtube.com/@berseni"
+                href={dbContent?.footerLinkYoutube || "https://www.youtube.com/@berseni"}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="YouTube"
