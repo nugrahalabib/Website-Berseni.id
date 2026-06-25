@@ -6,8 +6,8 @@ import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Blog.module.css';
 
-export default function BlogPostPageClient({ post }) {
-  const { t, getTranslation } = useLanguage();
+export default function BlogPostPageClient({ content, post }) {
+  const { language, t, getTranslation, dbContent } = useLanguage();
 
   if (!post) return null;
 
@@ -15,7 +15,7 @@ export default function BlogPostPageClient({ post }) {
   const paragraphs = t(post, 'content').split('\n\n');
 
   return (
-    <div style={{ backgroundColor: 'var(--color-cream-bg)', minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ backgroundColor: dbContent?.bg_blog_detail_main || content?.bg_blog_detail_main || 'var(--color-cream-bg)', minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
       {/* Background Decorative Glow Blobs */}
       <div className={styles.blogGlowContainer}>
         <div className={`${styles.glowBlob} ${styles.glowTosca}`}></div>
@@ -81,6 +81,34 @@ export default function BlogPostPageClient({ post }) {
               return <p key={index}>{para}</p>;
             })}
           </div>
+
+          {/* Call To Action (CTA) Section */}
+          {post.ctaShow && (
+            <div 
+              className={styles.blogCtaBlock} 
+              style={{ 
+                backgroundColor: dbContent?.bg_blog_detail_cta || content?.bg_blog_detail_cta || '',
+                backgroundImage: (dbContent?.bg_blog_detail_cta || content?.bg_blog_detail_cta) ? 'none' : ''
+              }}
+            >
+              <h3 className={styles.blogCtaTitle}>
+                {t(post, 'ctaTitle') || (language === 'id' ? 'Tertarik Mencoba?' : 'Interested in Trying?')}
+              </h3>
+              {(post.ctaDesc_id || post.ctaDesc_en) && (
+                <p className={styles.blogCtaDesc}>{t(post, 'ctaDesc')}</p>
+              )}
+              {post.ctaShowButton && post.ctaButtonLink && (
+                <a 
+                  href={post.ctaButtonLink} 
+                  className={styles.blogCtaBtn}
+                  target={post.ctaButtonLink.startsWith('http') ? '_blank' : undefined}
+                  rel={post.ctaButtonLink.startsWith('http') ? 'noopener noreferrer' : undefined}
+                >
+                  {t(post, 'ctaButtonText') || (language === 'id' ? 'Pelajari Selengkapnya' : 'Learn More')}
+                </a>
+              )}
+            </div>
+          )}
 
           {/* Author/Community Bio Footer */}
           <footer className={styles.postFooter}>

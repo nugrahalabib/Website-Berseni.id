@@ -8,7 +8,7 @@ import ProductModal from '@/components/ProductModal';
 import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Store.module.css';
 
-export default function StorePageClient({ content, initialProducts }) {
+export default function ClassesPageClient({ content, initialProducts }) {
   const { language, t, getTranslation, dbContent } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [products, setProducts] = useState(initialProducts || []);
@@ -19,6 +19,11 @@ export default function StorePageClient({ content, initialProducts }) {
 
   useEffect(() => {
     setMounted(true);
+    const params = new URLSearchParams(window.location.search);
+    const filterParam = params.get('type') || params.get('filter');
+    if (filterParam === 'offline' || filterParam === 'online') {
+      setSelectedFilter(filterParam);
+    }
   }, []);
 
   // Filter and Sort Logic
@@ -62,7 +67,7 @@ export default function StorePageClient({ content, initialProducts }) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.spinner}></div>
-        <p>{getTranslation('loadingStore')}</p>
+        <p>{getTranslation('loadingClasses')}</p>
       </div>
     );
   }
@@ -72,7 +77,7 @@ export default function StorePageClient({ content, initialProducts }) {
       {/* Shared Header Navigation */}
       <Navbar />
 
-      <main className={styles.storeMain} style={{ backgroundColor: dbContent?.bg_store_main || content?.bg_store_main || '' }}>
+      <main className={styles.storeMain} style={{ backgroundColor: dbContent?.bg_classes_main || content?.bg_classes_main || '' }}>
         {/* Ambient Gradient Blobs for premium atmosphere */}
         <div className={styles.storeGlowContainer}>
           <div className={`${styles.glowBlob} ${styles.glowTosca}`}></div>
@@ -82,17 +87,17 @@ export default function StorePageClient({ content, initialProducts }) {
         {/* Hero Header Section */}
         <section className={styles.heroSection}>
           <div className={styles.heroInner}>
-            <span className={styles.heroSubtitle}>Berseni Art Market & Hub</span>
+            <span className={styles.heroSubtitle}>Berseni Academy & Hub</span>
             <h1 className={styles.heroTitle}>
-              {getTranslation('storeTitle')}
+              {getTranslation('classesTitle')}
             </h1>
             <p className={styles.heroDesc}>
-              {getTranslation('galleryArtworkSubtitle')}
+              {getTranslation('classesSubtitle')}
             </p>
           </div>
         </section>
 
-        {/* Marketplace Toolbar (Search, Sorter) */}
+        {/* Marketplace Toolbar (Search, Filter, Sort) */}
         <section className={styles.toolbarSection}>
           <div className={styles.toolbarInner}>
             {/* Search Input Box */}
@@ -103,7 +108,7 @@ export default function StorePageClient({ content, initialProducts }) {
               </svg>
               <input 
                 type="text" 
-                placeholder={getTranslation('storeSearchPlaceholder')}
+                placeholder={getTranslation('classesSearchPlaceholder')}
                 className={styles.searchInput}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -121,8 +126,30 @@ export default function StorePageClient({ content, initialProducts }) {
               )}
             </div>
 
-            {/* Controls Row (Sorter) */}
-            <div className={styles.controlsRow} style={{ justifyContent: 'flex-end' }}>
+            {/* Controls Row (Filters & Sorter) */}
+            <div className={styles.controlsRow}>
+              {/* Category Filters */}
+              <div className={styles.filterTabs}>
+                <button 
+                  className={`${styles.filterTab} ${selectedFilter === 'all' ? styles.activeFilterTab : ''}`}
+                  onClick={() => setSelectedFilter('all')}
+                >
+                  {language === 'id' ? 'Semua Kelas' : 'All Classes'}
+                </button>
+                <button 
+                  className={`${styles.filterTab} ${selectedFilter === 'offline' ? styles.activeFilterTab : ''}`}
+                  onClick={() => setSelectedFilter('offline')}
+                >
+                  {getTranslation('tabOffline')}
+                </button>
+                <button 
+                  className={`${styles.filterTab} ${selectedFilter === 'online' ? styles.activeFilterTab : ''}`}
+                  onClick={() => setSelectedFilter('online')}
+                >
+                  {language === 'id' ? 'Kelas Online' : 'Online Classes'}
+                </button>
+              </div>
+
               {/* Sorter Selector */}
               <div className={styles.sortWrapper}>
                 <label htmlFor="sortBy">{getTranslation('sortByLabel')}</label>
@@ -142,11 +169,12 @@ export default function StorePageClient({ content, initialProducts }) {
 
             {/* Results Count Summary */}
             <div className={styles.resultsSummary}>
-              <span>{getTranslation('resultsCountArtwork').replace('{count}', filteredProducts.length)}</span>
-              {(searchQuery || sortBy !== 'default') && (
+              <span>{getTranslation('resultsCountClasses').replace('{count}', filteredProducts.length)}</span>
+              {(selectedFilter !== 'all' || searchQuery || sortBy !== 'default') && (
                 <button 
                   className={styles.resetFilters}
                   onClick={() => {
+                    setSelectedFilter('all');
                     setSearchQuery('');
                     setSortBy('default');
                   }}
@@ -177,17 +205,18 @@ export default function StorePageClient({ content, initialProducts }) {
                 <svg width="64" height="64" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                 </svg>
-                <h3>{getTranslation('emptyStoreTitle')}</h3>
-                <p>{getTranslation('emptyStoreDesc')}</p>
+                <h3>{getTranslation('emptyClassesTitle')}</h3>
+                <p>{getTranslation('emptyClassesDesc')}</p>
                 <button 
                   className="btn btn-secondary" 
                   style={{ marginTop: '1.5rem' }}
                   onClick={() => {
+                    setSelectedFilter('all');
                     setSearchQuery('');
                     setSortBy('default');
                   }}
                 >
-                  {getTranslation('showAllProducts')}
+                  {getTranslation('showAllClasses')}
                 </button>
               </div>
             )}

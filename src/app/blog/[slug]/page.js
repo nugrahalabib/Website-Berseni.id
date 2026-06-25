@@ -22,15 +22,26 @@ export async function generateMetadata({ params }) {
   const posts = await db.get('posts') || [];
   const post = posts.find((p) => p.slug === slug);
 
+  const content = await db.get('content') || {};
+  const defaultLanguage = content.content?.defaultLanguage || content.defaultLanguage || 'id';
+
   if (!post) {
     return {
-      title: "Artikel Tidak Ditemukan | Berseni Blog"
+      title: defaultLanguage === 'en' ? "Article Not Found | Berseni Blog" : "Artikel Tidak Ditemukan | Berseni Blog"
     };
   }
 
-  const title = post.seoTitle_id || post.title_id || post.title_en;
-  const description = post.seoDescription_id || post.excerpt_id || post.excerpt_en;
-  const keywords = post.seoKeywords_id || "blog, artikel, berseni";
+  const title = defaultLanguage === 'en'
+    ? (post.seoTitle_en || post.title_en || post.seoTitle_id || post.title_id)
+    : (post.seoTitle_id || post.title_id || post.seoTitle_en || post.title_en);
+
+  const description = defaultLanguage === 'en'
+    ? (post.seoDescription_en || post.excerpt_en || post.seoDescription_id || post.excerpt_id)
+    : (post.seoDescription_id || post.excerpt_id || post.seoDescription_en || post.excerpt_en);
+
+  const keywords = defaultLanguage === 'en'
+    ? (post.seoKeywords_en || "blog, article, berseni")
+    : (post.seoKeywords_id || "blog, artikel, berseni");
   const postImage = post.image ? (post.image.startsWith('http') ? post.image : `${SITE_URL}${post.image}`) : `${SITE_URL}/og-image.jpg`;
 
   return {
@@ -73,6 +84,7 @@ export default async function BlogPostPage({ params }) {
     notFound();
   }
 
+  const content = await db.get('content') || {};
   const postImage = post.image ? (post.image.startsWith('http') ? post.image : `${SITE_URL}${post.image}`) : `${SITE_URL}/og-image.jpg`;
 
   const blogPostJsonLd = {
@@ -99,7 +111,9 @@ export default async function BlogPostPage({ params }) {
       "name": "Berseni"
     },
     "publisher": {
-      "@id": `${SITE_URL}/#organization`
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      "name": "Berseni"
     },
     "mainEntityOfPage": `${SITE_URL}/blog/${slug}`,
     "articleBody": [
@@ -112,7 +126,7 @@ export default async function BlogPostPage({ params }) {
   return (
     <>
       <JsonLd data={blogPostJsonLd} />
-      <BlogPostPageClient post={post} />
+      <BlogPostPageClient content={content} post={post} />
     </>
   );
 }

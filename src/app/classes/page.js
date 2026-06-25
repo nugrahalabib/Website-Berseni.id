@@ -1,8 +1,8 @@
 import { db } from '@/lib/db';
-import StorePageClient from '@/components/StorePageClient';
+import ClassesPageClient from '@/components/ClassesPageClient';
 import JsonLd from '@/components/JsonLd';
 
-// Ensure the page fetches latest content from local json/DB on request
+// Ensure page fetches latest data on request
 export const revalidate = 0;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://berseni.id';
@@ -12,19 +12,19 @@ export async function generateMetadata() {
   const defaultLanguage = content.content?.defaultLanguage || content.defaultLanguage || 'id';
 
   const seoPages = await db.get('seo_pages') || {};
-  const pageSeo = seoPages['store'] || {};
+  const pageSeo = seoPages['classes'] || {};
 
   const title = defaultLanguage === 'en'
-    ? (pageSeo.title_en || pageSeo.title_id || "Art Gallery & Collections - Berseni Art Market")
-    : (pageSeo.title_id || pageSeo.title_en || "Galeri & Koleksi Seni - Berseni Art Market");
+    ? (pageSeo.title_en || pageSeo.title_id || "Art & Painting Classes - Berseni Art Academy")
+    : (pageSeo.title_id || pageSeo.title_en || "Kelas & Akademi Seni - Berseni Art Academy");
 
   const description = defaultLanguage === 'en'
-    ? (pageSeo.description_en || pageSeo.description_id || "Explore the entire collection of original physical paintings and curated artworks from Berseni's local Indonesian artists.")
-    : (pageSeo.description_id || pageSeo.description_en || "Jelajahi seluruh koleksi lukisan fisik orisinal dan karya seni terkurasi dari seniman lokal Indonesia di Berseni.");
+    ? (pageSeo.description_en || pageSeo.description_id || "Register for online painting classes and offline intimate workshops from Berseni. Learn directly from Nusantara painting maestros.")
+    : (pageSeo.description_id || pageSeo.description_en || "Daftar kelas melukis online dan intimate workshop offline dari Berseni. Belajar langsung dari maestro pelukis Nusantara.");
 
   const keywords = defaultLanguage === 'en'
-    ? (pageSeo.keywords_en || pageSeo.keywords_id || "art gallery, artwork, painting, original art, physical painting, buy artwork, berseni, indonesia")
-    : (pageSeo.keywords_id || pageSeo.keywords_en || "galeri seni, karya seni, lukisan fisik, lukisan orisinal, beli lukisan, berseni, indonesia");
+    ? (pageSeo.keywords_en || pageSeo.keywords_id || "art classes, painting class, offline workshop, learn painting, online painting class, berseni, indonesia")
+    : (pageSeo.keywords_id || pageSeo.keywords_en || "kelas seni, kelas melukis, workshop offline, belajar melukis, kelas online melukis, berseni, indonesia");
 
   return {
     title,
@@ -33,7 +33,7 @@ export async function generateMetadata() {
     openGraph: {
       title,
       description,
-      url: `${SITE_URL}/store`,
+      url: `${SITE_URL}/classes`,
       type: "website",
       images: [{ url: `${SITE_URL}/og-image.jpg`, width: 1200, height: 630, alt: title }],
     },
@@ -44,7 +44,7 @@ export async function generateMetadata() {
       images: [`${SITE_URL}/og-image.jpg`],
     },
     alternates: {
-      canonical: `${SITE_URL}/store`,
+      canonical: `${SITE_URL}/classes`,
     },
     other: {
       "geo.region": pageSeo.geo_region || "ID-JK",
@@ -55,35 +55,35 @@ export async function generateMetadata() {
   };
 }
 
-export default async function StorePage() {
+export default async function ClassesPage() {
   const content = await db.get('content') || {};
   const allProducts = await db.get('products') || [];
-  const products = allProducts.filter(p => p.category === 'artwork');
+  const products = allProducts.filter(p => p.category === 'offline' || p.category === 'online');
 
   const seoPages = await db.get('seo_pages') || {};
-  const pageSeo = seoPages['store'] || {};
+  const pageSeo = seoPages['classes'] || {};
 
   const brandFacts = (pageSeo.geo_facts_id || pageSeo.geo_facts_en) ? {
     "@type": "CreativeWork",
-    "name": "Core Store Facts & AI Citation Reference",
+    "name": "Core Classes Facts & AI Citation Reference",
     "text": [
       { "@value": pageSeo.geo_facts_id || "", "@language": "id" },
       { "@value": pageSeo.geo_facts_en || "", "@language": "en" }
     ]
   } : null;
 
-  const storePageJsonLd = {
+  const classesPageJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "@id": `${SITE_URL}/store#webpage`,
-    "url": `${SITE_URL}/store`,
+    "@id": `${SITE_URL}/classes#webpage`,
+    "url": `${SITE_URL}/classes`,
     "name": [
-      { "@value": pageSeo.title_id || "Galeri & Kelas Seni - Berseni Art Market", "@language": "id" },
-      { "@value": pageSeo.title_en || "Gallery & Art Classes - Berseni Art Market", "@language": "en" }
+      { "@value": pageSeo.title_id || "Kelas & Akademi Seni - Berseni Art Academy", "@language": "id" },
+      { "@value": pageSeo.title_en || "Art & Painting Classes - Berseni Art Academy", "@language": "en" }
     ],
     "description": [
-      { "@value": pageSeo.description_id || "Jelajahi seluruh koleksi karya seni orisinal Indonesia, kelas melukis online (e-course), dan pendaftaran intimate workshop offline dari Berseni.", "@language": "id" },
-      { "@value": pageSeo.description_en || "Explore the entire collection of original Indonesian artworks, online painting classes (e-courses), and offline intimate workshop registrations from Berseni.", "@language": "en" }
+      { "@value": pageSeo.description_id || "Daftar kelas melukis online dan intimate workshop offline dari Berseni. Belajar langsung dari maestro pelukis Nusantara.", "@language": "id" },
+      { "@value": pageSeo.description_en || "Register for online painting classes and offline intimate workshops from Berseni. Learn directly from Nusantara painting maestros.", "@language": "en" }
     ],
     "isPartOf": {
       "@id": `${SITE_URL}/#website`
@@ -95,8 +95,8 @@ export default async function StorePage() {
     "mainEntity": {
       "@type": "ItemList",
       "name": [
-        { "@value": "Katalog Karya Seni & Kelas Melukis", "@language": "id" },
-        { "@value": "Artwork Catalog & Painting Classes", "@language": "en" }
+        { "@value": "Katalog Kelas Melukis & Workshop", "@language": "id" },
+        { "@value": "Painting Classes & Workshops Catalog", "@language": "en" }
       ],
       "numberOfItems": products.length,
       "itemListElement": products.map((prod, index) => ({
@@ -118,7 +118,7 @@ export default async function StorePage() {
             "priceCurrency": "IDR",
             "price": prod.price,
             "availability": "https://schema.org/InStock",
-            "url": prod.link || `${SITE_URL}/store`
+            "url": prod.link || `${SITE_URL}/classes`
           }
         }
       }))
@@ -180,21 +180,18 @@ export default async function StorePage() {
   const faqJsonLd = faqList.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "@id": `${SITE_URL}/store#faq`,
+    "@id": `${SITE_URL}/classes#faq`,
     "mainEntity": faqList
   } : null;
 
   return (
     <>
-      <JsonLd data={storePageJsonLd} />
+      <JsonLd data={classesPageJsonLd} />
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
-      <StorePageClient 
+      <ClassesPageClient 
         content={content} 
         initialProducts={products}
       />
     </>
   );
 }
-
-
-

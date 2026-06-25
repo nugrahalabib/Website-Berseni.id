@@ -3,6 +3,9 @@ import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { decryptSession } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Helper untuk validasi session admin
 async function isAdmin() {
   const cookieStore = await cookies();

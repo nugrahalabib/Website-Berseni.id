@@ -167,10 +167,13 @@ export default async function RootLayout({ children }) {
   const globalSettings = seoPages.global || {};
   const pixelId = (globalSettings.meta_pixel_enabled === 'true' || globalSettings.meta_pixel_enabled === true) ? globalSettings.meta_pixel_id : '';
 
+  const content = await db.get('content') || {};
+  const defaultLanguage = content.defaultLanguage || 'id';
+
   return (
-    <html lang="id" className={`${montserrat.variable} ${dancingScript.variable}`}>
+    <html lang={defaultLanguage} className={`${montserrat.variable} ${dancingScript.variable}`}>
       <body>
-        <LanguageProvider>
+        <LanguageProvider defaultLanguage={defaultLanguage} initialContent={content}>
           {pixelId && <MetaPixelTracker pixelId={pixelId} />}
           {/* Global JSON-LD Structured Data untuk SEO + GEO */}
           <JsonLd data={organizationJsonLd} />

@@ -17,12 +17,23 @@ function convertDate(dateStr) {
 }
 
 export async function generateMetadata() {
+  const content = await db.get('content') || {};
+  const defaultLanguage = content.content?.defaultLanguage || content.defaultLanguage || 'id';
+
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['blog'] || {};
 
-  const title = pageSeo.title_id || "Artikel & Catatan Seni - Berseni Blog";
-  const description = pageSeo.description_id || "Wawasan seputar teknik melukis, sejarah seni rupa, dan proses kreatif dari para seniman Indonesia.";
-  const keywords = pageSeo.keywords_id || "blog seni, teknik melukis, sejarah seni, proses kreatif, seniman indonesia, cat air, akrilik";
+  const title = defaultLanguage === 'en'
+    ? (pageSeo.title_en || pageSeo.title_id || "Articles & Art Notes - Berseni Blog")
+    : (pageSeo.title_id || pageSeo.title_en || "Artikel & Catatan Seni - Berseni Blog");
+
+  const description = defaultLanguage === 'en'
+    ? (pageSeo.description_en || pageSeo.description_id || "Insights around painting techniques, art history, and creative processes of Indonesian artists.")
+    : (pageSeo.description_id || pageSeo.description_en || "Wawasan seputar teknik melukis, sejarah seni rupa, dan proses kreatif dari para seniman Indonesia.");
+
+  const keywords = defaultLanguage === 'en'
+    ? (pageSeo.keywords_en || pageSeo.keywords_id || "art blog, painting techniques, art history, creative process, indonesian artists, watercolor, acrylic")
+    : (pageSeo.keywords_id || pageSeo.keywords_en || "blog seni, teknik melukis, sejarah seni, proses kreatif, seniman indonesia, cat air, akrilik");
 
   return {
     title,
@@ -54,6 +65,7 @@ export async function generateMetadata() {
 }
 
 export default async function BlogPage() {
+  const content = await db.get('content') || {};
   const rawPosts = await db.get('posts') || [];
 
   // Sort posts descending by date (DD/MM/YYYY)
@@ -181,7 +193,7 @@ export default async function BlogPage() {
     <>
       <JsonLd data={blogPageJsonLd} />
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
-      <BlogPageClient initialPosts={posts} />
+      <BlogPageClient content={content} initialPosts={posts} />
     </>
   );
 }

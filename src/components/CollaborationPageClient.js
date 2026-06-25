@@ -99,7 +99,7 @@ export default function CollaborationPageClient({ content }) {
       <main className={styles.mainContent}>
         
         {/* 1. HERO SECTION */}
-        <section className={styles.heroSection}>
+        <section className={styles.heroSection} style={{ backgroundColor: dbContent?.bg_collab_hero || content?.bg_collab_hero || '', backgroundImage: (dbContent?.bg_collab_hero || content?.bg_collab_hero) ? 'none' : '' }}>
           <div className={styles.heroGlowContainer}>
             <div className={`${styles.glowBlob} ${styles.glowTosca}`}></div>
             <div className={`${styles.glowBlob} ${styles.glowKunyit}`}></div>
@@ -116,7 +116,7 @@ export default function CollaborationPageClient({ content }) {
         </section>
 
         {/* 2. BRAND COLLABORATION SECTION */}
-        <section className={styles.collabSection}>
+        <section className={styles.collabSection} style={{ backgroundColor: dbContent?.bg_collab_brand || content?.bg_collab_brand || '' }}>
           <div className={styles.sectionInner}>
             <div className={styles.brandCollabGrid}>
               
@@ -251,7 +251,7 @@ export default function CollaborationPageClient({ content }) {
         </section>
 
         {/* 3. VENUE COLLABORATION SECTION */}
-        <section className={`${styles.collabSection} ${styles.venueSectionBg}`}>
+        <section className={`${styles.collabSection} ${styles.venueSectionBg}`} style={{ backgroundColor: dbContent?.bg_collab_venue || content?.bg_collab_venue || '' }}>
           <div className={styles.sectionInner}>
             <div className={styles.venueHeader}>
               <span className={styles.sectionBadge} style={{ backgroundColor: 'rgba(20, 120, 155, 0.1)', color: 'var(--color-tosca)' }}>{getTranslation('collabVenueBadge')}</span>

@@ -19,6 +19,10 @@ function initLocalDb() {
         heroTitle_en: "Experience Art. Feel Indonesia.",
         heroSubtitle_id: "Learn. Create. Experience.",
         heroSubtitle_en: "Learn. Create. Experience.",
+        heroCardOpacity: "0.85",
+        heroBirdsTop: "10%",
+        navLayout: "floating",
+        navOpacity: "0.65",
         heroDescription_id: "Belajar langsung dari seniman profesional Indonesia melalui kelas online interaktif, workshop intim, dan festival seni imersif. Selami warisan budaya lokal yang kaya dan kembangkan kreativitas kontemporer Anda.",
         heroDescription_en: "Learn directly from professional Indonesian artists through interactive online classes, intimate workshops, and immersive art festivals. Dive into our rich local cultural heritage and develop your contemporary creativity.",
         aboutTitle_id: "When passion meets arts",
@@ -68,7 +72,9 @@ function initLocalDb() {
             rating: 5,
             comment_id: "Kelas Basic Oil Realism sangat direkomendasikan! Penjelasan Mas Srinthil mudah dipahami bahkan untuk saya yang baru mulai melukis.",
             comment_en: "Basic Oil Realism class is highly recommended! Mas Srinthil's explanation is easy to understand even for me who just started painting.",
-            borderColor: "var(--color-tosca)"
+            borderColor: "var(--color-tosca)",
+            videoThumbnail: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600",
+            videoLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
           },
           {
             id: "testi-2",
@@ -77,7 +83,9 @@ function initLocalDb() {
             rating: 5,
             comment_id: "Puas banget ikutan workshop Meowna Lisa kemarin! Mentornya sabar, vibes studionya asyik, dan bisa bawa pulang lukisan kucing buatan sendiri.",
             comment_en: "Extremely satisfied with the Meowna Lisa workshop! The mentor was patient, the studio vibe was fun, and I could bring home my own cat painting.",
-            borderColor: "var(--color-maroon)"
+            borderColor: "var(--color-maroon)",
+            videoThumbnail: "",
+            videoLink: ""
           },
           {
             id: "testi-3",
@@ -86,7 +94,9 @@ function initLocalDb() {
             rating: 5,
             comment_id: "Karya lukis orisinalnya sangat indah dan bersertifikat COA resmi. Dipajang di ruang tamu langsung bikin suasana rumah jadi lebih estetik.",
             comment_en: "The original paintings are stunning and come with an official COA. Hanging it in the living room instantly makes the house look aesthetic.",
-            borderColor: "var(--color-kunyit)"
+            borderColor: "var(--color-kunyit)",
+            videoThumbnail: "",
+            videoLink: ""
           },
           {
             id: "testi-4",
@@ -95,7 +105,9 @@ function initLocalDb() {
             rating: 4,
             comment_id: "Pendaftaran kelas online sangat mudah via Lynk.id. Video pembelajarannya HD dan aksesnya seumur hidup. Sangat worth it!",
             comment_en: "Registering for the online class was very easy via Lynk.id. The instructional videos are HD with lifetime access. Highly worth it!",
-            borderColor: "var(--color-tosca)"
+            borderColor: "var(--color-tosca)",
+            videoThumbnail: "",
+            videoLink: ""
           },
           {
             id: "testi-5",
@@ -104,7 +116,9 @@ function initLocalDb() {
             rating: 5,
             comment_id: "Workshop Summer in Pink di Yello Hotel kemarin seru banget! Dapet snack enak, alat lukis lengkap, dan dapet kenalan baru sesama pencinta seni.",
             comment_en: "The Summer in Pink workshop at Yello Hotel was so much fun! Got delicious snacks, complete painting tools, and met new friends who love art.",
-            borderColor: "var(--color-maroon)"
+            borderColor: "var(--color-maroon)",
+            videoThumbnail: "",
+            videoLink: ""
           },
           {
             id: "testi-6",
@@ -113,7 +127,9 @@ function initLocalDb() {
             rating: 5,
             comment_id: "Lukisan 'It's OK Offline' yang saya beli kualitas cat dan detail kanvasnya luar biasa. Pengirimannya aman menggunakan packing kayu.",
             comment_en: "The quality of the paint and canvas detail on the 'It's OK Offline' painting I bought is amazing. Shipping was safe using a wooden crate.",
-            borderColor: "var(--color-kunyit)"
+            borderColor: "var(--color-kunyit)",
+            videoThumbnail: "",
+            videoLink: ""
           },
           {
             id: "testi-7",
@@ -122,7 +138,9 @@ function initLocalDb() {
             rating: 4,
             comment_id: "Baru pertama kali melukis di workshop Tweet your Heart, ternyata menyenangkan sekali. Step-by-step-nya dipandu telaten oleh seniman.",
             comment_en: "First time painting at the Tweet your Heart workshop, and it turned out to be super fun. The artist guided us step-by-step with patience.",
-            borderColor: "var(--color-tosca)"
+            borderColor: "var(--color-tosca)",
+            videoThumbnail: "",
+            videoLink: ""
           },
           {
             id: "testi-8",
@@ -131,18 +149,20 @@ function initLocalDb() {
             rating: 5,
             comment_id: "Suka sekali dengan konsep komunitas Berseni. Bisa sharing progress lukisan di grup WhatsApp dan dapet arahan langsung dari tutor profesional.",
             comment_en: "Love the concept of the Berseni community. We can share painting progress in the WhatsApp group and get direct feedback from professional tutors.",
-            borderColor: "var(--color-maroon)"
+            borderColor: "var(--color-maroon)",
+            videoThumbnail: "",
+            videoLink: ""
           }
         ],
         heroBtn1Link: "#products",
         heroBtn1Status: "active",
         heroBtn2Link: "/about",
         heroBtn2Status: "active",
-        prog1Link: "filter:offline",
+        prog1Link: "/classes?type=offline",
         prog1Status: "active",
-        prog2Link: "filter:online",
+        prog2Link: "/classes?type=online",
         prog2Status: "active",
-        prog3Link: "filter:artwork",
+        prog3Link: "/store",
         prog3Status: "active",
         galleryBtnLink: "/store",
         galleryBtnStatus: "active",
@@ -160,7 +180,44 @@ function initLocalDb() {
         collabBrandBtnStatus: "active",
         collabVenueBtnLink: "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Saya%20memiliki%20venue%2Ftempat%20yang%20tertarik%20untuk%20berkolaborasi%20dengan%20komunitas%20Berseni.",
         collabVenueBtnStatus: "active",
-        defaultLanguage: "id"
+        classesTitle_id: "Kelas & Akademi Seni Berseni.",
+        classesTitle_en: "Berseni Art Classes & Academy.",
+        classesSubtitle_id: "Ikuti workshop offline dan kelas online interaktif kami bersama maestro pelukis Nusantara.",
+        classesSubtitle_en: "Join our offline workshops and interactive online classes with Indonesian maestros.",
+        classesSearchPlaceholder_id: "Cari kelas atau workshop...",
+        classesSearchPlaceholder_en: "Search classes or workshops...",
+        resultsCountClasses_id: "Menampilkan {count} kelas / workshop seni",
+        resultsCountClasses_en: "Showing {count} art classes / workshops",
+        emptyClassesTitle_id: "Tidak ada kelas yang cocok",
+        emptyClassesTitle_en: "No matching classes",
+        emptyClassesDesc_id: "Coba gunakan kata kunci pencarian lain atau pilih kategori yang berbeda.",
+        emptyClassesDesc_en: "Try using other search keywords or choose a different category.",
+        showAllClasses_id: "Tampilkan Semua Kelas",
+        showAllClasses_en: "Show All Classes",
+        defaultLanguage: "id",
+        bg_navbar: "#FAF5EB",
+        bg_home_hero: "#FAF5EB",
+        bg_home_partners: "#FFFFFF",
+        bg_home_programs: "#FAF5EB",
+        bg_home_gallery: "#FFFFFF",
+        bg_home_testimonials: "#FAF5EB",
+        bg_home_blog: "#FFFFFF",
+        bg_home_cta: "#14789B",
+        bg_about_hero: "#FAF5EB",
+        bg_about_feature: "#FFFFFF",
+        bg_about_empower: "#FAF5EB",
+        bg_about_pillars: "#FFFFFF",
+        bg_about_stats: "#14789B",
+        bg_about_cta: "#FAF5EB",
+        bg_collab_hero: "#FAF5EB",
+        bg_collab_brand: "#FFFFFF",
+        bg_collab_venue: "#FAF5EB",
+        bg_store_main: "#FAF5EB",
+        bg_classes_main: "#FAF5EB",
+        bg_blog_header: "#FAF5EB",
+        bg_blog_content: "#FFFFFF",
+        bg_blog_detail_main: "#FFFFFF",
+        bg_blog_detail_cta: "#FAF5EB"
       },
       products: [
         {
@@ -397,6 +454,18 @@ function initLocalDb() {
           geo_placename: "Jakarta",
           geo_position: "-6.2088;106.8456",
           geo_icbm: "-6.2088, 106.8456"
+        },
+        classes: {
+          title_id: "Kelas & Akademi Seni - Berseni Art Academy",
+          title_en: "Art & Painting Classes - Berseni Art Academy",
+          description_id: "Daftar kelas melukis online (e-course) dan intimate workshop offline dari Berseni. Belajar langsung dari maestro pelukis Nusantara.",
+          description_en: "Register for online painting classes (e-courses) and offline intimate workshops from Berseni. Learn directly from Nusantara painting maestros.",
+          keywords_id: "kelas seni, kelas melukis, workshop offline, belajar melukis, e-course melukis, berseni, indonesia",
+          keywords_en: "art classes, painting class, offline workshop, learn painting, painting e-course, berseni, indonesia",
+          geo_region: "ID-JK",
+          geo_placename: "Jakarta",
+          geo_position: "-6.2088;106.8456",
+          geo_icbm: "-6.2088, 106.8456"
         }
       }
     };
@@ -509,11 +578,11 @@ function initLocalDb() {
         data.content.heroBtn1Status = "active";
         data.content.heroBtn2Link = "/about";
         data.content.heroBtn2Status = "active";
-        data.content.prog1Link = "filter:offline";
+        data.content.prog1Link = "/classes?type=offline";
         data.content.prog1Status = "active";
-        data.content.prog2Link = "filter:online";
+        data.content.prog2Link = "/classes?type=online";
         data.content.prog2Status = "active";
-        data.content.prog3Link = "filter:artwork";
+        data.content.prog3Link = "/store";
         data.content.prog3Status = "active";
         data.content.galleryBtnLink = "/store";
         data.content.galleryBtnStatus = "active";
@@ -536,6 +605,66 @@ function initLocalDb() {
       if (data.content && !data.content.defaultLanguage) {
         data.content.defaultLanguage = "id";
         updated = true;
+      }
+      if (data.content && data.content.heroCardOpacity === undefined) {
+        data.content.heroCardOpacity = "0.85";
+        updated = true;
+      }
+      if (data.content && data.content.heroBirdsTop === undefined) {
+        data.content.heroBirdsTop = "10%";
+        updated = true;
+      }
+      if (data.content && data.content.navLayout === undefined) {
+        data.content.navLayout = "floating";
+        updated = true;
+      }
+      if (data.content && data.content.classesTitle_id === undefined) {
+        data.content.classesTitle_id = "Kelas & Akademi Seni Berseni.";
+        data.content.classesTitle_en = "Berseni Art Classes & Academy.";
+        data.content.classesSubtitle_id = "Ikuti workshop offline dan kelas online interaktif kami bersama maestro pelukis Nusantara.";
+        data.content.classesSubtitle_en = "Join our offline workshops and interactive online classes with Indonesian maestros.";
+        data.content.classesSearchPlaceholder_id = "Cari kelas atau workshop...";
+        data.content.classesSearchPlaceholder_en = "Search classes or workshops...";
+        data.content.resultsCountClasses_id = "Menampilkan {count} kelas / workshop seni";
+        data.content.resultsCountClasses_en = "Showing {count} art classes / workshops";
+        data.content.emptyClassesTitle_id = "Tidak ada kelas yang cocok";
+        data.content.emptyClassesTitle_en = "No matching classes";
+        data.content.emptyClassesDesc_id = "Coba gunakan kata kunci pencarian lain atau pilih kategori yang berbeda.";
+        data.content.emptyClassesDesc_en = "Try using other search keywords or choose a different category.";
+        data.content.showAllClasses_id = "Tampilkan Semua Kelas";
+        data.content.showAllClasses_en = "Show All Classes";
+        updated = true;
+      }
+      if (data.content && data.content.navOpacity === undefined) {
+        data.content.navOpacity = "0.65";
+        updated = true;
+      }
+      if (data.content && data.content.testimonials) {
+        let testiUpdated = false;
+        data.content.testimonials = data.content.testimonials.map(t => {
+          let singleUpdated = false;
+          if (t.videoThumbnail === undefined) {
+            t.videoThumbnail = "";
+            singleUpdated = true;
+          }
+          if (t.videoLink === undefined) {
+            t.videoLink = "";
+            singleUpdated = true;
+          }
+          // Seed the first testimonial if empty
+          if (t.id === "testi-1" && !t.videoThumbnail) {
+            t.videoThumbnail = "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600";
+            t.videoLink = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+            singleUpdated = true;
+          }
+          if (singleUpdated) {
+            testiUpdated = true;
+          }
+          return t;
+        });
+        if (testiUpdated) {
+          updated = true;
+        }
       }
       if (!data.admin_password) {
         data.admin_password = process.env.ADMIN_PASSWORD || 'admin123';
@@ -602,8 +731,61 @@ function initLocalDb() {
             geo_placename: "Jakarta",
             geo_position: "-6.2088;106.8456",
             geo_icbm: "-6.2088, 106.8456"
+          },
+          classes: {
+            title_id: "Kelas & Akademi Seni - Berseni Art Academy",
+            title_en: "Art & Painting Classes - Berseni Art Academy",
+            description_id: "Daftar kelas melukis online (e-course) dan intimate workshop offline dari Berseni. Belajar langsung dari maestro pelukis Nusantara.",
+            description_en: "Register for online painting classes (e-courses) and offline intimate workshops from Berseni. Learn directly from Nusantara painting maestros.",
+            keywords_id: "kelas seni, kelas melukis, workshop offline, belajar melukis, e-course melukis, berseni, indonesia",
+            keywords_en: "art classes, painting class, offline workshop, learn painting, painting e-course, berseni, indonesia",
+            geo_region: "ID-JK",
+            geo_placename: "Jakarta",
+            geo_position: "-6.2088;106.8456",
+            geo_icbm: "-6.2088, 106.8456"
           }
         };
+        updated = true;
+      }
+      if (data.seo_pages && !data.seo_pages.classes) {
+        data.seo_pages.classes = {
+          title_id: "Kelas & Akademi Seni - Berseni Art Academy",
+          title_en: "Art & Painting Classes - Berseni Art Academy",
+          description_id: "Daftar kelas melukis online (e-course) dan intimate workshop offline dari Berseni. Belajar langsung dari maestro pelukis Nusantara.",
+          description_en: "Register for online painting classes (e-courses) and offline intimate workshops from Berseni. Learn directly from Nusantara painting maestros.",
+          keywords_id: "kelas seni, kelas melukis, workshop offline, belajar melukis, e-course melukis, berseni, indonesia",
+          keywords_en: "art classes, painting class, offline workshop, learn painting, painting e-course, berseni, indonesia",
+          geo_region: "ID-JK",
+          geo_placename: "Jakarta",
+          geo_position: "-6.2088;106.8456",
+          geo_icbm: "-6.2088, 106.8456"
+        };
+        updated = true;
+      }
+      if (data.content && data.content.bg_navbar === undefined) {
+        data.content.bg_navbar = "#FAF5EB";
+        data.content.bg_home_hero = "#FAF5EB";
+        data.content.bg_home_partners = "#FFFFFF";
+        data.content.bg_home_programs = "#0B132B";
+        data.content.bg_home_gallery = "#FFFFFF";
+        data.content.bg_home_testimonials = "#FAF5EB";
+        data.content.bg_home_blog = "#FFFFFF";
+        data.content.bg_home_cta = "#14789B";
+        data.content.bg_about_hero = "#FAF5EB";
+        data.content.bg_about_feature = "#FFFFFF";
+        data.content.bg_about_empower = "#FAF5EB";
+        data.content.bg_about_pillars = "#FFFFFF";
+        data.content.bg_about_stats = "#0B132B";
+        data.content.bg_about_cta = "#FAF5EB";
+        data.content.bg_collab_hero = "#FAF5EB";
+        data.content.bg_collab_brand = "#FFFFFF";
+        data.content.bg_collab_venue = "#FAF5EB";
+        data.content.bg_store_main = "#FAF5EB";
+        data.content.bg_classes_main = "#FAF5EB";
+        data.content.bg_blog_header = "#FAF5EB";
+        data.content.bg_blog_content = "#FFFFFF";
+        data.content.bg_blog_detail_main = "#FFFFFF";
+        data.content.bg_blog_detail_cta = "#FAF5EB";
         updated = true;
       }
       if (updated) {

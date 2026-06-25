@@ -36,9 +36,8 @@ export default function MetaPixelTracker({ pixelId }) {
   return (
     <>
       {/* Standard Meta Pixel Script */}
-      <Script
+      <script
         id="meta-pixel-init"
-        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             !function(f,b,e,v,n,t,s)

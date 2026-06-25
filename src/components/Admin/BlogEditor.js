@@ -27,7 +27,17 @@ export default function BlogEditor({ showToast }) {
     seoDescription_id: '',
     seoDescription_en: '',
     seoKeywords_id: '',
-    seoKeywords_en: ''
+    seoKeywords_en: '',
+    // CTA configs
+    ctaShow: false,
+    ctaTitle_id: '',
+    ctaTitle_en: '',
+    ctaDesc_id: '',
+    ctaDesc_en: '',
+    ctaShowButton: false,
+    ctaButtonText_id: '',
+    ctaButtonText_en: '',
+    ctaButtonLink: ''
   });
 
   const fetchPosts = async () => {
@@ -68,7 +78,17 @@ export default function BlogEditor({ showToast }) {
       seoDescription_id: post.seoDescription_id || '',
       seoDescription_en: post.seoDescription_en || '',
       seoKeywords_id: post.seoKeywords_id || '',
-      seoKeywords_en: post.seoKeywords_en || ''
+      seoKeywords_en: post.seoKeywords_en || '',
+      // CTA fields
+      ctaShow: post.ctaShow || false,
+      ctaTitle_id: post.ctaTitle_id || '',
+      ctaTitle_en: post.ctaTitle_en || '',
+      ctaDesc_id: post.ctaDesc_id || '',
+      ctaDesc_en: post.ctaDesc_en || '',
+      ctaShowButton: post.ctaShowButton || false,
+      ctaButtonText_id: post.ctaButtonText_id || '',
+      ctaButtonText_en: post.ctaButtonText_en || '',
+      ctaButtonLink: post.ctaButtonLink || ''
     });
   };
 
@@ -91,14 +111,25 @@ export default function BlogEditor({ showToast }) {
       seoDescription_id: '',
       seoDescription_en: '',
       seoKeywords_id: '',
-      seoKeywords_en: ''
+      seoKeywords_en: '',
+      // CTA fields
+      ctaShow: false,
+      ctaTitle_id: '',
+      ctaTitle_en: '',
+      ctaDesc_id: '',
+      ctaDesc_en: '',
+      ctaShowButton: false,
+      ctaButtonText_id: '',
+      ctaButtonText_en: '',
+      ctaButtonLink: ''
     });
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
+    const val = type === 'checkbox' ? checked : value;
     setForm(prev => {
-      const updated = { ...prev, [name]: value };
+      const updated = { ...prev, [name]: val };
       
       // Auto-generate slug from title_id if user edits title and is creating a new post
       if (name === 'title_id' && editingPost === 'new') {
@@ -582,6 +613,126 @@ export default function BlogEditor({ showToast }) {
                         style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
                       />
                     </div>
+                  </div>
+                </div>
+
+                <div style={{ border: '1px solid #E2E8F0', borderRadius: '12px', padding: '1.25rem', backgroundColor: '#FFFBEB', marginTop: '0.5rem' }}>
+                  <h5 style={{ fontWeight: 'bold', fontSize: '0.9rem', marginBottom: '1rem', color: 'var(--color-text-dark)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    📢 Pengaturan Call to Action (CTA)
+                  </h5>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer', color: 'var(--color-text-dark)' }}>
+                      <input
+                        type="checkbox"
+                        name="ctaShow"
+                        checked={form.ctaShow}
+                        onChange={handleInputChange}
+                      />
+                      Tampilkan Blok CTA di Halaman Artikel ini
+                    </label>
+
+                    {form.ctaShow && (
+                      <>
+                        <div>
+                          <label className={styles.adminLabel} style={{ fontSize: '0.75rem' }}>CTA Judul / Title (ID)</label>
+                          <input
+                            type="text"
+                            name="ctaTitle_id"
+                            value={form.ctaTitle_id}
+                            onChange={handleInputChange}
+                            placeholder="e.g. Tertarik Melukis?"
+                            className={styles.adminInput}
+                            style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                          />
+                        </div>
+                        <div>
+                          <label className={styles.adminLabel} style={{ fontSize: '0.75rem' }}>CTA Judul / Title (EN)</label>
+                          <input
+                            type="text"
+                            name="ctaTitle_en"
+                            value={form.ctaTitle_en}
+                            onChange={handleInputChange}
+                            placeholder="e.g. Interested in Painting?"
+                            className={styles.adminInput}
+                            style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                          />
+                        </div>
+                        <div>
+                          <label className={styles.adminLabel} style={{ fontSize: '0.75rem' }}>CTA Deskripsi / Deskripsi (ID)</label>
+                          <textarea
+                            name="ctaDesc_id"
+                            value={form.ctaDesc_id}
+                            onChange={handleInputChange}
+                            placeholder="e.g. Ikuti kelas melukis online & offline kami sekarang juga!"
+                            className={styles.adminTextarea}
+                            style={{ minHeight: '60px', padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                          />
+                        </div>
+                        <div>
+                          <label className={styles.adminLabel} style={{ fontSize: '0.75rem' }}>CTA Deskripsi / Deskripsi (EN)</label>
+                          <textarea
+                            name="ctaDesc_en"
+                            value={form.ctaDesc_en}
+                            onChange={handleInputChange}
+                            placeholder="e.g. Join our online & offline painting classes today!"
+                            className={styles.adminTextarea}
+                            style={{ minHeight: '60px', padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                          />
+                        </div>
+                        
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer', color: 'var(--color-text-dark)', marginTop: '0.5rem' }}>
+                          <input
+                            type="checkbox"
+                            name="ctaShowButton"
+                            checked={form.ctaShowButton}
+                            onChange={handleInputChange}
+                          />
+                          Tampilkan Tombol Aksi (CTA Button)
+                        </label>
+
+                        {form.ctaShowButton && (
+                          <>
+                            <div>
+                              <label className={styles.adminLabel} style={{ fontSize: '0.75rem' }}>Tulisan Tombol (ID)</label>
+                              <input
+                                type="text"
+                                name="ctaButtonText_id"
+                                value={form.ctaButtonText_id}
+                                onChange={handleInputChange}
+                                placeholder="e.g. Lihat Kelas"
+                                className={styles.adminInput}
+                                style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                              />
+                            </div>
+                            <div>
+                              <label className={styles.adminLabel} style={{ fontSize: '0.75rem' }}>Tulisan Tombol (EN)</label>
+                              <input
+                                type="text"
+                                name="ctaButtonText_en"
+                                value={form.ctaButtonText_en}
+                                onChange={handleInputChange}
+                                placeholder="e.g. View Classes"
+                                className={styles.adminInput}
+                                style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                              />
+                            </div>
+                            <div>
+                              <label className={styles.adminLabel} style={{ fontSize: '0.75rem' }}>Link Tujuan Tombol</label>
+                              <input
+                                type="text"
+                                name="ctaButtonLink"
+                                value={form.ctaButtonLink}
+                                onChange={handleInputChange}
+                                placeholder="e.g. /classes atau https://lynk.id/..."
+                                className={styles.adminInput}
+                                style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                              />
+                            </div>
+                          </>
+                        )}
+                      </>
+                    )}
                   </div>
                 </div>
 

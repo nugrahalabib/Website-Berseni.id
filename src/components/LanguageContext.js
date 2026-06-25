@@ -4,13 +4,13 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const LanguageContext = createContext();
 
-export function LanguageProvider({ children }) {
-  const [language, setLanguage] = useState('id');
-  const [dbContent, setDbContent] = useState({});
+export function LanguageProvider({ children, defaultLanguage = 'id', initialContent = {} }) {
+  const [language, setLanguage] = useState(defaultLanguage);
+  const [dbContent, setDbContent] = useState(initialContent);
 
   const fetchDbContent = async () => {
     try {
-      const res = await fetch('/api/content');
+      const res = await fetch('/api/content', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setDbContent(data);
@@ -31,9 +31,11 @@ export function LanguageProvider({ children }) {
     const savedLang = localStorage.getItem('berseni_lang');
     if (savedLang === 'id' || savedLang === 'en') {
       setLanguage(savedLang);
+    } else {
+      setLanguage(defaultLanguage);
     }
     fetchDbContent();
-  }, []);
+  }, [defaultLanguage]);
 
   const toggleLanguage = () => {
     const newLang = language === 'id' ? 'en' : 'id';
@@ -61,15 +63,16 @@ export function LanguageProvider({ children }) {
   // Static strings translation dictionary
   const dict = {
     // Navbar
-    navHome: { id: 'Home', en: 'Home' },
-    navStore: { id: 'Store', en: 'Store' },
-    navAbout: { id: 'About Us', en: 'About Us' },
-    navCollab: { id: 'Colaboration', en: 'Collaboration' },
+    navHome: { id: 'Beranda', en: 'Home' },
+    navStore: { id: 'Galeri', en: 'Store' },
+    navClasses: { id: 'Kelas', en: 'Classes' },
+    navAbout: { id: 'Tentang Kami', en: 'About Us' },
+    navCollab: { id: 'Kolaborasi', en: 'Collaboration' },
     navBlog: { id: 'Blog', en: 'Blog' },
     langToggle: { id: 'EN', en: 'ID' },
 
     // Footer
-    footerTagline: { id: 'A World of Art for Everyone', en: 'A World of Art for Everyone' },
+    footerTagline: { id: 'Dunia Seni untuk Semua', en: 'A World of Art for Everyone' },
     footerDesc: {
       id: 'Platform penghubung publik dan seniman Indonesia. Temukan kelas melukis online, workshop offline, dan karya seni terbaik langsung dari para maestro.',
       en: 'A platform connecting the public and Indonesian artists. Discover online painting classes, offline workshops, and the best artwork directly from the maestros.'
@@ -121,7 +124,7 @@ export function LanguageProvider({ children }) {
     tabAll: { id: 'Semua Koleksi', en: 'All Collections' },
     tabArtwork: { id: 'Karya Seni', en: 'Artworks' },
     tabOffline: { id: 'Workshop Offline', en: 'Offline Workshops' },
-    tabOnline: { id: 'Kelas E-Course', en: 'E-Course Classes' },
+    tabOnline: { id: 'Kelas Online', en: 'Online Classes' },
     viewAll: { id: 'Lihat Selengkapnya', en: 'View More' },
     emptyGallery: {
       id: 'Belum ada item untuk kategori ini. Hubungi admin via WhatsApp untuk melakukan request khusus.',
@@ -241,13 +244,13 @@ export function LanguageProvider({ children }) {
 
     // Collaboration Page
     collabHeroSubtitle: { id: 'KEMITRAAN BERSENI', en: 'BERSENI PARTNERSHIP' },
-    collabHeroTitle: { id: 'Collaboration Opportunities', en: 'Collaboration Opportunities' },
+    collabHeroTitle: { id: 'Peluang Kolaborasi', en: 'Collaboration Opportunities' },
     collabHeroDesc: {
       id: 'Mari jalin kemitraan kreatif bersama Berseni. Kami membuka peluang kolaborasi dengan brand, komunitas, dan partner venue untuk menghadirkan pengalaman seni rupa yang berkesan bagi semua orang.',
       en: "Let's build a creative partnership with Berseni. We open collaboration opportunities with brands, communities, and space partners to bring a memorable visual art experience for everyone."
     },
     collabBrandBadge: { id: 'Brand & Korporat', en: 'Brand & Corporate' },
-    collabBrandTitle: { id: 'Brand Collaboration', en: 'Brand Collaboration' },
+    collabBrandTitle: { id: 'Kolaborasi Brand', en: 'Brand Collaboration' },
     collabBrandIntro: {
       id: 'Berseni terbuka untuk berkolaborasi dengan brand, komunitas, dan perusahaan untuk menghadirkan pengalaman seni yang inspiratif dan berkesan. 🧡',
       en: 'Berseni is open to collaborate with brands, communities, and companies to bring inspiring and memorable art experiences. 🧡'
@@ -263,7 +266,7 @@ export function LanguageProvider({ children }) {
     collabBrandCallout: { id: '"Mari ciptakan cerita, koneksi, dan karya yang berdampak bersama!"', en: '"Let\'s create stories, connections, and impactful works together!"' },
     collabBrandBtn: { id: 'Mulai Kolaborasi Brand', en: 'Start Brand Collaboration' },
     collabVenueBadge: { id: 'Host & Mitra Ruang', en: 'Host & Space Partners' },
-    collabVenueTitle: { id: 'Call for Venue Collaboration', en: 'Call for Venue Collaboration' },
+    collabVenueTitle: { id: 'Undangan Kolaborasi Venue', en: 'Call for Venue Collaboration' },
     collabVenueSub: {
       id: 'Kami sedang mencari venue yang ingin berkolaborasi dengan kami. Anda menyediakan tempat, kami bawa traffic & pengalaman seni!',
       en: 'We are looking for space partners that want to collaborate with us. You provide the venue, we bring the traffic & art experience!'
@@ -274,7 +277,7 @@ export function LanguageProvider({ children }) {
     collabVenueFeat2Desc: { id: 'Kolaborasi kampanye media sosial dan pemasaran digital yang saling menguntungkan (*win-win*).', en: 'Mutual (win-win) social media campaigns and digital marketing collaborations.' },
     collabVenueFeat3Title: { id: 'Hadirkan Pengalaman', en: 'Bring Experience' },
     collabVenueFeat3Desc: { id: 'Ciptakan aktivitas kreatif berkesan, pameran seni, atau workshop melukis yang hidup di lokasi Anda.', en: 'Create memorable creative activities, art exhibitions, or live painting workshops at your location.' },
-    collabVenueCtaTitle: { id: "Let's Grow Together!", en: "Let's Grow Together!" },
+    collabVenueCtaTitle: { id: "Mari Tumbuh Bersama!", en: "Let's Grow Together!" },
     collabVenueCtaDesc: {
       id: 'Punya cafe, resto, coworking space, atau hotel dengan area kosong yang berseni? Hubungi tim kami via WhatsApp sekarang juga untuk berdiskusi menjalin kerjasama yang seru ini!',
       en: 'Have a cafe, restaurant, coworking space, or hotel with an artistic empty area? Contact our team via WhatsApp right now to discuss this exciting collaboration!'
@@ -329,14 +332,26 @@ export function LanguageProvider({ children }) {
     
     // Store Page keys
     resultsCount: { id: 'Menampilkan {count} produk / kelas seni', en: 'Showing {count} products / art classes' },
+    resultsCountArtwork: { id: 'Menampilkan {count} karya seni', en: 'Showing {count} original artworks' },
+    resultsCountClasses: { id: 'Menampilkan {count} kelas / workshop seni', en: 'Showing {count} art classes / workshops' },
     resetFilters: { id: 'Reset Filter', en: 'Reset Filters' },
     emptyStoreTitle: { id: 'Tidak ada produk yang cocok', en: 'No matching products' },
     emptyStoreDesc: { id: 'Coba gunakan kata kunci pencarian lain atau pilih kategori yang berbeda.', en: 'Try using other search keywords or choose a different category.' },
+    emptyClassesTitle: { id: 'Tidak ada kelas yang cocok', en: 'No matching classes' },
+    emptyClassesDesc: { id: 'Coba gunakan kata kunci pencarian lain atau pilih kategori yang berbeda.', en: 'Try using other search keywords or choose a different category.' },
     showAllProducts: { id: 'Tampilkan Semua Produk', en: 'Show All Products' },
+    showAllClasses: { id: 'Tampilkan Semua Kelas', en: 'Show All Classes' },
     loadingStore: { id: 'Memuat Art Market...', en: 'Loading Art Market...' },
+    loadingClasses: { id: 'Memuat Kelas Seni...', en: 'Loading Art Classes...' },
     publishedOn: { id: 'Diterbitkan pada', en: 'Published on' },
     writtenBy: { id: 'Ditulis oleh', en: 'Written by' },
-    minRead: { id: 'Menit Baca', en: 'Min Read' }
+    minRead: { id: 'Menit Baca', en: 'Min Read' },
+    
+    // New Classes template titles
+    classesTitle: { id: 'Kelas & Akademi Seni Berseni.', en: 'Berseni Art Classes & Academy.' },
+    classesSearchPlaceholder: { id: 'Cari kelas atau workshop...', en: 'Search classes or workshops...' },
+    galleryArtworkSubtitle: { id: 'Miliki lukisan fisik orisinal hasil kurasi seniman Nusantara untuk melengkapi keindahan koleksi Anda.', en: 'Own curated physical original paintings from Indonesian artists to enrich your private collection.' },
+    classesSubtitle: { id: 'Ikuti workshop offline dan kelas online interaktif kami bersama maestro pelukis Nusantara.', en: 'Join our offline workshops and interactive online classes with Indonesian maestros.' }
   };
 
   const getTranslation = (key) => {

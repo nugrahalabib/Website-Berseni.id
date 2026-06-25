@@ -141,7 +141,7 @@ export default function DashboardClient() {
       case 'page-content':
         return 'Edit teks sambutan, deskripsi, dan isi section landing page, about, dan collaboration.';
       case 'products':
-        return 'Kelola karya lukisan fisik, workshop offline, atau e-course online untuk dijual.';
+        return 'Kelola karya lukisan fisik, workshop offline, atau kelas online untuk dijual.';
       case 'blog':
         return 'Kelola artikel blog kreatif, catatan seni, dan parameter SEO masing-masing tulisan.';
       case 'seo':

@@ -7,12 +7,23 @@ export const revalidate = 0;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://berseni.id';
 
 export async function generateMetadata() {
+  const content = await db.get('content') || {};
+  const defaultLanguage = content.defaultLanguage || 'id';
+
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['home'] || {};
 
-  const title = pageSeo.title_id || 'Berseni - Galeri Seni & Kelas Melukis Online';
-  const description = pageSeo.description_id || 'Platform penghubung publik dan seniman Indonesia. Temukan kelas melukis online, workshop offline, dan karya seni terbaik langsung dari para maestro.';
-  const keywords = pageSeo.keywords_id || 'seni, lukis, kelas online, workshop offline, lukisan indonesia, belajar melukis, berseni';
+  const title = defaultLanguage === 'en'
+    ? (pageSeo.title_en || pageSeo.title_id || 'Berseni - A World of Art For Everyone')
+    : (pageSeo.title_id || pageSeo.title_en || 'Berseni - Galeri Seni & Kelas Melukis Online');
+
+  const description = defaultLanguage === 'en'
+    ? (pageSeo.description_en || pageSeo.description_id || 'A platform connecting the public and Indonesian artists. Discover online painting classes, offline workshops, and the best artwork directly from the maestros.')
+    : (pageSeo.description_id || pageSeo.description_en || 'Platform penghubung publik dan seniman Indonesia. Temukan kelas melukis online, workshop offline, dan karya seni terbaik langsung dari para maestro.');
+
+  const keywords = defaultLanguage === 'en'
+    ? (pageSeo.keywords_en || pageSeo.keywords_id || 'art, painting, online classes, offline workshops, indonesian painting, learn painting, berseni')
+    : (pageSeo.keywords_id || pageSeo.keywords_en || 'seni, lukis, kelas online, workshop offline, lukisan indonesia, belajar melukis, berseni');
 
   return {
     title,

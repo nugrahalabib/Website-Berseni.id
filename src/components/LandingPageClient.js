@@ -162,9 +162,34 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
     }
   ];
 
-  const mid = Math.ceil(allTestimonials.length / 2);
-  const reviewsRow1 = allTestimonials.slice(0, mid);
-  const reviewsRow2 = allTestimonials.slice(mid);
+  const videoReviews = allTestimonials.filter(t => t.videoThumbnail && t.videoLink);
+  const textReviews = allTestimonials.filter(t => !t.videoThumbnail || !t.videoLink);
+
+  const showVideoRow = videoReviews.length > 0;
+  let reviewsRow1 = [];
+  let reviewsRow2 = [];
+
+  if (showVideoRow) {
+    reviewsRow1 = videoReviews;
+    reviewsRow2 = textReviews;
+  } else {
+    const mid = Math.ceil(allTestimonials.length / 2);
+    reviewsRow1 = allTestimonials.slice(0, mid);
+    reviewsRow2 = allTestimonials.slice(mid);
+  }
+
+  // Ensure marquee has enough elements to loop seamlessly on wide screens
+  const getMarqueeItems = (arr) => {
+    if (!arr || arr.length === 0) return [];
+    let items = [...arr];
+    while (items.length < 12) {
+      items = items.concat(arr);
+    }
+    return items;
+  };
+
+  const marqueeRow1 = getMarqueeItems(reviewsRow1);
+  const marqueeRow2 = getMarqueeItems(reviewsRow2);
   const partnersList = dbContent?.partners || initialContent?.partners || [
     "/support/1.png",
     "/support/2.png",
@@ -179,7 +204,6 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [videoEnded, setVideoEnded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ minutes: 59, seconds: 59 });
   const galleryTrackRef = useRef(null);
@@ -241,6 +265,10 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           e.preventDefault();
           const filter = link.split(':')[1];
           extraProps.onClick(filter);
+          const target = document.getElementById('products');
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
         } else {
           extraProps.onClick(e);
         }
@@ -435,111 +463,57 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
 
   // Hitung nilai animasi staggered berdasarkan scrollProgress (0 - 1)
   
-  // 1. Intro Video Opacity (fades out from 0.1 to 0.22)
-  const videoOpacity = scrollProgress < 0.1 
+  // 1. Sunset & Waves Transition (stays visible, fades out near the end of container)
+  const sunsetOpacity = scrollProgress < 0.85 
     ? 1 
-    : scrollProgress < 0.22 
-      ? 1 - (scrollProgress - 0.1) / 0.12 
+    : 1 - (scrollProgress - 0.85) / 0.15;
+
+  const sunsetTranslateY = scrollProgress * 50;
+
+  // 2. Birds Transition (stays visible, translates dynamically)
+  const birdsOpacity = scrollProgress < 0.85 
+    ? 1 
+    : 1 - (scrollProgress - 0.85) / 0.15;
+
+  const birdsTranslateX = scrollProgress * 150;
+  const birdsTranslateY = scrollProgress * -50;
+
+  // 3. Experience Art Text Card (visible on load, fades out from 0 to 0.45)
+  const textOpacity = scrollProgress < 0.45 
+    ? 1 - (scrollProgress / 0.45) 
+    : 0;
+
+  const textScale = scrollProgress < 0.45 
+    ? 1 - (scrollProgress / 0.45) * 0.05 
+    : 0.95;
+
+  const textTranslateY = scrollProgress < 0.45 
+    ? -((scrollProgress / 0.45) * 40) 
+    : -40;
+
+  // 4. Showcase (carousel) Transition (fades in from 0.50 to 0.85)
+  const showcaseOpacity = scrollProgress < 0.50 
+    ? 0 
+    : Math.min(1, (scrollProgress - 0.50) / 0.35);
+
+  const showcaseScale = scrollProgress < 0.50 
+    ? 0.92 
+    : 0.92 + Math.min(1, (scrollProgress - 0.50) / 0.35) * 0.08;
+
+  const showcaseTranslateY = scrollProgress < 0.50 
+    ? 40 
+    : 40 - Math.min(1, (scrollProgress - 0.50) / 0.35) * 40;
+
+  const showScrollButton = true;
+  
+  const scrollButtonOpacity = scrollProgress < 0.05 
+    ? 1 
+    : scrollProgress < 0.15 
+      ? 1 - (scrollProgress - 0.05) / 0.1 
       : 0;
 
-  // 2. Sunset & Waves Transition (fades/slides up 0.2 to 0.4, slides down/fades out 0.74 to 0.82)
-  const sunsetOpacity = scrollProgress < 0.20 
-    ? 0 
-    : scrollProgress < 0.40 
-      ? (scrollProgress - 0.20) / 0.20 
-      : scrollProgress < 0.74 
-        ? 1 
-        : scrollProgress < 0.82 
-          ? 1 - (scrollProgress - 0.74) / 0.08 
-          : 0;
-
-  const sunsetTranslateY = scrollProgress < 0.20 
-    ? 120 
-    : scrollProgress < 0.40 
-      ? 120 - ((scrollProgress - 0.20) / 0.20) * 120 
-      : scrollProgress < 0.74 
-        ? 0 
-        : ((scrollProgress - 0.74) / 0.08) * 120;
-
-  // 3. Birds Transition (fades/flies from left-top 0.33 to 0.52, flies right-top/fades out 0.70 to 0.78)
-  const birdsOpacity = scrollProgress < 0.33 
-    ? 0 
-    : scrollProgress < 0.52 
-      ? (scrollProgress - 0.33) / 0.19 
-      : scrollProgress < 0.70 
-        ? 1 
-        : scrollProgress < 0.78 
-          ? 1 - (scrollProgress - 0.70) / 0.08 
-          : 0;
-
-  const birdsTranslateX = scrollProgress < 0.33 
-    ? -200 
-    : scrollProgress < 0.52 
-      ? -200 - ((scrollProgress - 0.33) / 0.19) * -200 
-      : scrollProgress < 0.70 
-        ? 0 
-        : scrollProgress < 0.78 
-          ? ((scrollProgress - 0.70) / 0.08) * 300 
-          : 300;
-
-  const birdsTranslateY = scrollProgress < 0.33 
-    ? -60 
-    : scrollProgress < 0.52 
-      ? -60 - ((scrollProgress - 0.33) / 0.19) * -60 
-      : scrollProgress < 0.70 
-        ? 0 
-        : -((scrollProgress - 0.70) / 0.08) * 80;
-
-  // 4. Experience Art Text Card (fades/scales in 0.46 to 0.60, fades/slides up out first 0.65 to 0.72)
-  const textOpacity = scrollProgress < 0.46 
-    ? 0 
-    : scrollProgress < 0.60 
-      ? (scrollProgress - 0.46) / 0.14 
-      : scrollProgress < 0.65 
-        ? 1 
-        : scrollProgress < 0.72 
-          ? 1 - (scrollProgress - 0.65) / 0.07 
-          : 0;
-
-  const textScale = scrollProgress < 0.46 
-    ? 0.9 
-    : scrollProgress < 0.60 
-      ? 0.9 + ((scrollProgress - 0.46) / 0.14) * 0.1 
-      : scrollProgress < 0.65 
-        ? 1 
-        : scrollProgress < 0.72 
-          ? 1 - ((scrollProgress - 0.65) / 0.07) * 0.05 
-          : 0.95;
-
-  const textTranslateY = scrollProgress < 0.46 
-    ? 40 
-    : scrollProgress < 0.60 
-      ? 40 - ((scrollProgress - 0.46) / 0.14) * 40 
-      : scrollProgress < 0.65 
-        ? 0 
-        : -((scrollProgress - 0.65) / 0.07) * 30;
-
-  const showcaseOpacity = scrollProgress < 0.80 
-    ? 0 
-    : Math.min(1, (scrollProgress - 0.80) / 0.12);
-
-  const showcaseScale = scrollProgress < 0.80 
-    ? 0.92 
-    : 0.92 + Math.min(1, (scrollProgress - 0.80) / 0.12) * 0.08;
-
-  const showcaseTranslateY = scrollProgress < 0.80 
-    ? 40 
-    : 40 - Math.min(1, (scrollProgress - 0.80) / 0.12) * 40;
-
-  const showScrollButton = (isMobile || videoEnded);
-  
-  const scrollButtonOpacity = showScrollButton
-    ? (scrollProgress < 0.05 
-        ? 1 
-        : scrollProgress < 0.15 
-          ? 1 - (scrollProgress - 0.05) / 0.1 
-          : 0)
-    : 0;
+  const cardOpacity = dbContent?.heroCardOpacity || initialContent?.heroCardOpacity || '0.85';
+  const birdsTop = (!isMobile && (dbContent?.heroBirdsTop || initialContent?.heroBirdsTop)) ? (dbContent?.heroBirdsTop || initialContent?.heroBirdsTop) : '0px';
 
   const handleScrollDown = () => {
     window.scrollTo({
@@ -556,6 +530,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       <section 
         id="hero-scroll-container" 
         className={styles.heroScrollContainer}
+        style={{ backgroundColor: dbContent?.bg_home_hero || initialContent?.bg_home_hero || '' }}
       >
         <div className={styles.heroStickyWrapper}>
 
@@ -571,72 +546,14 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
             </svg>
           </div>
 
-          {/* TAHAP 1 & 2: ZOOM BINGKAI LUKISAN & VIDEO INTRO */}
-          {scrollProgress < 0.65 && (
-            <div 
-              className={styles.frameContainer}
-              style={{
-                transform: `translate(-50%, -50%) scale(${1 + scrollProgress * 18})`,
-                opacity: scrollProgress < 0.25 ? 1 : Math.max(0, 1 - (scrollProgress - 0.25) / 0.35),
-                pointerEvents: scrollProgress > 0.45 ? 'none' : 'auto',
-              }}
-            >
-              <div className={styles.frameWrapper}>
-                {/* 4 Pojok Bingkai Responsif */}
-                <img 
-                  src={content.heroCornerTl || "/hero-corner-tl.png"} 
-                  alt="Corner Top Left" 
-                  className={`${styles.frameCorner} ${styles.cornerTl}`}
-                />
-                <img 
-                  src={content.heroCornerTr || "/hero-corner-tr.png"} 
-                  alt="Corner Top Right" 
-                  className={`${styles.frameCorner} ${styles.cornerTr}`}
-                />
-                <img 
-                  src={content.heroCornerBl || "/hero-corner-bl.png"} 
-                  alt="Corner Bottom Left" 
-                  className={`${styles.frameCorner} ${styles.cornerBl}`}
-                />
-                <img 
-                  src={content.heroCornerBr || "/hero-corner-br.png"} 
-                  alt="Corner Bottom Right" 
-                  className={`${styles.frameCorner} ${styles.cornerBr}`}
-                />
-                
-                {/* Video Intro Logo di Tengah Bingkai (Fades out smoothly) */}
-                <div 
-                  className={styles.frameLogoOverlay}
-                  style={{
-                    opacity: videoOpacity,
-                    pointerEvents: videoOpacity < 0.1 ? 'none' : 'auto',
-                  }}
-                >
-                  <video
-                    className={styles.introVideo}
-                    src={content.heroVideo || "/video-intro-logo.mp4"}
-                    autoPlay
-                    muted
-                    playsInline
-                    preload="auto"
-                    onEnded={() => setVideoEnded(true)}
-                  />
-                  <img
-                    src={content.heroLogo || "/logo.png"}
-                    alt="Berseni Logo"
-                    className={styles.frameLogo}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+
 
           {/* BACKGROUND UNTUK TAHAP 3 (HERO TEXT) - STAGGERED ACCENTS */}
           <div 
             className={styles.heroStage3Bg}
             style={{
               pointerEvents: 'none',
-              display: scrollProgress < 0.15 || scrollProgress > 0.9 ? 'none' : 'block',
+              display: scrollProgress > 0.95 ? 'none' : 'block',
             }}
           >
             {/* Latar Belakang Ombak Sunset (Slides up and fades in) */}
@@ -658,7 +575,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                 transform: `scale(${1 + scrollProgress * 0.1}) translate(${birdsTranslateX + scrollProgress * 20}px, ${birdsTranslateY - scrollProgress * 12}px)`,
               }}
             >
-              <div className={styles.bgBirds} />
+              <div className={styles.bgBirds} style={{ top: birdsTop }} />
             </div>
           </div>
 
@@ -666,10 +583,11 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           <div 
             className={styles.heroContent}
             style={{
+              backgroundColor: `rgba(250, 245, 235, ${cardOpacity})`,
               opacity: textOpacity,
               transform: `translate(-50%, -50%) translateY(${textTranslateY}px) scale(${textScale})`,
               pointerEvents: textOpacity < 0.3 ? 'none' : 'auto',
-              display: scrollProgress > 0.92 ? 'none' : 'block',
+              display: scrollProgress > 0.45 ? 'none' : 'block',
             }}
           >
             <span className={styles.heroSubtitle}>{t(content, 'heroSubtitle')}</span>
@@ -729,7 +647,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       </section>
  
       {/* SPONSOR & PARTNER LOGOS LOOP (DI PERCAYA OLEH) */}
-      <section className={styles.partnersSection}>
+      <section className={styles.partnersSection} style={{ backgroundColor: dbContent?.bg_home_partners || initialContent?.bg_home_partners || '' }}>
         <div className={styles.partnersInner}>
           <h4 className={styles.partnersTitle}>{getTranslation('trustedBy')}</h4>
           <div className={styles.partnersMarquee}>
@@ -753,7 +671,14 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       </section>
  
       {/* 2. PROGRAMS SECTION (DARK INTERFACE) */}
-      <section id="programs" className={styles.programs}>
+      <section 
+        id="programs" 
+        className={styles.programs} 
+        style={{ 
+          backgroundColor: dbContent?.bg_home_programs || initialContent?.bg_home_programs || '',
+          backgroundImage: (dbContent?.bg_home_programs || initialContent?.bg_home_programs) ? 'none' : ''
+        }}
+      >
         {/* Glow backgrounds */}
         <div className={styles.programsGlowContainer}>
           <div className={`${styles.glowBlob} ${styles.glowMaroon}`}></div>
@@ -856,7 +781,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       </section>
 
       {/* 3. PRODUCT & WORKSHOP GALLERY SECTION */}
-      <section id="products" className={styles.gallery}>
+      <section id="products" className={styles.gallery} style={{ backgroundColor: dbContent?.bg_home_gallery || initialContent?.bg_home_gallery || '' }}>
         <div className={styles.sectionHeader}>
           <h2 style={{ color: 'var(--color-text-dark)' }}>{getTranslation('galleryTitle')}<span>.</span></h2>
           <p style={{ color: 'var(--color-text-muted)' }}>{getTranslation('gallerySubtitle')}</p>
@@ -982,71 +907,127 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       </section>
 
       {/* TESTIMONIALS / REVIEWS SECTION */}
-      <section className={styles.testimonials}>
+      <section className={styles.testimonials} style={{ backgroundColor: dbContent?.bg_home_testimonials || initialContent?.bg_home_testimonials || '' }}>
         <div className={styles.sectionHeader}>
           <h2 style={{ color: 'var(--color-text-dark)' }}>{getTranslation('testimonialsTitle')}<span>.</span></h2>
           <p style={{ color: 'var(--color-text-muted)' }}>{getTranslation('testimonialsSubtitle')}</p>
         </div>
 
         {/* Row 1: Left to Right movement */}
-        <div className={styles.marqueeWrapper}>
-          <div className={styles.marqueeTrackLeft}>
-            {reviewsRow1.concat(reviewsRow1).concat(reviewsRow1).map((review, idx) => (
-              <div 
-                key={`row1-${review.id}-${idx}`} 
-                className={styles.reviewCard}
-                style={{ borderTop: `4px solid ${review.borderColor}` }}
-              >
-                <div className={styles.reviewHeader}>
-                  <img src={review.avatar} alt={review.name} className={styles.reviewAvatar} />
-                  <div className={styles.reviewMeta}>
-                    <span className={styles.reviewName}>{review.name}</span>
-                    <div className={styles.reviewStars}>
-                      {Array.from({ length: review.rating }).map((_, i) => (
-                        <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="var(--color-kunyit)">
-                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
-                      ))}
+        {marqueeRow1.length > 0 && (
+          <div className={styles.marqueeWrapper}>
+            <div className={styles.marqueeTrackLeft}>
+              {marqueeRow1.map((review, idx) => {
+                const isVideoCard = showVideoRow && review.videoThumbnail && review.videoLink;
+                if (isVideoCard) {
+                  return (
+                    <a 
+                      key={`row1-video-${review.id}-${idx}`} 
+                      href={review.videoLink} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className={styles.videoReviewCard}
+                      style={{ borderTop: `4px solid ${review.borderColor}` }}
+                    >
+                      <img src={review.videoThumbnail} alt="Video Review Thumbnail" className={styles.videoCardImage} />
+                      <div className={styles.videoCardPlayOverlay}>
+                        <div className={styles.playButtonIconLarge}>
+                          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </div>
+                        <span className={styles.playBadge}>{language === 'en' ? 'Watch Review' : 'Tonton Review'}</span>
+                      </div>
+                      <div className={styles.videoCardProgress}>
+                        <div className={styles.videoCardProgressBar} style={{ width: '40%' }}></div>
+                      </div>
+                      
+                      {/* Glassmorphic reviewer card info at the bottom */}
+                      <div className={styles.videoCardFooter}>
+                        <div className={styles.videoCardHeader}>
+                          <img src={review.avatar} alt={review.name} className={styles.videoCardAvatar} />
+                          <div className={styles.videoCardMeta}>
+                            <span className={styles.videoCardName}>{review.name}</span>
+                            <div className={styles.videoCardStars}>
+                              {Array.from({ length: review.rating }).map((_, i) => (
+                                <svg key={i} width="12" height="12" viewBox="0 0 24 24" fill="var(--color-kunyit)">
+                                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                </svg>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        {t(review, 'comment') && (
+                          <p className={styles.videoCardComment}>"{t(review, 'comment')}"</p>
+                        )}
+                      </div>
+                    </a>
+                  );
+                }
+
+                // Standard reviewCard
+                return (
+                  <div 
+                    key={`row1-text-${review.id}-${idx}`} 
+                    className={styles.reviewCard}
+                    style={{ borderTop: `4px solid ${review.borderColor}` }}
+                  >
+                    <div className={styles.reviewHeader}>
+                      <img src={review.avatar} alt={review.name} className={styles.reviewAvatar} />
+                      <div className={styles.reviewMeta}>
+                        <span className={styles.reviewName}>{review.name}</span>
+                        <div className={styles.reviewStars}>
+                          {Array.from({ length: review.rating }).map((_, i) => (
+                            <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="var(--color-kunyit)">
+                              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                            </svg>
+                          ))}
+                        </div>
+                      </div>
                     </div>
+                    <p className={styles.reviewComment}>"{t(review, 'comment')}"</p>
                   </div>
-                </div>
-                <p className={styles.reviewComment}>"{t(review, 'comment')}"</p>
-              </div>
-            ))}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Row 2: Right to Left movement */}
-        <div className={styles.marqueeWrapper}>
-          <div className={styles.marqueeTrackRight}>
-            {reviewsRow2.concat(reviewsRow2).concat(reviewsRow2).map((review, idx) => (
-              <div 
-                key={`row2-${review.id}-${idx}`} 
-                className={styles.reviewCard}
-                style={{ borderTop: `4px solid ${review.borderColor}` }}
-              >
-                <div className={styles.reviewHeader}>
-                  <img src={review.avatar} alt={review.name} className={styles.reviewAvatar} />
-                  <div className={styles.reviewMeta}>
-                    <span className={styles.reviewName}>{review.name}</span>
-                    <div className={styles.reviewStars}>
-                      {Array.from({ length: review.rating }).map((_, i) => (
-                        <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="var(--color-kunyit)">
-                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
-                      ))}
+        {marqueeRow2.length > 0 && (
+          <div className={styles.marqueeWrapper}>
+            <div className={styles.marqueeTrackRight}>
+              {marqueeRow2.map((review, idx) => {
+                return (
+                  <div 
+                    key={`row2-${review.id}-${idx}`} 
+                    className={styles.reviewCard}
+                    style={{ borderTop: `4px solid ${review.borderColor}` }}
+                  >
+                    <div className={styles.reviewHeader}>
+                      <img src={review.avatar} alt={review.name} className={styles.reviewAvatar} />
+                      <div className={styles.reviewMeta}>
+                        <span className={styles.reviewName}>{review.name}</span>
+                        <div className={styles.reviewStars}>
+                          {Array.from({ length: review.rating }).map((_, i) => (
+                            <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="var(--color-kunyit)">
+                              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                            </svg>
+                          ))}
+                        </div>
+                      </div>
                     </div>
+                    <p className={styles.reviewComment}>"{t(review, 'comment')}"</p>
                   </div>
-                </div>
-                <p className={styles.reviewComment}>"{t(review, 'comment')}"</p>
-              </div>
-            ))}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </section>
 
       {/* BLOG SECTION */}
-      <section id="blog" className={styles.blogSliderSection}>
+      <section id="blog" className={styles.blogSliderSection} style={{ backgroundColor: dbContent?.bg_home_blog || initialContent?.bg_home_blog || '' }}>
         <div className={styles.sectionHeader}>
           <h2 style={{ color: 'var(--color-text-dark)' }}>{getTranslation('blogHeaderTitleText')}<span>{getTranslation('blogHeaderTitleSpan')}</span></h2>
           <p style={{ color: 'var(--color-text-muted)' }}>{getTranslation('blogHeaderSubtitle')}</p>
@@ -1140,7 +1121,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       </section>
 
       {/* 5. CTA SECTION */}
-      <section className={styles.cta}>
+      <section className={styles.cta} style={{ backgroundColor: dbContent?.bg_home_cta || initialContent?.bg_home_cta || '', backgroundImage: (dbContent?.bg_home_cta || initialContent?.bg_home_cta) ? 'none' : '' }}>
         {/* Background light effects */}
         <div style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: 'radial-gradient(circle, rgba(250,164,51,0.08) 0%, transparent 60%)', pointerEvents: 'none' }}></div>
         

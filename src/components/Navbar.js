@@ -12,7 +12,7 @@ export default function Navbar() {
   const [isAdmin, setIsAdmin] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { language, toggleLanguage, getTranslation } = useLanguage();
+  const { language, toggleLanguage, getTranslation, dbContent } = useLanguage();
 
   // Efek scroll navbar
   useEffect(() => {
@@ -56,13 +56,63 @@ export default function Navbar() {
   const navLinks = [
     { name: getTranslation('navHome'), path: '/' },
     { name: getTranslation('navStore'), path: '/store' },
+    { name: getTranslation('navClasses'), path: '/classes' },
     { name: getTranslation('navAbout'), path: '/about' },
     { name: getTranslation('navCollab'), path: '/collaboration' },
     { name: getTranslation('navBlog'), path: '/blog' },
   ];
 
+  const navLayout = dbContent?.navLayout || 'floating';
+  const navOpacity = dbContent?.navOpacity || '0.65';
+  const bgNavbar = dbContent?.bg_navbar || '#FAF5EB';
+  
+  const baseOpacity = isNaN(parseFloat(navOpacity)) ? 0.65 : parseFloat(navOpacity);
+  const currentOpacity = scrolled ? Math.min(1.0, baseOpacity + 0.23) : baseOpacity;
+  
+  // Helper to convert hex to rgba to preserve scrolled glassmorphic transparency
+  const convertToRgba = (colorStr, opacity) => {
+    if (!colorStr) return `rgba(250, 245, 235, ${opacity})`;
+    let cleaned = colorStr.trim();
+    if (cleaned.startsWith('var(') || cleaned.startsWith('rgb(') || cleaned.startsWith('rgba(')) {
+      return cleaned;
+    }
+    if (cleaned.startsWith('#')) {
+      let hex = cleaned.substring(1);
+      if (hex.length === 3 || hex.length === 4) {
+        hex = hex.split('').map(char => char + char).join('');
+      }
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      if (isNaN(r) || isNaN(g) || isNaN(b)) {
+        return `rgba(250, 245, 235, ${opacity})`;
+      }
+      return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+    return cleaned;
+  };
+
+  const inlineStyle = {
+    backgroundColor: convertToRgba(bgNavbar, currentOpacity)
+  };
+  
+  if (navLayout === 'full') {
+    inlineStyle.top = '0px';
+    inlineStyle.left = '0px';
+    inlineStyle.width = '100%';
+    inlineStyle.maxWidth = '100%';
+    inlineStyle.borderRadius = '0px';
+    inlineStyle.transform = 'none';
+    inlineStyle.borderLeft = 'none';
+    inlineStyle.borderRight = 'none';
+    inlineStyle.borderTop = 'none';
+  }
+
   return (
-    <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''} ${mobileActive ? styles.navbarExpanded : ''}`}>
+    <nav 
+      className={`${styles.navbar} ${scrolled ? styles.scrolled : ''} ${mobileActive ? styles.navbarExpanded : ''}`}
+      style={inlineStyle}
+    >
       <div className={styles.navInner}>
         {/* Brand Logo */}
         <div 
@@ -76,9 +126,9 @@ export default function Navbar() {
             }
           }}
         >
+          <img src="/logo.png" alt="Berseni Logo" className={styles.logoImage} />
           <div className={styles.logoTextContainer}>
-            <span className={styles.logoText}>Berseni</span>
-            <span className={styles.logoTagline}>A World of Art for Everyone</span>
+            <span className={styles.logoTagline}>{getTranslation('footerTagline')}</span>
           </div>
         </div>
 

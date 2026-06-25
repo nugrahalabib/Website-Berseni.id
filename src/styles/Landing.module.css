@@ -8,7 +8,7 @@
 /* HERO SECTION (SCROLL-ZOOM STICKY CONTAINER) */
 .heroScrollContainer {
   position: relative;
-  height: 300vh;
+  height: 200vh;
   width: 100%;
   background-color: var(--color-cream-bg);
   margin-top: -80px;
@@ -1290,6 +1290,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: hidden; /* Auto-clip video headers bleed corners */
 }
 
 .reviewCard:hover {
@@ -1340,8 +1341,327 @@
   font-weight: 500;
 }
 
+/* VIDEO REVIEW ACCENTS & MOTION EFFECTS */
+.videoPreviewWrapper {
+  display: block;
+  position: relative;
+  width: calc(100% + 3.5rem);
+  margin: -1.75rem -1.75rem 1.25rem -1.75rem;
+  height: 160px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(20, 120, 155, 0.08);
+  cursor: pointer;
+  z-index: 2;
+}
+
+.videoPreviewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.videoPlayOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.15) 60%, rgba(0, 0, 0, 0.35) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.95;
+  transition: all 0.3s ease;
+}
+
+/* Pulsating Play Button shadow ripple animation */
+.playButtonIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-tosca);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(20, 120, 155, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: playButtonPulse 2s infinite ease-in-out;
+}
+
+.playButtonIcon svg {
+  margin-left: 2px;
+  fill: #ffffff;
+}
+
+.playText {
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-top: 0.4rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.45);
+  padding: 3px 8px;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+}
+
+.videoMockProgress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  z-index: 3;
+}
+
+.videoMockProgressBar {
+  height: 100%;
+  background: var(--color-tosca);
+}
+
+/* Hover Zoom & Pulse acceleration */
+.videoPreviewWrapper:hover .videoPreviewImage {
+  transform: scale(1.08);
+}
+
+.videoPreviewWrapper:hover .videoPlayOverlay {
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.1) 60%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.videoPreviewWrapper:hover .playButtonIcon {
+  transform: scale(1.12) rotate(10deg);
+  background: var(--color-maroon);
+  box-shadow: 0 6px 18px rgba(186, 45, 50, 0.6);
+}
+
+.videoPreviewWrapper:hover .playText {
+  background: var(--color-maroon);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+@keyframes playButtonPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(20, 120, 155, 0.65);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(20, 120, 155, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(20, 120, 155, 0);
+  }
+}
+
+
+/* FULL VIDEO REVIEW CARD STYLING */
+.videoReviewCard {
+  flex: 0 0 360px;
+  height: 280px;
+  position: relative;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(20, 120, 155, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Align the glassmorphic footer at the bottom */
+  overflow: hidden;
+  text-decoration: none; /* Make sure links don't have underlines */
+  cursor: pointer;
+}
+
+.videoReviewCard:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(20, 120, 155, 0.12);
+  border-color: rgba(20, 120, 155, 0.2);
+}
+
+.videoCardImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.videoReviewCard:hover .videoCardImage {
+  transform: scale(1.08);
+}
+
+.videoCardPlayOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 60%, rgba(0, 0, 0, 0.7) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: background 0.3s ease;
+  padding-bottom: 75px; /* Offset to center the play button relative to the visible area above the footer */
+}
+
+.videoReviewCard:hover .videoCardPlayOverlay {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.45) 50%, rgba(0, 0, 0, 0.75) 100%);
+}
+
+.playButtonIconLarge {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--color-tosca);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(20, 120, 155, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: playButtonPulseLarge 2s infinite ease-in-out;
+}
+
+.playButtonIconLarge svg {
+  margin-left: 2px;
+  fill: #ffffff;
+}
+
+.videoReviewCard:hover .playButtonIconLarge {
+  transform: scale(1.1) rotate(8deg);
+  background: var(--color-maroon);
+  box-shadow: 0 6px 20px rgba(186, 45, 50, 0.65);
+}
+
+.playBadge {
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4px 10px;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.videoReviewCard:hover .playBadge {
+  background: var(--color-maroon);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.videoCardProgress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 3;
+}
+
+.videoCardProgressBar {
+  height: 100%;
+  background: var(--color-tosca);
+}
+
+/* Glassmorphic Footer Overlay at the Bottom of Video Card */
+.videoCardFooter {
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.85); /* Semi-transparent white */
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.videoCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.videoCardAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--color-white);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.videoCardMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.videoCardName {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--color-text-dark);
+  line-height: 1.2;
+}
+
+.videoCardStars {
+  display: flex;
+  gap: 2px;
+  margin-top: 1px;
+}
+
+.videoCardComment {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  font-style: italic;
+  font-weight: 500;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes playButtonPulseLarge {
+  0% {
+    box-shadow: 0 0 0 0 rgba(20, 120, 155, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(20, 120, 155, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(20, 120, 155, 0);
+  }
+}
+
+
 @media (max-width: 768px) {
+  .videoReviewCard {
+    flex-basis: 300px;
+    height: 250px;
+  }
+  .videoCardPlayOverlay {
+    padding-bottom: 60px;
+  }
   .testimonials {
+
     padding: 4.5rem 0;
   }
   .reviewCard {

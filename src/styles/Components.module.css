@@ -119,6 +119,7 @@
   position: relative;
   padding: 0.25rem 0;
   transition: color 0.3s;
+  white-space: nowrap; /* Prevent "ABOUT US" and "TENTANG KAMI" from wrapping */
 }
 
 .navLink::after {
@@ -738,6 +739,38 @@
   to { transform: scale(1) translateY(0); opacity: 1; }
 }
 
+/* Prevent wrapping and optimize navbar layout for desktop and tablet screens */
+@media (max-width: 1200px) {
+  .navbar {
+    padding: 0.75rem 1.5rem;
+  }
+  .scrolled {
+    padding: 0.55rem 1.5rem;
+  }
+  .navInner {
+    padding: 0 0.5rem;
+  }
+  .navLinks {
+    gap: 1.25rem;
+  }
+  .logoTagline {
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .navLinks {
+    gap: 0.85rem;
+  }
+  .navLink {
+    font-size: 0.85rem;
+  }
+  .logoTagline {
+    display: none; /* Hide tagline on smaller desktops to avoid overcrowding */
+  }
+}
+
 /* RESPONSIVE DESIGN */
 @media (max-width: 960px) {
   .footerGrid {
@@ -827,7 +860,7 @@
 }
 
 .navbarExpanded {
-  border-radius: 24px !important; /* Smoothly changes from pill to rounded card when expanded */
+  border-radius: 24px; /* Smoothly changes from pill to rounded card when expanded */
 }
 
 .mobileMenuContent {

@@ -34,6 +34,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/classes" className={styles.footerLink}>
+                  {getTranslation('navClasses')}
+                </Link>
+              </li>
+              <li>
                 <Link href="/about" className={styles.footerLink}>
                   {getTranslation('navAbout')}
                 </Link>

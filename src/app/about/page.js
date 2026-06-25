@@ -8,12 +8,23 @@ export const revalidate = 0;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://berseni.id';
 
 export async function generateMetadata() {
+  const content = await db.get('content') || {};
+  const defaultLanguage = content.content?.defaultLanguage || content.defaultLanguage || 'id';
+
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['about'] || {};
 
-  const title = pageSeo.title_id || "Tentang Kami - Berseni";
-  const description = pageSeo.description_id || "Temukan kisah kami, visi misi, dan komitmen Berseni dalam menjadi jembatan global utama antara masyarakat umum dan seniman lokal Indonesia.";
-  const keywords = pageSeo.keywords_id || "tentang kami, berseni, visi misi, komunitas seni, indonesia, melukis";
+  const title = defaultLanguage === 'en'
+    ? (pageSeo.title_en || pageSeo.title_id || "About Us - Berseni")
+    : (pageSeo.title_id || pageSeo.title_en || "Tentang Kami - Berseni");
+
+  const description = defaultLanguage === 'en'
+    ? (pageSeo.description_en || pageSeo.description_id || "Discover our story, vision, mission, and commitment of Berseni in becoming the primary global bridge between the general public and local Indonesian artists.")
+    : (pageSeo.description_id || pageSeo.description_en || "Temukan kisah kami, visi misi, dan komitmen Berseni dalam menjadi jembatan global utama antara masyarakat umum dan seniman lokal Indonesia.");
+
+  const keywords = defaultLanguage === 'en'
+    ? (pageSeo.keywords_en || pageSeo.keywords_id || "about us, berseni, vision mission, art community, indonesia, painting")
+    : (pageSeo.keywords_id || pageSeo.keywords_en || "tentang kami, berseni, visi misi, komunitas seni, indonesia, melukis");
 
   return {
     title,

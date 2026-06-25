@@ -74,6 +74,7 @@ export default function SeoEditor({ showToast }) {
     about: 'Halaman Tentang Kami (About Us)',
     collaboration: 'Halaman Kemitraan (Collaboration)',
     store: 'Halaman Art Market (Store)',
+    classes: 'Halaman Kelas Seni (Classes)',
     blog: 'Halaman Kumpulan Blog (Blog)',
     global: 'Integrasi Meta Pixel'
   };

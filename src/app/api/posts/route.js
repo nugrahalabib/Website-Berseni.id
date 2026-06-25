@@ -52,7 +52,8 @@ export async function POST(request) {
     const { 
       slug, title_id, title_en, date, image, 
       excerpt_id, excerpt_en, content_id, content_en,
-      seoTitle_id, seoTitle_en, seoDescription_id, seoDescription_en, seoKeywords_id, seoKeywords_en
+      seoTitle_id, seoTitle_en, seoDescription_id, seoDescription_en, seoKeywords_id, seoKeywords_en,
+      ctaShow, ctaTitle_id, ctaTitle_en, ctaDesc_id, ctaDesc_en, ctaShowButton, ctaButtonText_id, ctaButtonText_en, ctaButtonLink
     } = body;
     
     if (!slug || !title_id || !title_en || !content_id || !content_en) {
@@ -82,7 +83,17 @@ export async function POST(request) {
       seoDescription_id: seoDescription_id || '',
       seoDescription_en: seoDescription_en || '',
       seoKeywords_id: seoKeywords_id || '',
-      seoKeywords_en: seoKeywords_en || ''
+      seoKeywords_en: seoKeywords_en || '',
+      // CTA configs
+      ctaShow: !!ctaShow,
+      ctaTitle_id: ctaTitle_id || '',
+      ctaTitle_en: ctaTitle_en || '',
+      ctaDesc_id: ctaDesc_id || '',
+      ctaDesc_en: ctaDesc_en || '',
+      ctaShowButton: !!ctaShowButton,
+      ctaButtonText_id: ctaButtonText_id || '',
+      ctaButtonText_en: ctaButtonText_en || '',
+      ctaButtonLink: ctaButtonLink || ''
     };
     
     posts.unshift(newPost); // Taruh di awal biar langsung muncul sebagai artikel utama/terbaru
@@ -109,7 +120,8 @@ export async function PUT(request) {
     const { 
       originalSlug, slug, title_id, title_en, date, image, 
       excerpt_id, excerpt_en, content_id, content_en,
-      seoTitle_id, seoTitle_en, seoDescription_id, seoDescription_en, seoKeywords_id, seoKeywords_en
+      seoTitle_id, seoTitle_en, seoDescription_id, seoDescription_en, seoKeywords_id, seoKeywords_en,
+      ctaShow, ctaTitle_id, ctaTitle_en, ctaDesc_id, ctaDesc_en, ctaShowButton, ctaButtonText_id, ctaButtonText_en, ctaButtonLink
     } = body;
     
     if (!originalSlug || !slug || !title_id || !title_en || !content_id || !content_en) {
@@ -144,7 +156,17 @@ export async function PUT(request) {
       seoDescription_id: seoDescription_id || '',
       seoDescription_en: seoDescription_en || '',
       seoKeywords_id: seoKeywords_id || '',
-      seoKeywords_en: seoKeywords_en || ''
+      seoKeywords_en: seoKeywords_en || '',
+      // CTA configs
+      ctaShow: !!ctaShow,
+      ctaTitle_id: ctaTitle_id || '',
+      ctaTitle_en: ctaTitle_en || '',
+      ctaDesc_id: ctaDesc_id || '',
+      ctaDesc_en: ctaDesc_en || '',
+      ctaShowButton: !!ctaShowButton,
+      ctaButtonText_id: ctaButtonText_id || '',
+      ctaButtonText_en: ctaButtonText_en || '',
+      ctaButtonLink: ctaButtonLink || ''
     };
     
     const success = await db.set('posts', posts);

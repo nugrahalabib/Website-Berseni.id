@@ -6,15 +6,15 @@ import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Blog.module.css';
 
-export default function BlogPageClient({ initialPosts }) {
-  const { t, getTranslation } = useLanguage();
+export default function BlogPageClient({ content, initialPosts }) {
+  const { t, getTranslation, dbContent } = useLanguage();
   
   const posts = initialPosts || [];
   const featuredPost = posts.length > 0 ? posts[0] : null;
   const remainingPosts = posts.length > 1 ? posts.slice(1) : [];
 
   return (
-    <div style={{ backgroundColor: 'var(--color-cream-bg)', minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ backgroundColor: dbContent?.bg_blog_content || content?.bg_blog_content || 'var(--color-cream-bg)', minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
       {/* Background Glow Blobs for Artistic Aesthetic */}
       <div className={styles.blogGlowContainer}>
         <div className={`${styles.glowBlob} ${styles.glowTosca}`}></div>
@@ -26,7 +26,7 @@ export default function BlogPageClient({ initialPosts }) {
       
       <main className={styles.blogPage}>
         {/* Page Header */}
-        <div className={styles.blogHeader}>
+        <div className={styles.blogHeader} style={{ backgroundColor: dbContent?.bg_blog_header || content?.bg_blog_header || '' }}>
           <h1 className={styles.blogTitle}>
             {getTranslation('blogHeaderTitleText')}<span>{getTranslation('blogHeaderTitleSpan')}</span>
           </h1>

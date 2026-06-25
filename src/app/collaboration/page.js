@@ -8,12 +8,23 @@ export const revalidate = 0;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://berseni.id';
 
 export async function generateMetadata() {
+  const content = await db.get('content') || {};
+  const defaultLanguage = content.content?.defaultLanguage || content.defaultLanguage || 'id';
+
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['collaboration'] || {};
 
-  const title = pageSeo.title_id || "Kolaborasi Kemitraan - Berseni";
-  const description = pageSeo.description_id || "Buka peluang kolaborasi kreatif bersama Berseni. Kami terbuka untuk brand, komunitas, dan partner venue untuk menghadirkan pengalaman seni terbaik.";
-  const keywords = pageSeo.keywords_id || "kolaborasi, kerjasama, venue partner, brand collaboration, berseni, event seni";
+  const title = defaultLanguage === 'en'
+    ? (pageSeo.title_en || pageSeo.title_id || "Partnership Collaboration - Berseni")
+    : (pageSeo.title_id || pageSeo.title_en || "Kolaborasi Kemitraan - Berseni");
+
+  const description = defaultLanguage === 'en'
+    ? (pageSeo.description_en || pageSeo.description_id || "Open creative collaboration opportunities with Berseni. We are open for brands, communities, and venue partners to bring the best art experiences.")
+    : (pageSeo.description_id || pageSeo.description_en || "Buka peluang kolaborasi kreatif bersama Berseni. Kami terbuka untuk brand, komunitas, dan partner venue untuk menghadirkan pengalaman seni terbaik.");
+
+  const keywords = defaultLanguage === 'en'
+    ? (pageSeo.keywords_en || pageSeo.keywords_id || "collaboration, partnership, venue partner, brand collaboration, berseni, art event")
+    : (pageSeo.keywords_id || pageSeo.keywords_en || "kolaborasi, kerjasama, venue partner, brand collaboration, berseni, event seni");
 
   return {
     title,

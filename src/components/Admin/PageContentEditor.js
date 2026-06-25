@@ -112,6 +112,104 @@ const MediaUploadInput = ({ label, name, value, type, onChange }) => {
   );
 };
 
+// Default theme colors for reset fallbacks and placeholders
+const defaultColors = {
+  bg_navbar: "#FAF5EB",
+  bg_home_hero: "#FAF5EB",
+  bg_home_partners: "#FFFFFF",
+  bg_home_programs: "#0B132B",
+  bg_home_gallery: "#FFFFFF",
+  bg_home_testimonials: "#FAF5EB",
+  bg_home_blog: "#FFFFFF",
+  bg_home_cta: "#14789B",
+  bg_about_hero: "#FAF5EB",
+  bg_about_feature: "#FFFFFF",
+  bg_about_empower: "#FAF5EB",
+  bg_about_pillars: "#FFFFFF",
+  bg_about_stats: "#0B132B",
+  bg_about_cta: "#FAF5EB",
+  bg_collab_hero: "#FAF5EB",
+  bg_collab_brand: "#FFFFFF",
+  bg_collab_venue: "#FAF5EB",
+  bg_store_main: "#FAF5EB",
+  bg_classes_main: "#FAF5EB",
+  bg_blog_header: "#FAF5EB",
+  bg_blog_content: "#FFFFFF",
+  bg_blog_detail_main: "#FFFFFF",
+  bg_blog_detail_cta: "#FAF5EB"
+};
+
+// Component for visual color picking with typed hex codes support
+const ColorPickerInput = ({ label, name, value, onChange }) => {
+  const defaultVal = defaultColors[name] || '#ffffff';
+
+  // Helper to convert any custom input to standard 7-character lowercase hex required by HTML5 color picker
+  const getPickerHexValue = (val) => {
+    const rawVal = val || defaultVal;
+    let cleaned = rawVal.trim().toLowerCase();
+    if (!cleaned.startsWith('#')) return '#ffffff';
+    
+    let hex = cleaned.substring(1);
+    // Expand shorthand (e.g. #fff -> #ffffff)
+    if (hex.length === 3 || hex.length === 4) {
+      hex = hex.split('').slice(0, 3).map(char => char + char).join('');
+    }
+    if (hex.length === 6) {
+      return '#' + hex;
+    }
+    if (hex.length === 8) {
+      // Ignore alpha channel for the browser color picker
+      return '#' + hex.substring(0, 6);
+    }
+    return '#ffffff';
+  };
+
+  const hexValue = getPickerHexValue(value);
+
+  return (
+    <div style={{ marginBottom: '1.25rem', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: '12px', background: '#F8FAFC', width: '100%' }}>
+      <label style={{ display: 'block', fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--color-text-dark)', marginBottom: '0.5rem' }}>{label}</label>
+      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+        <input
+          type="color"
+          value={hexValue}
+          onChange={(e) => onChange(name, e.target.value)}
+          style={{
+            border: '1px solid #CBD5E1',
+            borderRadius: '8px',
+            width: '46px',
+            height: '42px',
+            padding: '2px',
+            cursor: 'pointer',
+            backgroundColor: '#FFFFFF',
+            flexShrink: 0
+          }}
+        />
+        <input
+          type="text"
+          value={value || ''}
+          onChange={(e) => onChange(name, e.target.value)}
+          placeholder={`Default: ${defaultVal}`}
+          className={styles.adminInput}
+          style={{ margin: 0, flex: 1 }}
+        />
+        <button
+          type="button"
+          className="btn btn-outline"
+          style={{ padding: '0.5rem 0.75rem', fontSize: '0.75rem', borderRadius: '8px', flexShrink: 0, height: '42px', display: 'flex', alignItems: 'center', background: 'transparent' }}
+          onClick={() => onChange(name, defaultVal)}
+        >
+          Default
+        </button>
+      </div>
+      <span style={{ fontSize: '0.7rem', color: '#64748B', display: 'block', marginTop: '0.25rem' }}>
+        Geser kotak warna di kiri, atau ketik kode HEX/RGB/RGBA secara manual.
+      </span>
+    </div>
+  );
+};
+
+
 export default function PageContentEditor({ showToast }) {
   const { refreshContent } = useLanguage();
   const [loading, setLoading] = useState(true);
@@ -124,10 +222,17 @@ export default function PageContentEditor({ showToast }) {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const res = await fetch('/api/content');
+        const res = await fetch('/api/content', { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
-          setForm(data);
+          // Pre-populate missing background colors with default colors
+          const updatedForm = { ...data };
+          Object.keys(defaultColors).forEach(key => {
+            if (updatedForm[key] === undefined || updatedForm[key] === '') {
+              updatedForm[key] = defaultColors[key];
+            }
+          });
+          setForm(updatedForm);
         }
       } catch (err) {
         console.error("Gagal memuat konten:", err);
@@ -210,12 +315,17 @@ export default function PageContentEditor({ showToast }) {
       title: 'Halaman Utama (Landing Page)',
       sections: {
         general: {
-          title: 'Pengaturan Umum Situs',
+          title: 'Pengaturan Umum Situs & Menu (Navbar)',
           fields: [
             { name: 'defaultLanguage', label: 'Bahasa Default Website (Untuk Pengunjung Baru)', type: 'select', defaultValue: 'id', options: [
               { value: 'id', label: 'Bahasa Indonesia (ID)' },
               { value: 'en', label: 'English (EN)' }
-            ]}
+            ]},
+            { name: 'navLayout', label: 'Layout Menu Navigasi (Navbar)', type: 'select', defaultValue: 'floating', options: [
+              { value: 'floating', label: 'Capsule Melayang (Melayang dengan sudut tumpul di atas)' },
+              { value: 'full', label: 'Kotak Penuh Lebar (Full-width rectangle di atas)' }
+            ]},
+            { name: 'navOpacity', label: 'Opasitas Latar Belakang Navbar (Nilai 0.0 s.d 1.0. Semakin dekat ke 0.0 semakin transparan, semakin dekat ke 1.0 semakin tebal/solid. Default: 0.65)', type: 'text', placeholder: '0.65' }
           ]
         },
         hero: {
@@ -239,12 +349,8 @@ export default function PageContentEditor({ showToast }) {
               { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
               { value: 'hidden', label: 'Sembunyikan Tombol' }
             ]},
-            { name: 'heroVideo', label: 'Video Intro (MP4)', type: 'video' },
-            { name: 'heroLogo', label: 'Logo Tengah Video (PNG)', type: 'image' },
-            { name: 'heroCornerTl', label: 'Bingkai Pojok Kiri Atas (PNG)', type: 'image' },
-            { name: 'heroCornerTr', label: 'Bingkai Pojok Kanan Atas (PNG)', type: 'image' },
-            { name: 'heroCornerBl', label: 'Bingkai Pojok Kiri Bawah (PNG)', type: 'image' },
-            { name: 'heroCornerBr', label: 'Bingkai Pojok Kanan Bawah (PNG)', type: 'image' }
+            { name: 'heroCardOpacity', label: 'Opasitas Kotak Teks Hero (Nilai 0.0 s.d 1.0. Semakin dekat ke 0.0 semakin transparan/tembus pandang, semakin dekat ke 1.0 semakin solid/tebal warna putihnya. Default: 0.85)', type: 'text', placeholder: '0.85' },
+            { name: 'heroBirdsTop', label: 'Posisi Tinggi Burung Parallax Desktop (Semakin besar persentase atau px maka burung makin TURUN ke bawah, contoh: 15% atau 50px. Gunakan nilai negatif seperti -60px untuk MENAIKKAN burung ke atas. Default: 10%)', type: 'text', placeholder: '10%' }
           ]
         },
         programs: {
@@ -363,6 +469,19 @@ export default function PageContentEditor({ showToast }) {
           title: 'Kelola Logo Partner (Dipercaya Oleh)',
           fields: [],
           customRender: 'partners_editor'
+        },
+        backgrounds: {
+          title: '🎨 Warna Latar Belakang Section & Navbar',
+          fields: [
+            { name: 'bg_navbar', label: 'Warna Latar Belakang Navbar', type: 'color' },
+            { name: 'bg_home_hero', label: 'Latar Belakang Hero Banner', type: 'color' },
+            { name: 'bg_home_partners', label: 'Latar Belakang Partner Logo', type: 'color' },
+            { name: 'bg_home_programs', label: 'Latar Belakang Program Kami (3 Pilar)', type: 'color' },
+            { name: 'bg_home_gallery', label: 'Latar Belakang Koleksi & Kelas Seni', type: 'color' },
+            { name: 'bg_home_testimonials', label: 'Latar Belakang Testimonial (Apa Kata Mereka)', type: 'color' },
+            { name: 'bg_home_blog', label: 'Latar Belakang Blog/Artikel Terbaru', type: 'color' },
+            { name: 'bg_home_cta', label: 'Latar Belakang CTA Banner WhatsApp', type: 'color' }
+          ]
         }
       }
     },
@@ -519,6 +638,17 @@ export default function PageContentEditor({ showToast }) {
               { value: 'hidden', label: 'Sembunyikan Tombol' }
             ]}
           ]
+        },
+        backgrounds: {
+          title: '🎨 Warna Latar Belakang Section',
+          fields: [
+            { name: 'bg_about_hero', label: 'Latar Belakang Hero Header', type: 'color' },
+            { name: 'bg_about_empower', label: 'Latar Belakang Story (Tentang Kami)', type: 'color' },
+            { name: 'bg_about_pillars', label: 'Latar Belakang Pillars Section', type: 'color' },
+            { name: 'bg_about_feature', label: 'Latar Belakang Commitment Section', type: 'color' },
+            { name: 'bg_about_stats', label: 'Latar Belakang Stats Section', type: 'color' },
+            { name: 'bg_about_cta', label: 'Latar Belakang CTA Section', type: 'color' }
+          ]
         }
       }
     },
@@ -619,6 +749,14 @@ export default function PageContentEditor({ showToast }) {
               { value: 'hidden', label: 'Sembunyikan Tombol' }
             ]}
           ]
+        },
+        backgrounds: {
+          title: '🎨 Warna Latar Belakang Section',
+          fields: [
+            { name: 'bg_collab_hero', label: 'Latar Belakang Hero Header', type: 'color' },
+            { name: 'bg_collab_brand', label: 'Latar Belakang Brand & Corporate Collab', type: 'color' },
+            { name: 'bg_collab_venue', label: 'Latar Belakang Host & Space Partners', type: 'color' }
+          ]
         }
       }
     },
@@ -650,6 +788,42 @@ export default function PageContentEditor({ showToast }) {
             { name: 'emptyStoreDesc_en', label: 'Empty Results Description (EN)', type: 'textarea' },
             { name: 'showAllProducts_id', label: 'Show All Button text (ID)', type: 'text' },
             { name: 'showAllProducts_en', label: 'Show All Button text (EN)', type: 'text' }
+          ]
+        },
+        backgrounds: {
+          title: '🎨 Warna Latar Belakang Page',
+          fields: [
+            { name: 'bg_store_main', label: 'Latar Belakang Utama Halaman Galeri', type: 'color' }
+          ]
+        }
+      }
+    },
+    classes: {
+      title: 'Halaman Kelas & Akademi (Classes)',
+      sections: {
+        header: {
+          title: 'Classes Headings & Labels',
+          fields: [
+            { name: 'classesTitle_id', label: 'Classes Main Title (ID)', type: 'text' },
+            { name: 'classesTitle_en', label: 'Classes Main Title (EN)', type: 'text' },
+            { name: 'classesSubtitle_id', label: 'Classes Subtitle (ID)', type: 'textarea' },
+            { name: 'classesSubtitle_en', label: 'Classes Subtitle (EN)', type: 'textarea' },
+            { name: 'classesSearchPlaceholder_id', label: 'Search Input Placeholder (ID)', type: 'text' },
+            { name: 'classesSearchPlaceholder_en', label: 'Search Input Placeholder (EN)', type: 'text' },
+            { name: 'resultsCountClasses_id', label: 'Results Count text (ID - gunakan {count})', type: 'text' },
+            { name: 'resultsCountClasses_en', label: 'Results Count text (EN - gunakan {count})', type: 'text' },
+            { name: 'emptyClassesTitle_id', label: 'Empty Results Title (ID)', type: 'text' },
+            { name: 'emptyClassesTitle_en', label: 'Empty Results Title (EN)', type: 'text' },
+            { name: 'emptyClassesDesc_id', label: 'Empty Results Description (ID)', type: 'textarea' },
+            { name: 'emptyClassesDesc_en', label: 'Empty Results Description (EN)', type: 'textarea' },
+            { name: 'showAllClasses_id', label: 'Show All Button text (ID)', type: 'text' },
+            { name: 'showAllClasses_en', label: 'Show All Button text (EN)', type: 'text' }
+          ]
+        },
+        backgrounds: {
+          title: '🎨 Warna Latar Belakang Page',
+          fields: [
+            { name: 'bg_classes_main', label: 'Latar Belakang Utama Halaman Kelas', type: 'color' }
           ]
         }
       }
@@ -683,6 +857,15 @@ export default function PageContentEditor({ showToast }) {
             { name: 'blogAboutTitle_en', label: 'Judul Tentang Berseni (EN)', type: 'text' },
             { name: 'blogAboutDesc_id', label: 'Deskripsi Tentang Berseni (ID)', type: 'textarea' },
             { name: 'blogAboutDesc_en', label: 'Deskripsi Tentang Berseni (EN)', type: 'textarea' }
+          ]
+        },
+        backgrounds: {
+          title: '🎨 Warna Latar Belakang Page & Detail',
+          fields: [
+            { name: 'bg_blog_header', label: 'Latar Belakang Header Halaman Blog', type: 'color' },
+            { name: 'bg_blog_content', label: 'Latar Belakang Konten Daftar Blog', type: 'color' },
+            { name: 'bg_blog_detail_main', label: 'Latar Belakang Utama Detail Artikel (Detail Blog)', type: 'color' },
+            { name: 'bg_blog_detail_cta', label: 'Latar Belakang CTA Detail Artikel (Detail Blog)', type: 'color' }
           ]
         }
       }
@@ -1274,43 +1457,49 @@ export default function PageContentEditor({ showToast }) {
   // Helper Custom Testimonials Editor
   const TestimonialsEditorSection = () => {
     const [editingIndex, setEditingIndex] = useState(null); // index or 'new'
-    const [testiForm, setTestiForm] = useState({
-      id: '',
-      name: '',
-      avatar: '',
-      rating: 5,
-      comment_id: '',
-      comment_en: '',
-      borderColor: 'var(--color-tosca)'
-    });
-
-    const testimonials = form.testimonials || [];
-
-    const handleEdit = (idx) => {
-      setEditingIndex(idx);
-      setTestiForm({
-        id: testimonials[idx].id || `testi-${Date.now()}`,
-        name: testimonials[idx].name || '',
-        avatar: testimonials[idx].avatar || '',
-        rating: testimonials[idx].rating || 5,
-        comment_id: testimonials[idx].comment_id || '',
-        comment_en: testimonials[idx].comment_en || '',
-        borderColor: testimonials[idx].borderColor || 'var(--color-tosca)'
-      });
-    };
-
-    const handleAddNew = () => {
-      setEditingIndex('new');
-      setTestiForm({
-        id: `testi-${Date.now()}`,
-        name: '',
-        avatar: '',
-        rating: 5,
-        comment_id: '',
-        comment_en: '',
-        borderColor: 'var(--color-tosca)'
-      });
-    };
+     const [testiForm, setTestiForm] = useState({
+       id: '',
+       name: '',
+       avatar: '',
+       rating: 5,
+       comment_id: '',
+       comment_en: '',
+       borderColor: 'var(--color-tosca)',
+       videoThumbnail: '',
+       videoLink: ''
+     });
+ 
+     const testimonials = form.testimonials || [];
+ 
+     const handleEdit = (idx) => {
+       setEditingIndex(idx);
+       setTestiForm({
+         id: testimonials[idx].id || `testi-${Date.now()}`,
+         name: testimonials[idx].name || '',
+         avatar: testimonials[idx].avatar || '',
+         rating: testimonials[idx].rating || 5,
+         comment_id: testimonials[idx].comment_id || '',
+         comment_en: testimonials[idx].comment_en || '',
+         borderColor: testimonials[idx].borderColor || 'var(--color-tosca)',
+         videoThumbnail: testimonials[idx].videoThumbnail || '',
+         videoLink: testimonials[idx].videoLink || ''
+       });
+     };
+ 
+     const handleAddNew = () => {
+       setEditingIndex('new');
+       setTestiForm({
+         id: `testi-${Date.now()}`,
+         name: '',
+         avatar: '',
+         rating: 5,
+         comment_id: '',
+         comment_en: '',
+         borderColor: 'var(--color-tosca)',
+         videoThumbnail: '',
+         videoLink: ''
+       });
+     };
 
     const handleDelete = (idx) => {
       if (confirm('Apakah Anda yakin ingin menghapus testimonial ini?')) {
@@ -1504,6 +1693,74 @@ export default function PageContentEditor({ showToast }) {
               </div>
             </div>
 
+            {/* Video Review config cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem', borderTop: '1px dashed #E2E8F0', paddingTop: '1.25rem' }}>
+              <div>
+                <label className={styles.adminLabel}>URL Thumbnail Video Review (Gambar Preview - Opsional)</label>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  {testiForm.videoThumbnail && (
+                    <img 
+                      src={testiForm.videoThumbnail} 
+                      alt="Thumbnail Preview" 
+                      style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover', border: '1px solid #CBD5E1', cursor: 'pointer' }}
+                      onClick={() => window.open(testiForm.videoThumbnail, '_blank')}
+                      title="Klik untuk lihat gambar penuh"
+                    />
+                  )}
+                  <input
+                    type="text"
+                    name="videoThumbnail"
+                    value={testiForm.videoThumbnail || ''}
+                    onChange={handleFormChange}
+                    placeholder="Masukkan URL gambar atau unggah file..."
+                    className={styles.adminInput}
+                    style={{ flex: 1, margin: 0 }}
+                  />
+                </div>
+                <div style={{ marginTop: '0.5rem' }}>
+                  <label className="btn btn-secondary" style={{ padding: '0.3rem 0.65rem', borderRadius: '6px', fontSize: '0.7rem', cursor: 'pointer', display: 'inline-block', margin: 0 }}>
+                    Unggah Gambar Thumbnail
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        try {
+                          const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                          if (res.ok) {
+                            const data = await res.json();
+                            setTestiForm(prev => ({ ...prev, videoThumbnail: data.url }));
+                          } else {
+                            alert('Gagal mengunggah thumbnail.');
+                          }
+                        } catch (err) {
+                          alert('Terjadi kesalahan saat mengunggah.');
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label className={styles.adminLabel}>Tautan Video Review (YouTube, TikTok, dll - Opsional)</label>
+                <input
+                  type="text"
+                  name="videoLink"
+                  value={testiForm.videoLink || ''}
+                  onChange={handleFormChange}
+                  placeholder="e.g. https://www.youtube.com/watch?v=..."
+                  className={styles.adminInput}
+                />
+                <span style={{ fontSize: '0.75rem', color: '#64748B', display: 'block', marginTop: '0.35rem' }}>
+                  Jika diisi, ulasan ini akan menampilkan card preview video interaktif di bagian paling atas.
+                </span>
+              </div>
+            </div>
+
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
               <button type="button" className="btn btn-outline" style={{ padding: '0.5rem 1.5rem' }} onClick={() => setEditingIndex(null)}>
                 Batal
@@ -1533,7 +1790,7 @@ export default function PageContentEditor({ showToast }) {
                   />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                     <strong style={{ fontSize: '0.9rem', color: '#1E293B' }}>{testi.name}</strong>
                     <span style={{ fontSize: '0.8rem', color: 'var(--color-kunyit)' }}>
                       {'⭐'.repeat(testi.rating || 5)}
@@ -1548,6 +1805,11 @@ export default function PageContentEditor({ showToast }) {
                       }} 
                       title={`Border: ${testi.borderColor}`}
                     />
+                    {testi.videoLink && (
+                      <span style={{ fontSize: '0.65rem', padding: '1px 5px', borderRadius: '4px', background: '#E0F2FE', color: '#0369A1', fontWeight: 'bold' }}>
+                        📹 Video
+                      </span>
+                    )}
                   </div>
                   <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: '#64748B', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                     {testi.comment_id}
@@ -1624,13 +1886,20 @@ export default function PageContentEditor({ showToast }) {
           <form onSubmit={handleSubmit}>
             <div className={styles.formGrid}>
               {currentPageConfig.sections[activeSection].fields.map(field => (
-                <div key={field.name} className={(field.type === 'textarea' || field.type === 'image' || field.type === 'video') ? styles.formGridFull : ''}>
+                <div key={field.name} className={(field.type === 'textarea' || field.type === 'image' || field.type === 'video' || field.type === 'color') ? styles.formGridFull : ''}>
                   {field.type === 'image' || field.type === 'video' ? (
                     <MediaUploadInput
                       label={field.label}
                       name={field.name}
                       value={form[field.name] || ''}
                       type={field.type}
+                      onChange={(name, val) => setForm(prev => ({ ...prev, [name]: val }))}
+                    />
+                  ) : field.type === 'color' ? (
+                    <ColorPickerInput
+                      label={field.label}
+                      name={field.name}
+                      value={form[field.name] || ''}
                       onChange={(name, val) => setForm(prev => ({ ...prev, [name]: val }))}
                     />
                   ) : field.type === 'textarea' ? (
