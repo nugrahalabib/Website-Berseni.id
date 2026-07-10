@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import SafeImage from '@/components/SafeImage';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -658,7 +657,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               {Array.from({ length: 3 }).map((_, loopIdx) => (
                 <div key={loopIdx} className={styles.partnersGroup}>
                   {partnersList.map((partnerUrl, imgIdx) => (
-                    <Image
+                    <SafeImage
                       key={`${loopIdx}-${imgIdx}`}
                       src={partnerUrl}
                       alt={`Partner ${imgIdx + 1}`}
@@ -666,6 +665,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                       width={140}
                       height={45}
                       sizes="140px"
+                      fallbackSrc="/logo.png"
                     />
                   ))}
                 </div>
@@ -934,7 +934,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                       className={styles.videoReviewCard}
                     >
                       <div style={{ height: '4px', backgroundColor: review.borderColor, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, borderRadius: '24px 24px 0 0' }} />
-                      <Image src={review.videoThumbnail} alt="Video Review Thumbnail" className={styles.videoCardImage} width={600} height={400} sizes="(max-width: 768px) 80vw, 400px" />
+                      <SafeImage src={review.videoThumbnail} alt="Video Review Thumbnail" className={styles.videoCardImage} width={600} height={400} sizes="(max-width: 768px) 80vw, 400px" fallbackSrc="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop" />
                       <div className={styles.videoCardPlayOverlay}>
                         <div className={styles.playButtonIconLarge}>
                           <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
@@ -950,7 +950,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                       {/* Glassmorphic reviewer card info at the bottom */}
                       <div className={styles.videoCardFooter}>
                         <div className={styles.videoCardHeader}>
-                          <Image src={review.avatar} alt={review.name} className={styles.videoCardAvatar} width={100} height={100} sizes="60px" />
+                          <SafeImage src={review.avatar} alt={review.name} className={styles.videoCardAvatar} width={100} height={100} sizes="60px" fallbackSrc="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop" />
                           <div className={styles.videoCardMeta}>
                             <span className={styles.videoCardName}>{review.name}</span>
                             <div className={styles.videoCardStars}>
@@ -978,7 +978,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                   >
                     <div style={{ height: '4px', backgroundColor: review.borderColor, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, borderRadius: '24px 24px 0 0' }} />
                     <div className={styles.reviewHeader}>
-                      <Image src={review.avatar} alt={review.name} className={styles.reviewAvatar} width={52} height={52} sizes="52px" />
+                      <SafeImage src={review.avatar} alt={review.name} className={styles.reviewAvatar} width={52} height={52} sizes="52px" fallbackSrc="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop" />
                       <div className={styles.reviewMeta}>
                         <span className={styles.reviewName}>{review.name}</span>
                         <div className={styles.reviewStars}>
@@ -1010,7 +1010,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                   >
                     <div style={{ height: '4px', backgroundColor: review.borderColor, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, borderRadius: '24px 24px 0 0' }} />
                     <div className={styles.reviewHeader}>
-                      <Image src={review.avatar} alt={review.name} className={styles.reviewAvatar} width={52} height={52} sizes="52px" />
+                      <SafeImage src={review.avatar} alt={review.name} className={styles.reviewAvatar} width={52} height={52} sizes="52px" fallbackSrc="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop" />
                       <div className={styles.reviewMeta}>
                         <span className={styles.reviewName}>{review.name}</span>
                         <div className={styles.reviewStars}>

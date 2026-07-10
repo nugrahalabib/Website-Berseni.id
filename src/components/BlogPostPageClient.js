@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
@@ -62,7 +62,7 @@ export default function BlogPostPageClient({ content, post }) {
           
           {/* Hero Image */}
           <div className={styles.postImageWrapper}>
-            <Image
+            <SafeImage
               src={post.image}
               alt={t(post, 'title')}
               className={styles.postImage}
@@ -70,6 +70,7 @@ export default function BlogPostPageClient({ content, post }) {
               height={700}
               sizes="100vw"
               priority
+              fallbackSrc="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=1200&auto=format&fit=crop"
             />
           </div>
           

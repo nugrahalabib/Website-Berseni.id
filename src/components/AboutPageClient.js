@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/About.module.css';
 
@@ -146,25 +146,25 @@ export default function AboutPageClient({ content }) {
             {/* 4 Photo Grid Collage */}
             <div className={styles.collageGrid}>
               <div className={styles.collageCard}>
-                <Image src={data.aboutCollage1 || "/activity-outdoor.webp"} alt="Melukis di Luar Ruangan" width={600} height={800} sizes="(max-width: 768px) 45vw, 300px" />
+                <SafeImage src={data.aboutCollage1 || "/activity-outdoor.webp"} alt="Melukis di Luar Ruangan" width={600} height={800} sizes="(max-width: 768px) 45vw, 300px" fallbackSrc="/activity-outdoor.webp" />
                 <div className={styles.collageOverlay}>
                   <span>Outdoor Painting</span>
                 </div>
               </div>
               <div className={styles.collageCard}>
-                <Image src={data.aboutCollage2 || "/activity-batik.webp"} alt="Workshop Membatik Tulis" width={600} height={800} sizes="(max-width: 768px) 45vw, 300px" />
+                <SafeImage src={data.aboutCollage2 || "/activity-batik.webp"} alt="Workshop Membatik Tulis" width={600} height={800} sizes="(max-width: 768px) 45vw, 300px" fallbackSrc="/activity-batik.webp" />
                 <div className={styles.collageOverlay}>
                   <span>Batik Workshop</span>
                 </div>
               </div>
               <div className={styles.collageCard}>
-                <Image src={data.aboutCollage3 || "/activity-talk.webp"} alt="Talkshow Apresiasi Seni" width={600} height={800} sizes="(max-width: 768px) 45vw, 300px" />
+                <SafeImage src={data.aboutCollage3 || "/activity-talk.webp"} alt="Talkshow Apresiasi Seni" width={600} height={800} sizes="(max-width: 768px) 45vw, 300px" fallbackSrc="/activity-talk.webp" />
                 <div className={styles.collageOverlay}>
                   <span>Art Appreciation</span>
                 </div>
               </div>
               <div className={styles.collageCard}>
-                <Image src={data.aboutCollage4 || "/activity-children.webp"} alt="Kelas Seni Anak Inklusi" width={600} height={800} sizes="(max-width: 768px) 45vw, 300px" />
+                <SafeImage src={data.aboutCollage4 || "/activity-children.webp"} alt="Kelas Seni Anak Inklusi" width={600} height={800} sizes="(max-width: 768px) 45vw, 300px" fallbackSrc="/activity-children.webp" />
                 <div className={styles.collageOverlay}>
                   <span>Inclusion Art Class</span>
                 </div>
@@ -249,13 +249,14 @@ export default function AboutPageClient({ content }) {
                   <span className={`${styles.frameCorner} ${styles.botL}`}></span>
                   <span className={`${styles.frameCorner} ${styles.botR}`}></span>
 
-                  <Image
+                  <SafeImage
                     src={data.aboutStudioImg || "/about-studio.webp"}
                     alt="Berseni Art Studio Ubud"
                     className={styles.visualImage}
                     width={1000}
                     height={700}
                     sizes="(max-width: 768px) 90vw, 500px"
+                    fallbackSrc="/about-studio.webp"
                   />
                   
                   {/* Play/Interact Badge overlay */}

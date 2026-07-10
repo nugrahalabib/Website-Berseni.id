@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
@@ -41,13 +41,14 @@ export default function BlogPageClient({ content, initialPosts }) {
           <section className={styles.featuredSection}>
             <div className={styles.featuredCard}>
               <div className={styles.featuredImageWrapper}>
-                <Image
+                <SafeImage
                   src={featuredPost.image}
                   alt={t(featuredPost, 'title')}
                   className={styles.featuredImage}
                   width={1200}
                   height={700}
                   sizes="(max-width: 768px) 100vw, 700px"
+                  fallbackSrc="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=800&auto=format&fit=crop"
                 />
                 <span className={styles.featuredTag}>{getTranslation('blogFeaturedTag')}</span>
               </div>
@@ -80,13 +81,14 @@ export default function BlogPageClient({ content, initialPosts }) {
               {(remainingPosts.length > 0 ? remainingPosts : posts).map((post) => (
                 <article key={post.slug} className={styles.blogCard}>
                   <div className={styles.blogCardImageWrapper}>
-                    <Image
+                    <SafeImage
                       src={post.image}
                       alt={t(post, 'title')}
                       className={styles.blogCardImage}
                       width={600}
                       height={400}
                       sizes="(max-width: 768px) 80vw, 360px"
+                      fallbackSrc="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=800&auto=format&fit=crop"
                     />
                     <span className={styles.blogCardTag}>{getTranslation('blogHeaderTitleSpan')}</span>
                   </div>

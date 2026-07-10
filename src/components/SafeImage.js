@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 
 /**
@@ -9,22 +9,29 @@ import Image from 'next/image';
  *
  * @param {object} props
  * @param {string} props.src - URL gambar utama
- * @param {string} [props.fallbackSrc] - URL cadangan bila src gagal dimuat
+ * @param {string} [props.fallbackSrc] - URL cadangan bila src gagal dimuat (default: /og-image.jpg)
+ * @param {string} [props.alt] - Teks alternatif gambar
  */
-export default function SafeImage({ src, fallbackSrc, ...props }) {
+export default function SafeImage({ src, fallbackSrc, alt, ...props }) {
+  const resolvedFallback = fallbackSrc || '/og-image.jpg';
+
   const [imgSrc, setImgSrc] = useState(src);
 
-  // Sinkronkan kembali bila src berubah (mis. ganti produk/filter).
-  useEffect(() => {
+  // Sinkronkan kembali bila src berubah (mis. ganti produk/filter),
+  // tanpa useEffect: reset state saat render via ref.
+  const prevSrc = useRef(src);
+  if (prevSrc.current !== src) {
+    prevSrc.current = src;
     setImgSrc(src);
-  }, [src]);
+  }
 
   return (
     <Image
       {...props}
       src={imgSrc}
+      alt={alt}
       onError={() => {
-        if (fallbackSrc && imgSrc !== fallbackSrc) setImgSrc(fallbackSrc);
+        if (imgSrc !== resolvedFallback) setImgSrc(resolvedFallback);
       }}
     />
   );

@@ -151,6 +151,7 @@ export default function HeroCarousel({ items = [], onCardClick }) {
                   width={900}
                   height={1100}
                   sizes="(max-width: 768px) 80vw, 500px"
+                  priority={isActive}
                   fallbackSrc="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop"
                 />
               </div>
