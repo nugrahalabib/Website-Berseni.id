@@ -4,7 +4,9 @@ import path from 'path';
 
 // Mendeteksi apakah menggunakan local development (tanpa env KV Vercel)
 const isLocal = !process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN;
-const localDbPath = path.join(process.cwd(), 'public', 'db.json');
+// Datastore lives OUTSIDE public/ so it is never served as a static asset.
+// Also gitignored (contains admin password). Production uses Vercel KV instead.
+const localDbPath = path.join(process.cwd(), 'data', 'db.json');
 
 // Inisialisasi data default jika file database lokal belum ada
 function initLocalDb() {

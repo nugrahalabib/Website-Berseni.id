@@ -19,8 +19,8 @@ export default function AccountEditor({ showToast }) {
       return;
     }
 
-    if (newPassword.length < 4) {
-      setError('Password baru minimal 4 karakter!');
+    if (newPassword.length < 8) {
+      setError('Password baru minimal 8 karakter!');
       return;
     }
 

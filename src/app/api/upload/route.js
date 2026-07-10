@@ -6,6 +6,17 @@ import path from 'path';
 import { decryptSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 
+// Batasan upload: hanya gambar raster, maksimal 5MB.
+// Catatan: SVG sengaja TIDAK diizinkan karena bisa memuat <script> (stored XSS).
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5MB
+const ALLOWED_MIME = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'image/avif',
+]);
+
 // Helper untuk validasi session admin
 async function isAdmin() {
   const cookieStore = await cookies();
@@ -30,7 +41,23 @@ export async function POST(request) {
     if (!file) {
       return NextResponse.json({ error: 'File tidak ditemukan' }, { status: 400 });
     }
-    
+
+    // Validasi tipe file (whitelist MIME, tolak SVG/HTML/skrip)
+    if (!ALLOWED_MIME.has(file.type)) {
+      return NextResponse.json(
+        { error: 'Tipe file tidak didukung. Gunakan JPEG, PNG, WebP, GIF, atau AVIF.' },
+        { status: 400 }
+      );
+    }
+
+    // Validasi ukuran file (maks 5MB) — cegah penyalahgunaan storage/DoS
+    if (typeof file.size === 'number' && file.size > MAX_UPLOAD_BYTES) {
+      return NextResponse.json(
+        { error: 'Ukuran file melebihi batas 5MB.' },
+        { status: 400 }
+      );
+    }
+
     const filename = file.name || 'image.webp';
     const isLocal = !process.env.BLOB_READ_WRITE_TOKEN;
     

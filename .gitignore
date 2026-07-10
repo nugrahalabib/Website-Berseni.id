@@ -43,6 +43,10 @@ next-env.d.ts
 # local uploads
 /public/uploads/
 
+# local datastore (contains admin password — never commit, never place under public/)
+/data/db.json
+/public/db.json
+
 
 .vercel
 .env*
