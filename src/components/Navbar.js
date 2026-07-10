@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Components.module.css';
@@ -126,7 +127,7 @@ export default function Navbar() {
             }
           }}
         >
-          <img src="/logo.png" alt="Berseni Logo" className={styles.logoImage} />
+          <Image src="/logo.png" alt="Berseni Logo" className={styles.logoImage} width={160} height={48} priority />
           <div className={styles.logoTextContainer}>
             <span className={styles.logoTagline}>{getTranslation('footerTagline')}</span>
           </div>

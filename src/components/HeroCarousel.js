@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import SafeImage from '@/components/SafeImage';
 import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Components.module.css';
 
@@ -143,13 +144,14 @@ export default function HeroCarousel({ items = [], onCardClick }) {
 
               {/* Image */}
               <div className={styles.carouselImageWrapper}>
-                <img
+                <SafeImage
                   src={item.image}
                   alt={t(item, 'title')}
                   className={styles.carouselImage}
-                  onError={(e) => {
-                    e.target.src = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop';
-                  }}
+                  width={900}
+                  height={1100}
+                  sizes="(max-width: 768px) 80vw, 500px"
+                  fallbackSrc="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop"
                 />
               </div>
 

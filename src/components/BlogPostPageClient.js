@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
@@ -61,10 +62,14 @@ export default function BlogPostPageClient({ content, post }) {
           
           {/* Hero Image */}
           <div className={styles.postImageWrapper}>
-            <img 
-              src={post.image} 
-              alt={t(post, 'title')} 
+            <Image
+              src={post.image}
+              alt={t(post, 'title')}
               className={styles.postImage}
+              width={1200}
+              height={700}
+              sizes="100vw"
+              priority
             />
           </div>
           

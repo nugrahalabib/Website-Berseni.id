@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import SafeImage from '@/components/SafeImage';
 import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Components.module.css';
 
@@ -65,13 +66,14 @@ export default function ProductModal({ product, onClose }) {
         <div className={styles.modalGrid}>
           {/* Column 1: Image */}
           <div className={styles.modalImageCol}>
-            <img
+            <SafeImage
               src={product.image}
               alt={t(product, 'title')}
               className={styles.modalImage}
-              onError={(e) => {
-                e.target.src = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop';
-              }}
+              width={1000}
+              height={1000}
+              sizes="(max-width: 768px) 90vw, 600px"
+              fallbackSrc="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop"
             />
           </div>
 

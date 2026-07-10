@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import SafeImage from '@/components/SafeImage';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import HeroCarousel from '@/components/HeroCarousel';
@@ -656,11 +658,14 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               {Array.from({ length: 3 }).map((_, loopIdx) => (
                 <div key={loopIdx} className={styles.partnersGroup}>
                   {partnersList.map((partnerUrl, imgIdx) => (
-                    <img 
-                      key={`${loopIdx}-${imgIdx}`} 
-                      src={partnerUrl} 
-                      alt={`Partner ${imgIdx + 1}`} 
-                      className={styles.partnerLogo} 
+                    <Image
+                      key={`${loopIdx}-${imgIdx}`}
+                      src={partnerUrl}
+                      alt={`Partner ${imgIdx + 1}`}
+                      className={styles.partnerLogo}
+                      width={140}
+                      height={45}
+                      sizes="140px"
                     />
                   ))}
                 </div>
@@ -929,7 +934,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                       className={styles.videoReviewCard}
                     >
                       <div style={{ height: '4px', backgroundColor: review.borderColor, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, borderRadius: '24px 24px 0 0' }} />
-                      <img src={review.videoThumbnail} alt="Video Review Thumbnail" className={styles.videoCardImage} />
+                      <Image src={review.videoThumbnail} alt="Video Review Thumbnail" className={styles.videoCardImage} width={600} height={400} sizes="(max-width: 768px) 80vw, 400px" />
                       <div className={styles.videoCardPlayOverlay}>
                         <div className={styles.playButtonIconLarge}>
                           <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
@@ -945,7 +950,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                       {/* Glassmorphic reviewer card info at the bottom */}
                       <div className={styles.videoCardFooter}>
                         <div className={styles.videoCardHeader}>
-                          <img src={review.avatar} alt={review.name} className={styles.videoCardAvatar} />
+                          <Image src={review.avatar} alt={review.name} className={styles.videoCardAvatar} width={100} height={100} sizes="60px" />
                           <div className={styles.videoCardMeta}>
                             <span className={styles.videoCardName}>{review.name}</span>
                             <div className={styles.videoCardStars}>
@@ -973,7 +978,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                   >
                     <div style={{ height: '4px', backgroundColor: review.borderColor, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, borderRadius: '24px 24px 0 0' }} />
                     <div className={styles.reviewHeader}>
-                      <img src={review.avatar} alt={review.name} className={styles.reviewAvatar} />
+                      <Image src={review.avatar} alt={review.name} className={styles.reviewAvatar} width={52} height={52} sizes="52px" />
                       <div className={styles.reviewMeta}>
                         <span className={styles.reviewName}>{review.name}</span>
                         <div className={styles.reviewStars}>
@@ -1005,7 +1010,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                   >
                     <div style={{ height: '4px', backgroundColor: review.borderColor, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, borderRadius: '24px 24px 0 0' }} />
                     <div className={styles.reviewHeader}>
-                      <img src={review.avatar} alt={review.name} className={styles.reviewAvatar} />
+                      <Image src={review.avatar} alt={review.name} className={styles.reviewAvatar} width={52} height={52} sizes="52px" />
                       <div className={styles.reviewMeta}>
                         <span className={styles.reviewName}>{review.name}</span>
                         <div className={styles.reviewStars}>
@@ -1057,14 +1062,14 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                   <div key={post.slug} className={styles.blogScrollItem}>
                     <article className={styles.blogSlideCard}>
                       <div className={styles.blogSlideImageWrapper}>
-                        <img 
-                          src={post.image} 
-                          alt={t(post, 'title')} 
+                        <SafeImage
+                          src={post.image}
+                          alt={t(post, 'title')}
                           className={styles.blogSlideImage}
-                          loading="lazy"
-                          onError={(e) => {
-                            e.target.src = 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=600&auto=format&fit=crop';
-                          }}
+                          width={600}
+                          height={400}
+                          sizes="(max-width: 768px) 80vw, 360px"
+                          fallbackSrc="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=600&auto=format&fit=crop"
                         />
                         <span className={styles.blogSlideTag}>{getTranslation('blogHeaderTitleSpan')}</span>
                       </div>

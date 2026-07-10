@@ -1,5 +1,6 @@
 'use client';
 
+import SafeImage from '@/components/SafeImage';
 import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Components.module.css';
 
@@ -42,14 +43,14 @@ export default function ProductCard({ product, onClick }) {
         >
           {getCategoryLabel(product.category)}
         </span>
-        <img
+        <SafeImage
           src={product.image}
           alt={t(product, 'title')}
           className={styles.cardImage}
-          loading="lazy"
-          onError={(e) => {
-            e.target.src = 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop';
-          }}
+          width={600}
+          height={750}
+          sizes="(max-width: 768px) 80vw, 380px"
+          fallbackSrc="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop"
         />
       </div>
 
