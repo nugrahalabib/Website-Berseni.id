@@ -16,6 +16,7 @@ const ALLOWED_MIME = new Set([
   'image/gif',
   'image/avif',
 ]);
+const ALLOWED_EXT = new Set(['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif']);
 
 // Helper untuk validasi session admin
 async function isAdmin() {
@@ -59,6 +60,16 @@ export async function POST(request) {
     }
 
     const filename = file.name || 'image.webp';
+
+    // Validasi ekstensi (cegah bypass MIME: file .svg dengan Content-Type dipalsukan
+    // agar tidak tersimpan lalu tersaji sebagai image/svg+xml yang bisa mengeksekusi skrip).
+    const ext = (filename.split('.').pop() || '').toLowerCase();
+    if (!ALLOWED_EXT.has(ext)) {
+      return NextResponse.json(
+        { error: 'Ekstensi file tidak didukung. Gunakan jpg, png, webp, gif, atau avif.' },
+        { status: 400 }
+      );
+    }
     const isLocal = !process.env.BLOB_READ_WRITE_TOKEN;
     
     if (isLocal) {

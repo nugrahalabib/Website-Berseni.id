@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import Script from 'next/script';
 
 function PixelTrackerInner({ pixelId }) {
   const pathname = usePathname();
@@ -28,8 +27,12 @@ function PixelTrackerInner({ pixelId }) {
 export default function MetaPixelTracker({ pixelId }) {
   const pathname = usePathname();
 
+  // ID Meta Pixel selalu numerik. Sanitasi ke digit saja untuk mencegah breakout
+  // string di dalam <script> inline / URL (stored XSS site-wide dari input admin).
+  const safePixelId = String(pixelId ?? '').replace(/[^0-9]/g, '');
+
   // Do not initialize or track anything on admin routes
-  if (!pixelId || pathname.startsWith('/admin')) {
+  if (!safePixelId || pathname.startsWith('/admin')) {
     return null;
   }
 
@@ -48,7 +51,7 @@ export default function MetaPixelTracker({ pixelId }) {
             t.src=v;s=b.getElementsByTagName(e)[0];
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '${pixelId}');
+            fbq('init', '${safePixelId}');
             fbq('track', 'PageView');
           `,
         }}
@@ -58,13 +61,13 @@ export default function MetaPixelTracker({ pixelId }) {
           height="1"
           width="1"
           style={{ display: 'none' }}
-          src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
+          src={`https://www.facebook.com/tr?id=${safePixelId}&ev=PageView&noscript=1`}
           alt=""
         />
       </noscript>
       {/* Listen to pathname / searchParams updates wrapped in Suspense to avoid build de-optimization */}
       <Suspense fallback={null}>
-        <PixelTrackerInner pixelId={pixelId} />
+        <PixelTrackerInner pixelId={safePixelId} />
       </Suspense>
     </>
   );

@@ -9,10 +9,17 @@
 export default function JsonLd({ data }) {
   if (!data) return null;
 
+  // Cegah breakout </script> / injeksi HTML dari field admin (stored XSS):
+  // escape <, >, & menjadi escape-unicode yang aman di dalam <script>.
+  const json = JSON.stringify(data)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026');
+
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: json }}
     />
   );
 }

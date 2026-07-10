@@ -257,7 +257,7 @@ export default function CollaborationPageClient({ content }) {
               <span className={styles.sectionBadge} style={{ backgroundColor: 'rgba(20, 120, 155, 0.1)', color: 'var(--color-tosca)' }}>{getTranslation('collabVenueBadge')}</span>
               <h2>{getTranslation('collabVenueTitle')}</h2>
               <div className={`${styles.underline} ${styles.toscaUnderline}`}></div>
-              <p className={styles.venueSubtitle} dangerouslySetInnerHTML={{ __html: getTranslation('collabVenueSub') }}></p>
+              <p className={styles.venueSubtitle} style={{ whiteSpace: 'pre-line' }}>{getTranslation('collabVenueSub')}</p>
             </div>
             
             {/* Benefits Grid */}

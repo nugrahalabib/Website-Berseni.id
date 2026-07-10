@@ -31,8 +31,12 @@ export async function verifyPassword(plain, stored) {
 const SECRET = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'berseni-local-secret-key-321!';
 
 if (!process.env.SESSION_SECRET) {
+  if (process.env.VERCEL_ENV === 'production') {
+    // Fail closed: jangan jalankan produksi dengan kunci fallback yang publik di source code.
+    throw new Error('[auth] SESSION_SECRET wajib di-set di produksi tetapi belum ada.');
+  }
   console.warn(
-    '[auth] SESSION_SECRET belum di-set — memakai kunci fallback yang tidak aman. ' +
+    '[auth] SESSION_SECRET belum di-set — memakai kunci fallback yang tidak aman (dev only). ' +
     'Set SESSION_SECRET di environment untuk mengamankan session.'
   );
 }
