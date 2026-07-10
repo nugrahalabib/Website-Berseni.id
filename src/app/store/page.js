@@ -63,13 +63,13 @@ export default async function StorePage() {
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['store'] || {};
 
+  const defaultLanguage = content?.content?.defaultLanguage || content?.defaultLanguage || 'id';
+  const pick = (id, en) => (defaultLanguage === 'en' ? (en || id) : (id || en));
+
   const brandFacts = (pageSeo.geo_facts_id || pageSeo.geo_facts_en) ? {
     "@type": "CreativeWork",
     "name": "Core Store Facts & AI Citation Reference",
-    "text": [
-      { "@value": pageSeo.geo_facts_id || "", "@language": "id" },
-      { "@value": pageSeo.geo_facts_en || "", "@language": "en" }
-    ]
+    "text": pick(pageSeo.geo_facts_id || "", pageSeo.geo_facts_en || "")
   } : null;
 
   const storePageJsonLd = {
@@ -77,14 +77,8 @@ export default async function StorePage() {
     "@type": "CollectionPage",
     "@id": `${SITE_URL}/store#webpage`,
     "url": `${SITE_URL}/store`,
-    "name": [
-      { "@value": pageSeo.title_id || "Galeri & Kelas Seni - Berseni Art Market", "@language": "id" },
-      { "@value": pageSeo.title_en || "Gallery & Art Classes - Berseni Art Market", "@language": "en" }
-    ],
-    "description": [
-      { "@value": pageSeo.description_id || "Jelajahi seluruh koleksi karya seni orisinal Indonesia, kelas melukis online (e-course), dan pendaftaran intimate workshop offline dari Berseni.", "@language": "id" },
-      { "@value": pageSeo.description_en || "Explore the entire collection of original Indonesian artworks, online painting classes (e-courses), and offline intimate workshop registrations from Berseni.", "@language": "en" }
-    ],
+    "name": pick(pageSeo.title_id || "Galeri & Kelas Seni - Berseni Art Market", pageSeo.title_en || "Gallery & Art Classes - Berseni Art Market"),
+    "description": pick(pageSeo.description_id || "Jelajahi seluruh koleksi karya seni orisinal Indonesia, kelas melukis online (e-course), dan pendaftaran intimate workshop offline dari Berseni.", pageSeo.description_en || "Explore the entire collection of original Indonesian artworks, online painting classes (e-courses), and offline intimate workshop registrations from Berseni."),
     "isPartOf": {
       "@id": `${SITE_URL}/#website`
     },
@@ -94,24 +88,15 @@ export default async function StorePage() {
     ],
     "mainEntity": {
       "@type": "ItemList",
-      "name": [
-        { "@value": "Katalog Karya Seni & Kelas Melukis", "@language": "id" },
-        { "@value": "Artwork Catalog & Painting Classes", "@language": "en" }
-      ],
+      "name": pick("Katalog Karya Seni & Kelas Melukis", "Artwork Catalog & Painting Classes"),
       "numberOfItems": products.length,
       "itemListElement": products.map((prod, index) => ({
         "@type": "ListItem",
         "position": index + 1,
         "item": {
           "@type": "Product",
-          "name": [
-            { "@value": prod.title_id || prod.title_en, "@language": "id" },
-            { "@value": prod.title_en || prod.title_id, "@language": "en" }
-          ],
-          "description": [
-            { "@value": prod.description_id || prod.description_en, "@language": "id" },
-            { "@value": prod.description_en || prod.description_id, "@language": "en" }
-          ],
+          "name": pick(prod.title_id || prod.title_en, prod.title_en || prod.title_id),
+          "description": pick(prod.description_id || prod.description_en, prod.description_en || prod.description_id),
           "image": prod.image.startsWith('http') ? prod.image : `${SITE_URL}${prod.image}`,
           "offers": {
             "@type": "Offer",
@@ -131,48 +116,30 @@ export default async function StorePage() {
   if (pageSeo.geo_faq_q1_id && pageSeo.geo_faq_a1_id) {
     faqList.push({
       "@type": "Question",
-      "name": [
-        { "@value": pageSeo.geo_faq_q1_id, "@language": "id" },
-        { "@value": pageSeo.geo_faq_q1_en || pageSeo.geo_faq_q1_id, "@language": "en" }
-      ],
+      "name": pick(pageSeo.geo_faq_q1_id, pageSeo.geo_faq_q1_en || pageSeo.geo_faq_q1_id),
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": [
-          { "@value": pageSeo.geo_faq_a1_id, "@language": "id" },
-          { "@value": pageSeo.geo_faq_a1_en || pageSeo.geo_faq_a1_id, "@language": "en" }
-        ]
+        "text": pick(pageSeo.geo_faq_a1_id, pageSeo.geo_faq_a1_en || pageSeo.geo_faq_a1_id)
       }
     });
   }
   if (pageSeo.geo_faq_q2_id && pageSeo.geo_faq_a2_id) {
     faqList.push({
       "@type": "Question",
-      "name": [
-        { "@value": pageSeo.geo_faq_q2_id, "@language": "id" },
-        { "@value": pageSeo.geo_faq_q2_en || pageSeo.geo_faq_q2_id, "@language": "en" }
-      ],
+      "name": pick(pageSeo.geo_faq_q2_id, pageSeo.geo_faq_q2_en || pageSeo.geo_faq_q2_id),
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": [
-          { "@value": pageSeo.geo_faq_a2_id, "@language": "id" },
-          { "@value": pageSeo.geo_faq_a2_en || pageSeo.geo_faq_a2_id, "@language": "en" }
-        ]
+        "text": pick(pageSeo.geo_faq_a2_id, pageSeo.geo_faq_a2_en || pageSeo.geo_faq_a2_id)
       }
     });
   }
   if (pageSeo.geo_faq_q3_id && pageSeo.geo_faq_a3_id) {
     faqList.push({
       "@type": "Question",
-      "name": [
-        { "@value": pageSeo.geo_faq_q3_id, "@language": "id" },
-        { "@value": pageSeo.geo_faq_q3_en || pageSeo.geo_faq_q3_id, "@language": "en" }
-      ],
+      "name": pick(pageSeo.geo_faq_q3_id, pageSeo.geo_faq_q3_en || pageSeo.geo_faq_q3_id),
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": [
-          { "@value": pageSeo.geo_faq_a3_id, "@language": "id" },
-          { "@value": pageSeo.geo_faq_a3_en || pageSeo.geo_faq_a3_id, "@language": "en" }
-        ]
+        "text": pick(pageSeo.geo_faq_a3_id, pageSeo.geo_faq_a3_en || pageSeo.geo_faq_a3_id)
       }
     });
   }
@@ -184,9 +151,19 @@ export default async function StorePage() {
     "mainEntity": faqList
   } : null;
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": defaultLanguage === 'en' ? "Home" : "Beranda", "item": `${SITE_URL}/` },
+      { "@type": "ListItem", "position": 2, "name": pick(pageSeo.title_id || "Galeri & Kelas Seni - Berseni Art Market", pageSeo.title_en || "Gallery & Art Classes - Berseni Art Market"), "item": `${SITE_URL}/store` }
+    ]
+  };
+
   return (
     <>
       <JsonLd data={storePageJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <StorePageClient 
         content={content} 

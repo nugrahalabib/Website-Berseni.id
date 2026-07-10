@@ -63,13 +63,13 @@ export default async function ClassesPage() {
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['classes'] || {};
 
+  const defaultLanguage = content?.content?.defaultLanguage || content?.defaultLanguage || 'id';
+  const pick = (id, en) => (defaultLanguage === 'en' ? (en || id) : (id || en));
+
   const brandFacts = (pageSeo.geo_facts_id || pageSeo.geo_facts_en) ? {
     "@type": "CreativeWork",
     "name": "Core Classes Facts & AI Citation Reference",
-    "text": [
-      { "@value": pageSeo.geo_facts_id || "", "@language": "id" },
-      { "@value": pageSeo.geo_facts_en || "", "@language": "en" }
-    ]
+    "text": pick(pageSeo.geo_facts_id || "", pageSeo.geo_facts_en || "")
   } : null;
 
   const classesPageJsonLd = {
@@ -77,14 +77,8 @@ export default async function ClassesPage() {
     "@type": "CollectionPage",
     "@id": `${SITE_URL}/classes#webpage`,
     "url": `${SITE_URL}/classes`,
-    "name": [
-      { "@value": pageSeo.title_id || "Kelas & Akademi Seni - Berseni Art Academy", "@language": "id" },
-      { "@value": pageSeo.title_en || "Art & Painting Classes - Berseni Art Academy", "@language": "en" }
-    ],
-    "description": [
-      { "@value": pageSeo.description_id || "Daftar kelas melukis online dan intimate workshop offline dari Berseni. Belajar langsung dari maestro pelukis Nusantara.", "@language": "id" },
-      { "@value": pageSeo.description_en || "Register for online painting classes and offline intimate workshops from Berseni. Learn directly from Nusantara painting maestros.", "@language": "en" }
-    ],
+    "name": pick(pageSeo.title_id || "Kelas & Akademi Seni - Berseni Art Academy", pageSeo.title_en || "Art & Painting Classes - Berseni Art Academy"),
+    "description": pick(pageSeo.description_id || "Daftar kelas melukis online dan intimate workshop offline dari Berseni. Belajar langsung dari maestro pelukis Nusantara.", pageSeo.description_en || "Register for online painting classes and offline intimate workshops from Berseni. Learn directly from Nusantara painting maestros."),
     "isPartOf": {
       "@id": `${SITE_URL}/#website`
     },
@@ -94,24 +88,15 @@ export default async function ClassesPage() {
     ],
     "mainEntity": {
       "@type": "ItemList",
-      "name": [
-        { "@value": "Katalog Kelas Melukis & Workshop", "@language": "id" },
-        { "@value": "Painting Classes & Workshops Catalog", "@language": "en" }
-      ],
+      "name": pick("Katalog Kelas Melukis & Workshop", "Painting Classes & Workshops Catalog"),
       "numberOfItems": products.length,
       "itemListElement": products.map((prod, index) => ({
         "@type": "ListItem",
         "position": index + 1,
         "item": {
           "@type": "Product",
-          "name": [
-            { "@value": prod.title_id || prod.title_en, "@language": "id" },
-            { "@value": prod.title_en || prod.title_id, "@language": "en" }
-          ],
-          "description": [
-            { "@value": prod.description_id || prod.description_en, "@language": "id" },
-            { "@value": prod.description_en || prod.description_id, "@language": "en" }
-          ],
+          "name": pick(prod.title_id || prod.title_en, prod.title_en || prod.title_id),
+          "description": pick(prod.description_id || prod.description_en, prod.description_en || prod.description_id),
           "image": prod.image.startsWith('http') ? prod.image : `${SITE_URL}${prod.image}`,
           "offers": {
             "@type": "Offer",
@@ -131,48 +116,30 @@ export default async function ClassesPage() {
   if (pageSeo.geo_faq_q1_id && pageSeo.geo_faq_a1_id) {
     faqList.push({
       "@type": "Question",
-      "name": [
-        { "@value": pageSeo.geo_faq_q1_id, "@language": "id" },
-        { "@value": pageSeo.geo_faq_q1_en || pageSeo.geo_faq_q1_id, "@language": "en" }
-      ],
+      "name": pick(pageSeo.geo_faq_q1_id, pageSeo.geo_faq_q1_en || pageSeo.geo_faq_q1_id),
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": [
-          { "@value": pageSeo.geo_faq_a1_id, "@language": "id" },
-          { "@value": pageSeo.geo_faq_a1_en || pageSeo.geo_faq_a1_id, "@language": "en" }
-        ]
+        "text": pick(pageSeo.geo_faq_a1_id, pageSeo.geo_faq_a1_en || pageSeo.geo_faq_a1_id)
       }
     });
   }
   if (pageSeo.geo_faq_q2_id && pageSeo.geo_faq_a2_id) {
     faqList.push({
       "@type": "Question",
-      "name": [
-        { "@value": pageSeo.geo_faq_q2_id, "@language": "id" },
-        { "@value": pageSeo.geo_faq_q2_en || pageSeo.geo_faq_q2_id, "@language": "en" }
-      ],
+      "name": pick(pageSeo.geo_faq_q2_id, pageSeo.geo_faq_q2_en || pageSeo.geo_faq_q2_id),
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": [
-          { "@value": pageSeo.geo_faq_a2_id, "@language": "id" },
-          { "@value": pageSeo.geo_faq_a2_en || pageSeo.geo_faq_a2_id, "@language": "en" }
-        ]
+        "text": pick(pageSeo.geo_faq_a2_id, pageSeo.geo_faq_a2_en || pageSeo.geo_faq_a2_id)
       }
     });
   }
   if (pageSeo.geo_faq_q3_id && pageSeo.geo_faq_a3_id) {
     faqList.push({
       "@type": "Question",
-      "name": [
-        { "@value": pageSeo.geo_faq_q3_id, "@language": "id" },
-        { "@value": pageSeo.geo_faq_q3_en || pageSeo.geo_faq_q3_id, "@language": "en" }
-      ],
+      "name": pick(pageSeo.geo_faq_q3_id, pageSeo.geo_faq_q3_en || pageSeo.geo_faq_q3_id),
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": [
-          { "@value": pageSeo.geo_faq_a3_id, "@language": "id" },
-          { "@value": pageSeo.geo_faq_a3_en || pageSeo.geo_faq_a3_id, "@language": "en" }
-        ]
+        "text": pick(pageSeo.geo_faq_a3_id, pageSeo.geo_faq_a3_en || pageSeo.geo_faq_a3_id)
       }
     });
   }
@@ -184,9 +151,19 @@ export default async function ClassesPage() {
     "mainEntity": faqList
   } : null;
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": defaultLanguage === 'en' ? "Home" : "Beranda", "item": `${SITE_URL}/` },
+      { "@type": "ListItem", "position": 2, "name": pick(pageSeo.title_id || "Kelas & Akademi Seni - Berseni Art Academy", pageSeo.title_en || "Art & Painting Classes - Berseni Art Academy"), "item": `${SITE_URL}/classes` }
+    ]
+  };
+
   return (
     <>
       <JsonLd data={classesPageJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <ClassesPageClient 
         content={content} 

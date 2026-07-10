@@ -76,13 +76,13 @@ export default async function Home() {
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['home'] || {};
 
+  const defaultLanguage = content?.content?.defaultLanguage || content?.defaultLanguage || 'id';
+  const pick = (id, en) => (defaultLanguage === 'en' ? (en || id) : (id || en));
+
   const brandFacts = (pageSeo.geo_facts_id || pageSeo.geo_facts_en) ? {
     "@type": "CreativeWork",
     "name": "Core Brand Facts & AI Citation Reference",
-    "text": [
-      { "@value": pageSeo.geo_facts_id || "", "@language": "id" },
-      { "@value": pageSeo.geo_facts_en || "", "@language": "en" }
-    ]
+    "text": pick(pageSeo.geo_facts_id || "", pageSeo.geo_facts_en || "")
   } : null;
 
   const homePageJsonLd = {
@@ -90,14 +90,8 @@ export default async function Home() {
     "@type": "WebPage",
     "@id": `${SITE_URL}/#webpage`,
     "url": SITE_URL,
-    "name": [
-      { "@value": pageSeo.title_id || "Berseni - Galeri Seni & Kelas Melukis Online", "@language": "id" },
-      { "@value": pageSeo.title_en || "Berseni - Art Gallery & Online Painting Classes", "@language": "en" }
-    ],
-    "description": [
-      { "@value": pageSeo.description_id || "Platform penghubung publik dan seniman Indonesia. Temukan kelas melukis online, workshop offline, dan karya seni terbaik langsung dari para maestro.", "@language": "id" },
-      { "@value": pageSeo.description_en || "A platform connecting the public and Indonesian artists. Discover online painting classes, offline workshops, and the best artwork directly from the maestros.", "@language": "en" }
-    ],
+    "name": pick(pageSeo.title_id || "Berseni - Galeri Seni & Kelas Melukis Online", pageSeo.title_en || "Berseni - Art Gallery & Online Painting Classes"),
+    "description": pick(pageSeo.description_id || "Platform penghubung publik dan seniman Indonesia. Temukan kelas melukis online, workshop offline, dan karya seni terbaik langsung dari para maestro.", pageSeo.description_en || "A platform connecting the public and Indonesian artists. Discover online painting classes, offline workshops, and the best artwork directly from the maestros."),
     "isPartOf": {
       "@id": `${SITE_URL}/#website`
     },
@@ -111,24 +105,15 @@ export default async function Home() {
   const productListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": [
-      { "@value": "Koleksi Karya & Kelas Seni Pilihan", "@language": "id" },
-      { "@value": "Featured Artworks & Painting Classes", "@language": "en" }
-    ],
+    "name": pick("Koleksi Karya & Kelas Seni Pilihan", "Featured Artworks & Painting Classes"),
     "numberOfItems": products.length,
     "itemListElement": products.map((prod, index) => ({
       "@type": "ListItem",
       "position": index + 1,
       "item": {
         "@type": "Product",
-        "name": [
-          { "@value": prod.title_id || prod.title_en, "@language": "id" },
-          { "@value": prod.title_en || prod.title_id, "@language": "en" }
-        ],
-        "description": [
-          { "@value": prod.description_id || prod.description_en, "@language": "id" },
-          { "@value": prod.description_en || prod.description_id, "@language": "en" }
-        ],
+        "name": pick(prod.title_id || prod.title_en, prod.title_en || prod.title_id),
+        "description": pick(prod.description_id || prod.description_en, prod.description_en || prod.description_id),
         "image": prod.image.startsWith('http') ? prod.image : `${SITE_URL}${prod.image}`,
         "offers": {
           "@type": "Offer",
@@ -146,48 +131,30 @@ export default async function Home() {
   if (pageSeo.geo_faq_q1_id && pageSeo.geo_faq_a1_id) {
     faqList.push({
       "@type": "Question",
-      "name": [
-        { "@value": pageSeo.geo_faq_q1_id, "@language": "id" },
-        { "@value": pageSeo.geo_faq_q1_en || pageSeo.geo_faq_q1_id, "@language": "en" }
-      ],
+      "name": pick(pageSeo.geo_faq_q1_id, pageSeo.geo_faq_q1_en || pageSeo.geo_faq_q1_id),
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": [
-          { "@value": pageSeo.geo_faq_a1_id, "@language": "id" },
-          { "@value": pageSeo.geo_faq_a1_en || pageSeo.geo_faq_a1_id, "@language": "en" }
-        ]
+        "text": pick(pageSeo.geo_faq_a1_id, pageSeo.geo_faq_a1_en || pageSeo.geo_faq_a1_id)
       }
     });
   }
   if (pageSeo.geo_faq_q2_id && pageSeo.geo_faq_a2_id) {
     faqList.push({
       "@type": "Question",
-      "name": [
-        { "@value": pageSeo.geo_faq_q2_id, "@language": "id" },
-        { "@value": pageSeo.geo_faq_q2_en || pageSeo.geo_faq_q2_id, "@language": "en" }
-      ],
+      "name": pick(pageSeo.geo_faq_q2_id, pageSeo.geo_faq_q2_en || pageSeo.geo_faq_q2_id),
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": [
-          { "@value": pageSeo.geo_faq_a2_id, "@language": "id" },
-          { "@value": pageSeo.geo_faq_a2_en || pageSeo.geo_faq_a2_id, "@language": "en" }
-        ]
+        "text": pick(pageSeo.geo_faq_a2_id, pageSeo.geo_faq_a2_en || pageSeo.geo_faq_a2_id)
       }
     });
   }
   if (pageSeo.geo_faq_q3_id && pageSeo.geo_faq_a3_id) {
     faqList.push({
       "@type": "Question",
-      "name": [
-        { "@value": pageSeo.geo_faq_q3_id, "@language": "id" },
-        { "@value": pageSeo.geo_faq_q3_en || pageSeo.geo_faq_q3_id, "@language": "en" }
-      ],
+      "name": pick(pageSeo.geo_faq_q3_id, pageSeo.geo_faq_q3_en || pageSeo.geo_faq_q3_id),
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": [
-          { "@value": pageSeo.geo_faq_a3_id, "@language": "id" },
-          { "@value": pageSeo.geo_faq_a3_en || pageSeo.geo_faq_a3_id, "@language": "en" }
-        ]
+        "text": pick(pageSeo.geo_faq_a3_id, pageSeo.geo_faq_a3_en || pageSeo.geo_faq_a3_id)
       }
     });
   }

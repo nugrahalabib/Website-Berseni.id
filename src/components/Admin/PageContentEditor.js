@@ -280,6 +280,896 @@ function MisiListSection({ misiListId, misiListEn, onMisiChange, onRemoveMisi, o
   );
 }
 
+// Helper Custom Activities Carousel Editor (hoisted ke module scope agar tidak remount)
+function ActivitiesEditorSection({ form, setForm }) {
+    const [editingIndex, setEditingIndex] = useState(null); // index or 'new'
+    const [actForm, setActForm] = useState({
+      id: '',
+      title_id: '',
+      title_en: '',
+      category: 'workshop',
+      image: '',
+      summary_id: '',
+      summary_en: '',
+      description_id: '',
+      description_en: '',
+      details_id: '',
+      details_en: '',
+      link: ''
+    });
+
+    const activities = form.activities || [];
+
+    const handleEdit = (idx) => {
+      setEditingIndex(idx);
+      setActForm({
+        id: activities[idx].id || `act-${Date.now()}`,
+        title_id: activities[idx].title_id || '',
+        title_en: activities[idx].title_en || '',
+        category: activities[idx].category || 'workshop',
+        image: activities[idx].image || '',
+        summary_id: activities[idx].summary_id || '',
+        summary_en: activities[idx].summary_en || '',
+        description_id: activities[idx].description_id || '',
+        description_en: activities[idx].description_en || '',
+        details_id: activities[idx].details_id || '',
+        details_en: activities[idx].details_en || '',
+        link: activities[idx].link || 'https://lynk.id/berseni.id'
+      });
+    };
+
+    const handleAddNew = () => {
+      setEditingIndex('new');
+      setActForm({
+        id: `act-${Date.now()}`,
+        title_id: '',
+        title_en: '',
+        category: 'workshop',
+        image: '',
+        summary_id: '',
+        summary_en: '',
+        description_id: '',
+        description_en: '',
+        details_id: '',
+        details_en: '',
+        link: 'https://lynk.id/berseni.id'
+      });
+    };
+
+    const handleDelete = (idx) => {
+      if (confirm('Apakah Anda yakin ingin menghapus aktivitas ini?')) {
+        const updated = activities.filter((_, i) => i !== idx);
+        setForm(prev => ({ ...prev, activities: updated }));
+      }
+    };
+
+    const handleSave = () => {
+      if (!actForm.title_id || !actForm.title_en) {
+        alert('Judul Aktivitas (ID & EN) wajib diisi keduanya!');
+        return;
+      }
+      
+      let updated = [...activities];
+      if (editingIndex === 'new') {
+        updated.push(actForm);
+      } else {
+        updated[editingIndex] = actForm;
+      }
+      
+      setForm(prev => ({ ...prev, activities: updated }));
+      setEditingIndex(null);
+    };
+
+    const handleActFormChange = (e) => {
+      const { name, value } = e.target;
+      setActForm(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleActImageUpload = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setActForm(prev => ({ ...prev, image: data.url }));
+        } else {
+          alert('Gagal mengunggah gambar.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Terjadi kesalahan saat mengunggah.');
+      }
+    };
+
+    if (editingIndex !== null) {
+      return (
+        <div style={{ background: '#F8FAFC', padding: '1.5rem', borderRadius: '12px', border: '1px solid #E2E8F0', marginTop: '1rem' }}>
+          <h4 style={{ fontWeight: 'bold', marginBottom: '1.25rem', color: 'var(--color-tosca)', fontSize: '1rem' }}>
+            {editingIndex === 'new' ? 'Tambah Aktivitas Baru' : 'Sunting Aktivitas'}
+          </h4>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div>
+              <label className={styles.adminLabel}>Judul Aktivitas (ID)</label>
+              <input
+                type="text"
+                name="title_id"
+                value={actForm.title_id}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+                required
+              />
+            </div>
+            <div>
+              <label className={styles.adminLabel}>Judul Aktivitas (EN)</label>
+              <input
+                type="text"
+                name="title_en"
+                value={actForm.title_en}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+                required
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div>
+              <label className={styles.adminLabel}>Kategori</label>
+              <select
+                name="category"
+                value={actForm.category}
+                onChange={handleActFormChange}
+                className={styles.adminSelect}
+              >
+                <option value="workshop">Workshop</option>
+                <option value="exhibition">Exhibition</option>
+                <option value="social">Kegiatan Komunitas</option>
+              </select>
+            </div>
+            <div>
+              <label className={styles.adminLabel}>Link URL Detail / Lynk.id</label>
+              <input
+                type="text"
+                name="link"
+                value={actForm.link}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+              />
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '1.25rem' }}>
+            <label className={styles.adminLabel}>Gambar Aktivitas</label>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              {actForm.image ? (
+                <img 
+                  src={actForm.image} 
+                  alt="Preview" 
+                  style={{ width: '80px', height: '80px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #CBD5E1', cursor: 'pointer' }} 
+                  onClick={() => window.open(actForm.image, '_blank')}
+                  title="Klik untuk lihat gambar penuh (Preview)"
+                />
+              ) : (
+                <div style={{ width: '80px', height: '80px', borderRadius: '8px', border: '2px dashed #CBD5E1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94A3B8', fontSize: '0.75rem', textAlign: 'center' }}>No Image</div>
+              )}
+              <div style={{ flex: 1 }}>
+                <input
+                  type="text"
+                  name="image"
+                  value={actForm.image}
+                  onChange={handleActFormChange}
+                  className={styles.adminInput}
+                  placeholder="URL gambar..."
+                  style={{ marginBottom: '0.5rem' }}
+                />
+                <label className="btn btn-secondary" style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', cursor: 'pointer', display: 'inline-block', margin: 0 }}>
+                  Unggah Gambar
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={handleActImageUpload}
+                  />
+                </label>
+                {actForm.image && (
+                  <a
+                    href={actForm.image}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline"
+                    style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', textDecoration: 'none', color: 'var(--color-tosca)', borderColor: 'var(--color-tosca)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', height: 'auto', background: 'transparent', marginLeft: '0.5rem' }}
+                  >
+                    📥 Unduh Gambar Asli
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div>
+              <label className={styles.adminLabel}>Ringkasan Singkat (ID)</label>
+              <input
+                type="text"
+                name="summary_id"
+                value={actForm.summary_id}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+              />
+            </div>
+            <div>
+              <label className={styles.adminLabel}>Ringkasan Singkat (EN)</label>
+              <input
+                type="text"
+                name="summary_en"
+                value={actForm.summary_en}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div>
+              <label className={styles.adminLabel}>Deskripsi Lengkap (ID)</label>
+              <textarea
+                name="description_id"
+                value={actForm.description_id}
+                onChange={handleActFormChange}
+                className={styles.adminTextarea}
+                rows={3}
+              />
+            </div>
+            <div>
+              <label className={styles.adminLabel}>Deskripsi Lengkap (EN)</label>
+              <textarea
+                name="description_en"
+                value={actForm.description_en}
+                onChange={handleActFormChange}
+                className={styles.adminTextarea}
+                rows={3}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div>
+              <label className={styles.adminLabel}>Detail Aktivitas (ID)</label>
+              <input
+                type="text"
+                name="details_id"
+                value={actForm.details_id}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+                placeholder="misal: Durasi: 3 Jam | Lokasi: Ubud"
+              />
+            </div>
+            <div>
+              <label className={styles.adminLabel}>Detail Aktivitas (EN)</label>
+              <input
+                type="text"
+                name="details_en"
+                value={actForm.details_en}
+                onChange={handleActFormChange}
+                className={styles.adminInput}
+                placeholder="e.g. Duration: 3 Hours | Location: Ubud"
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+            <button type="button" className="btn btn-outline" style={{ padding: '0.5rem 1.5rem' }} onClick={() => setEditingIndex(null)}>
+              Batal
+            </button>
+            <button type="button" className="btn btn-primary" style={{ padding: '0.5rem 1.5rem' }} onClick={handleSave}>
+              Simpan Aktivitas
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div style={{ marginTop: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <label className={styles.adminLabel} style={{ marginBottom: 0 }}>Daftar Aktivitas Carousel</label>
+          <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem', borderRadius: '8px' }} onClick={handleAddNew}>
+            + Tambah Aktivitas
+          </button>
+        </div>
+
+        {activities.length === 0 ? (
+          <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', border: '1px dashed #CBD5E1', borderRadius: '12px' }}>
+            Belum ada aktivitas. Silakan klik tombol "+ Tambah Aktivitas" untuk menambahkan.
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {activities.map((act, idx) => (
+              <div key={act.id || idx} style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '0.75rem', border: '1px solid #E2E8F0', borderRadius: '10px', background: '#FFFFFF' }}>
+                <div style={{ position: 'relative', display: 'inline-block', flexShrink: 0 }}>
+                  <img 
+                    src={act.image || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=150'} 
+                    alt="" 
+                    style={{ width: '50px', height: '50px', borderRadius: '6px', objectFit: 'cover', cursor: 'pointer', display: 'block' }} 
+                    onClick={() => window.open(act.image || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=150', '_blank')}
+                    title="Klik untuk lihat gambar penuh (Preview)"
+                  />
+                  {act.image && (
+                    <a
+                      href={act.image}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        position: 'absolute',
+                        bottom: '2px',
+                        right: '2px',
+                        background: 'rgba(20, 120, 155, 0.85)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '3px',
+                        width: '16px',
+                        height: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '9px',
+                        cursor: 'pointer',
+                        textDecoration: 'none'
+                      }}
+                      title="Unduh Gambar"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      📥
+                    </a>
+                  )}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>{act.title_id || 'Tanpa Judul'}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#64748B', textTransform: 'capitalize' }}>
+                    Kategori: {act.category} | Detail: {act.details_id || '-'}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button type="button" className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem', borderRadius: '6px' }} onClick={() => handleEdit(idx)}>
+                    Sunting
+                  </button>
+                  <button type="button" className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem', borderRadius: '6px', color: '#EF4444', borderColor: '#FCA5A5' }} onClick={() => handleDelete(idx)}>
+                    Hapus
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+}
+
+// Helper Custom Partners List Editor (hoisted ke module scope agar tidak remount)
+function PartnersEditorSection({ form, setForm }) {
+    const [newLogoUrl, setNewLogoUrl] = useState('');
+    const [uploading, setUploading] = useState(false);
+
+    const partners = form.partners || [];
+
+    const handleFileUpload = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      setUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          // Add to partners list immediately
+          setForm(prev => ({
+            ...prev,
+            partners: [...(prev.partners || []), data.url]
+          }));
+        } else {
+          alert('Gagal mengunggah gambar.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Terjadi kesalahan saat mengunggah gambar.');
+      } finally {
+        setUploading(false);
+      }
+    };
+
+    const handleAddUrl = () => {
+      if (!newLogoUrl.trim()) return;
+      setForm(prev => ({
+        ...prev,
+        partners: [...(prev.partners || []), newLogoUrl.trim()]
+      }));
+      setNewLogoUrl('');
+    };
+
+    const handleDelete = (idx) => {
+      if (confirm('Apakah Anda yakin ingin menghapus logo partner ini?')) {
+        const updated = partners.filter((_, i) => i !== idx);
+        setForm(prev => ({ ...prev, partners: updated }));
+      }
+    };
+
+    const moveItem = (idx, direction) => {
+      const updated = [...partners];
+      if (direction === 'up' && idx > 0) {
+        const temp = updated[idx];
+        updated[idx] = updated[idx - 1];
+        updated[idx - 1] = temp;
+      } else if (direction === 'down' && idx < updated.length - 1) {
+        const temp = updated[idx];
+        updated[idx] = updated[idx + 1];
+        updated[idx + 1] = temp;
+      }
+      setForm(prev => ({ ...prev, partners: updated }));
+    };
+
+    return (
+      <div style={{ marginTop: '1rem', borderTop: '1px dashed #E2E8F0', paddingTop: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <label className={styles.adminLabel} style={{ marginBottom: 0 }}>Daftar Logo Partner (Dipercaya Oleh)</label>
+        </div>
+        
+        {/* Tambah Partner Baru */}
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', background: '#F8FAFC', padding: '1rem', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+          <div style={{ flex: 1, minWidth: '150px' }}>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#64748B' }}>Unggah File Logo Baru</label>
+            <label className="btn btn-secondary" style={{ display: 'inline-block', padding: '0.4rem 1rem', cursor: 'pointer', margin: 0, fontSize: '0.8rem', borderRadius: '8px' }}>
+              {uploading ? 'Mengunggah...' : 'Pilih File Gambar'}
+              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileUpload} disabled={uploading} />
+            </label>
+          </div>
+          <div style={{ flex: 2, minWidth: '220px' }}>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#64748B' }}>Atau Masukkan URL Gambar</label>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <input
+                type="text"
+                className={styles.adminInput}
+                value={newLogoUrl}
+                onChange={(e) => setNewLogoUrl(e.target.value)}
+                placeholder="https://example.com/logo.png"
+                style={{ margin: 0, height: '36px', fontSize: '0.85rem' }}
+              />
+              <button type="button" className="btn btn-primary" onClick={handleAddUrl} style={{ padding: '0.4rem 1.25rem', backgroundColor: 'var(--color-tosca)', color: 'white', borderRadius: '8px', fontSize: '0.8rem', height: '36px' }}>Tambah</button>
+            </div>
+          </div>
+        </div>
+
+        {/* List of Partners */}
+        {partners.length === 0 ? (
+          <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', border: '1px dashed #CBD5E1', borderRadius: '12px' }}>
+            Belum ada logo partner yang ditambahkan. Silakan unggah di atas.
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1rem' }}>
+            {partners.map((url, idx) => (
+              <div key={idx} style={{ border: '1px solid #E2E8F0', borderRadius: '10px', padding: '0.75rem', background: '#FFFFFF', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+                <span style={{ position: 'absolute', top: '5px', left: '10px', fontSize: '0.7rem', fontWeight: 'bold', color: '#94A3B8' }}>#{idx + 1}</span>
+                
+                {/* Logo Image Preview */}
+                <div style={{ width: '100%', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F8FAFC', borderRadius: '6px', border: '1px solid #E2E8F0', padding: '4px', cursor: 'pointer', marginBottom: '0.75rem', overflow: 'hidden' }} onClick={() => window.open(url, '_blank')} title="Klik untuk preview ukuran penuh">
+                  <img src={url} alt={`Partner ${idx + 1}`} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: '0.25rem', width: '100%', justifyContent: 'center', marginBottom: '0.5rem' }}>
+                  <button type="button" className="btn btn-outline" style={{ padding: '2px 6px', fontSize: '0.7rem', height: 'auto', background: 'transparent' }} onClick={() => moveItem(idx, 'up')} disabled={idx === 0} title="Geser Kiri">←</button>
+                  <button type="button" className="btn btn-outline" style={{ padding: '2px 6px', fontSize: '0.7rem', height: 'auto', background: 'transparent' }} onClick={() => moveItem(idx, 'down')} disabled={idx === partners.length - 1} title="Geser Kanan">→</button>
+                </div>
+                
+                <div style={{ display: 'flex', gap: '0.25rem', width: '100%', justifyContent: 'center' }}>
+                  <a href={url} download target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '3px 6px', fontSize: '0.65rem', textDecoration: 'none', color: 'var(--color-tosca)', borderColor: 'var(--color-tosca)', display: 'inline-flex', alignItems: 'center', height: 'auto', background: 'transparent' }} title="Unduh gambar asli">
+                    📥
+                  </a>
+                  <button type="button" className="btn btn-outline" style={{ padding: '3px 6px', fontSize: '0.65rem', color: '#EF4444', borderColor: '#FCA5A5', height: 'auto', background: 'transparent' }} onClick={() => handleDelete(idx)} title="Hapus Partner">
+                    Hapus
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+}
+
+// Helper Custom Testimonials Editor (hoisted ke module scope agar tidak remount)
+function TestimonialsEditorSection({ form, setForm }) {
+    const [editingIndex, setEditingIndex] = useState(null); // index or 'new'
+     const [testiForm, setTestiForm] = useState({
+       id: '',
+       name: '',
+       avatar: '',
+       rating: 5,
+       comment_id: '',
+       comment_en: '',
+       borderColor: 'var(--color-tosca)',
+       videoThumbnail: '',
+       videoLink: ''
+     });
+ 
+     const testimonials = form.testimonials || [];
+ 
+     const handleEdit = (idx) => {
+       setEditingIndex(idx);
+       setTestiForm({
+         id: testimonials[idx].id || `testi-${Date.now()}`,
+         name: testimonials[idx].name || '',
+         avatar: testimonials[idx].avatar || '',
+         rating: testimonials[idx].rating || 5,
+         comment_id: testimonials[idx].comment_id || '',
+         comment_en: testimonials[idx].comment_en || '',
+         borderColor: testimonials[idx].borderColor || 'var(--color-tosca)',
+         videoThumbnail: testimonials[idx].videoThumbnail || '',
+         videoLink: testimonials[idx].videoLink || ''
+       });
+     };
+ 
+     const handleAddNew = () => {
+       setEditingIndex('new');
+       setTestiForm({
+         id: `testi-${Date.now()}`,
+         name: '',
+         avatar: '',
+         rating: 5,
+         comment_id: '',
+         comment_en: '',
+         borderColor: 'var(--color-tosca)',
+         videoThumbnail: '',
+         videoLink: ''
+       });
+     };
+
+    const handleDelete = (idx) => {
+      if (confirm('Apakah Anda yakin ingin menghapus testimonial ini?')) {
+        const updated = testimonials.filter((_, i) => i !== idx);
+        setForm(prev => ({ ...prev, testimonials: updated }));
+      }
+    };
+
+    const handleSave = () => {
+      if (!testiForm.name || !testiForm.comment_id || !testiForm.comment_en) {
+        alert('Nama reviewer dan isi komentar (ID & EN) wajib diisi!');
+        return;
+      }
+      
+      let updated = [...testimonials];
+      if (editingIndex === 'new') {
+        updated.push(testiForm);
+      } else {
+        updated[editingIndex] = testiForm;
+      }
+      
+      setForm(prev => ({ ...prev, testimonials: updated }));
+      setEditingIndex(null);
+    };
+
+    const handleFormChange = (e) => {
+      const { name, value } = e.target;
+      setTestiForm(prev => ({ ...prev, [name]: name === 'rating' ? parseInt(value) : value }));
+    };
+
+    const handleAvatarUpload = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setTestiForm(prev => ({ ...prev, avatar: data.url }));
+        } else {
+          alert('Gagal mengunggah avatar.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Terjadi kesalahan saat mengunggah.');
+      }
+    };
+
+    return (
+      <div style={{ marginTop: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <label className={styles.adminLabel} style={{ marginBottom: 0 }}>Daftar Testimonial (reviews)</label>
+          <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem', borderRadius: '8px' }} onClick={handleAddNew}>
+            + Tambah Testimonial
+          </button>
+        </div>
+
+        {editingIndex !== null && (
+          <div style={{ background: '#F8FAFC', padding: '1.5rem', borderRadius: '12px', border: '1px solid #E2E8F0', marginTop: '1rem', marginBottom: '1.5rem' }}>
+            <h4 style={{ fontWeight: 'bold', marginBottom: '1.25rem', color: 'var(--color-tosca)', fontSize: '1rem' }}>
+              {editingIndex === 'new' ? 'Tambah Testimonial Baru' : 'Sunting Testimonial'}
+            </h4>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div>
+                <label className={styles.adminLabel}>Nama Reviewer</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={testiForm.name}
+                  onChange={handleFormChange}
+                  className={styles.adminInput}
+                  required
+                />
+              </div>
+              <div>
+                <label className={styles.adminLabel}>Rating (Bintang)</label>
+                <select
+                  name="rating"
+                  value={testiForm.rating}
+                  onChange={handleFormChange}
+                  className={styles.adminSelect}
+                >
+                  <option value={5}>⭐⭐⭐⭐⭐ (5 Bintang)</option>
+                  <option value={4}>⭐⭐⭐⭐ (4 Bintang)</option>
+                  <option value={3}>⭐⭐⭐ (3 Bintang)</option>
+                  <option value={2}>⭐⭐ (2 Bintang)</option>
+                  <option value={1}>⭐ (1 Bintang)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div>
+                <label className={styles.adminLabel}>Warna Border Card</label>
+                <select
+                  name="borderColor"
+                  value={testiForm.borderColor}
+                  onChange={handleFormChange}
+                  className={styles.adminSelect}
+                >
+                  <option value="var(--color-tosca)">Tosca (Hijau Tosca)</option>
+                  <option value="var(--color-maroon)">Maroon (Merah Maroon)</option>
+                  <option value="var(--color-kunyit)">Kunyit (Kuning Kunyit)</option>
+                </select>
+              </div>
+              <div>
+                {/* Spacer */}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '1.25rem' }}>
+              <label className={styles.adminLabel}>Foto Avatar Reviewer</label>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                {testiForm.avatar ? (
+                  <img 
+                    src={testiForm.avatar} 
+                    alt="Preview" 
+                    style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #CBD5E1', cursor: 'pointer' }} 
+                    onClick={() => window.open(testiForm.avatar, '_blank')}
+                    title="Klik untuk lihat gambar penuh (Preview)"
+                  />
+                ) : (
+                  <div style={{ width: '80px', height: '80px', borderRadius: '50%', border: '2px dashed #CBD5E1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94A3B8', fontSize: '0.75rem', textAlign: 'center' }}>No Avatar</div>
+                )}
+                <div style={{ flex: 1 }}>
+                  <input
+                    type="text"
+                    name="avatar"
+                    value={testiForm.avatar}
+                    onChange={handleFormChange}
+                    className={styles.adminInput}
+                    placeholder="URL avatar gambar..."
+                    style={{ marginBottom: '0.5rem' }}
+                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <label className="btn btn-secondary" style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', cursor: 'pointer', display: 'inline-block', margin: 0 }}>
+                      Unggah Foto Avatar
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={handleAvatarUpload}
+                      />
+                    </label>
+                    {testiForm.avatar && (
+                      <a
+                        href={testiForm.avatar}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-outline"
+                        style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', textDecoration: 'none', color: 'var(--color-tosca)', borderColor: 'var(--color-tosca)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', height: 'auto', background: 'transparent' }}
+                      >
+                        📥 Unduh Foto
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div>
+                <label className={styles.adminLabel}>Isi Ulasan / Komentar (ID)</label>
+                <textarea
+                  name="comment_id"
+                  value={testiForm.comment_id}
+                  onChange={handleFormChange}
+                  className={styles.adminTextarea}
+                  rows={3}
+                  required
+                />
+              </div>
+              <div>
+                <label className={styles.adminLabel}>Isi Ulasan / Komentar (EN)</label>
+                <textarea
+                  name="comment_en"
+                  value={testiForm.comment_en}
+                  onChange={handleFormChange}
+                  className={styles.adminTextarea}
+                  rows={3}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Video Review config cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem', borderTop: '1px dashed #E2E8F0', paddingTop: '1.25rem' }}>
+              <div>
+                <label className={styles.adminLabel}>URL Thumbnail Video Review (Gambar Preview - Opsional)</label>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  {testiForm.videoThumbnail && (
+                    <img 
+                      src={testiForm.videoThumbnail} 
+                      alt="Thumbnail Preview" 
+                      style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover', border: '1px solid #CBD5E1', cursor: 'pointer' }}
+                      onClick={() => window.open(testiForm.videoThumbnail, '_blank')}
+                      title="Klik untuk lihat gambar penuh"
+                    />
+                  )}
+                  <input
+                    type="text"
+                    name="videoThumbnail"
+                    value={testiForm.videoThumbnail || ''}
+                    onChange={handleFormChange}
+                    placeholder="Masukkan URL gambar atau unggah file..."
+                    className={styles.adminInput}
+                    style={{ flex: 1, margin: 0 }}
+                  />
+                </div>
+                <div style={{ marginTop: '0.5rem' }}>
+                  <label className="btn btn-secondary" style={{ padding: '0.3rem 0.65rem', borderRadius: '6px', fontSize: '0.7rem', cursor: 'pointer', display: 'inline-block', margin: 0 }}>
+                    Unggah Gambar Thumbnail
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        try {
+                          const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                          if (res.ok) {
+                            const data = await res.json();
+                            setTestiForm(prev => ({ ...prev, videoThumbnail: data.url }));
+                          } else {
+                            alert('Gagal mengunggah thumbnail.');
+                          }
+                        } catch (err) {
+                          alert('Terjadi kesalahan saat mengunggah.');
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label className={styles.adminLabel}>Tautan Video Review (YouTube, TikTok, dll - Opsional)</label>
+                <input
+                  type="text"
+                  name="videoLink"
+                  value={testiForm.videoLink || ''}
+                  onChange={handleFormChange}
+                  placeholder="e.g. https://www.youtube.com/watch?v=..."
+                  className={styles.adminInput}
+                />
+                <span style={{ fontSize: '0.75rem', color: '#64748B', display: 'block', marginTop: '0.35rem' }}>
+                  Jika diisi, ulasan ini akan menampilkan card preview video interaktif di bagian paling atas.
+                </span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+              <button type="button" className="btn btn-outline" style={{ padding: '0.5rem 1.5rem' }} onClick={() => setEditingIndex(null)}>
+                Batal
+              </button>
+              <button type="button" className="btn btn-primary" style={{ padding: '0.5rem 1.5rem' }} onClick={handleSave}>
+                Simpan Testimonial
+              </button>
+            </div>
+          </div>
+        )}
+
+        {testimonials.length === 0 ? (
+          <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', border: '1px dashed #CBD5E1', borderRadius: '12px' }}>
+            Belum ada testimonial. Silakan klik tombol "+ Tambah Testimonial" untuk menambahkan.
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {testimonials.map((testi, idx) => (
+              <div key={testi.id || idx} style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '0.75rem', border: '1px solid #E2E8F0', borderRadius: '10px', background: '#FFFFFF' }}>
+                <div style={{ position: 'relative', display: 'inline-block', flexShrink: 0 }}>
+                  <img 
+                    src={testi.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150'} 
+                    alt="" 
+                    style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', cursor: 'pointer', display: 'block' }} 
+                    onClick={() => window.open(testi.avatar, '_blank')}
+                    title="Klik untuk lihat gambar penuh (Preview)"
+                  />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <strong style={{ fontSize: '0.9rem', color: '#1E293B' }}>{testi.name}</strong>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--color-kunyit)' }}>
+                      {'⭐'.repeat(testi.rating || 5)}
+                    </span>
+                    <span 
+                      style={{ 
+                        display: 'inline-block', 
+                        width: '10px', 
+                        height: '10px', 
+                        borderRadius: '50%', 
+                        backgroundColor: testi.borderColor === 'var(--color-tosca)' ? 'var(--color-tosca)' : testi.borderColor === 'var(--color-maroon)' ? 'var(--color-maroon)' : 'var(--color-kunyit)' 
+                      }} 
+                      title={`Border: ${testi.borderColor}`}
+                    />
+                    {testi.videoLink && (
+                      <span style={{ fontSize: '0.65rem', padding: '1px 5px', borderRadius: '4px', background: '#E0F2FE', color: '#0369A1', fontWeight: 'bold' }}>
+                        📹 Video
+                      </span>
+                    )}
+                  </div>
+                  <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: '#64748B', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                    {testi.comment_id}
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
+                  <button type="button" className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', height: 'auto', background: 'transparent' }} onClick={() => handleEdit(idx)}>
+                    Edit
+                  </button>
+                  <button type="button" className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', color: '#EF4444', borderColor: '#FCA5A5', height: 'auto', background: 'transparent' }} onClick={() => handleDelete(idx)}>
+                    Hapus
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+}
+
 export default function PageContentEditor({ showToast }) {
   const { refreshContent } = useLanguage();
   const [loading, setLoading] = useState(true);
@@ -961,896 +1851,6 @@ export default function PageContentEditor({ showToast }) {
   // MisiListSection di-hoist ke module scope (didefinisikan di atas komponen ini)
   // agar tidak remount & kehilangan fokus input saat mengetik.
 
-  // Helper Custom Activities Carousel Editor
-  const ActivitiesEditorSection = () => {
-    const [editingIndex, setEditingIndex] = useState(null); // index or 'new'
-    const [actForm, setActForm] = useState({
-      id: '',
-      title_id: '',
-      title_en: '',
-      category: 'workshop',
-      image: '',
-      summary_id: '',
-      summary_en: '',
-      description_id: '',
-      description_en: '',
-      details_id: '',
-      details_en: '',
-      link: ''
-    });
-
-    const activities = form.activities || [];
-
-    const handleEdit = (idx) => {
-      setEditingIndex(idx);
-      setActForm({
-        id: activities[idx].id || `act-${Date.now()}`,
-        title_id: activities[idx].title_id || '',
-        title_en: activities[idx].title_en || '',
-        category: activities[idx].category || 'workshop',
-        image: activities[idx].image || '',
-        summary_id: activities[idx].summary_id || '',
-        summary_en: activities[idx].summary_en || '',
-        description_id: activities[idx].description_id || '',
-        description_en: activities[idx].description_en || '',
-        details_id: activities[idx].details_id || '',
-        details_en: activities[idx].details_en || '',
-        link: activities[idx].link || 'https://lynk.id/berseni.id'
-      });
-    };
-
-    const handleAddNew = () => {
-      setEditingIndex('new');
-      setActForm({
-        id: `act-${Date.now()}`,
-        title_id: '',
-        title_en: '',
-        category: 'workshop',
-        image: '',
-        summary_id: '',
-        summary_en: '',
-        description_id: '',
-        description_en: '',
-        details_id: '',
-        details_en: '',
-        link: 'https://lynk.id/berseni.id'
-      });
-    };
-
-    const handleDelete = (idx) => {
-      if (confirm('Apakah Anda yakin ingin menghapus aktivitas ini?')) {
-        const updated = activities.filter((_, i) => i !== idx);
-        setForm(prev => ({ ...prev, activities: updated }));
-      }
-    };
-
-    const handleSave = () => {
-      if (!actForm.title_id || !actForm.title_en) {
-        alert('Judul Aktivitas (ID & EN) wajib diisi keduanya!');
-        return;
-      }
-      
-      let updated = [...activities];
-      if (editingIndex === 'new') {
-        updated.push(actForm);
-      } else {
-        updated[editingIndex] = actForm;
-      }
-      
-      setForm(prev => ({ ...prev, activities: updated }));
-      setEditingIndex(null);
-    };
-
-    const handleActFormChange = (e) => {
-      const { name, value } = e.target;
-      setActForm(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleActImageUpload = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const formData = new FormData();
-      formData.append('file', file);
-
-      try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setActForm(prev => ({ ...prev, image: data.url }));
-        } else {
-          alert('Gagal mengunggah gambar.');
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Terjadi kesalahan saat mengunggah.');
-      }
-    };
-
-    if (editingIndex !== null) {
-      return (
-        <div style={{ background: '#F8FAFC', padding: '1.5rem', borderRadius: '12px', border: '1px solid #E2E8F0', marginTop: '1rem' }}>
-          <h4 style={{ fontWeight: 'bold', marginBottom: '1.25rem', color: 'var(--color-tosca)', fontSize: '1rem' }}>
-            {editingIndex === 'new' ? 'Tambah Aktivitas Baru' : 'Sunting Aktivitas'}
-          </h4>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <div>
-              <label className={styles.adminLabel}>Judul Aktivitas (ID)</label>
-              <input
-                type="text"
-                name="title_id"
-                value={actForm.title_id}
-                onChange={handleActFormChange}
-                className={styles.adminInput}
-                required
-              />
-            </div>
-            <div>
-              <label className={styles.adminLabel}>Judul Aktivitas (EN)</label>
-              <input
-                type="text"
-                name="title_en"
-                value={actForm.title_en}
-                onChange={handleActFormChange}
-                className={styles.adminInput}
-                required
-              />
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <div>
-              <label className={styles.adminLabel}>Kategori</label>
-              <select
-                name="category"
-                value={actForm.category}
-                onChange={handleActFormChange}
-                className={styles.adminSelect}
-              >
-                <option value="workshop">Workshop</option>
-                <option value="exhibition">Exhibition</option>
-                <option value="social">Kegiatan Komunitas</option>
-              </select>
-            </div>
-            <div>
-              <label className={styles.adminLabel}>Link URL Detail / Lynk.id</label>
-              <input
-                type="text"
-                name="link"
-                value={actForm.link}
-                onChange={handleActFormChange}
-                className={styles.adminInput}
-              />
-            </div>
-          </div>
-
-          <div style={{ marginBottom: '1.25rem' }}>
-            <label className={styles.adminLabel}>Gambar Aktivitas</label>
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              {actForm.image ? (
-                <img 
-                  src={actForm.image} 
-                  alt="Preview" 
-                  style={{ width: '80px', height: '80px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #CBD5E1', cursor: 'pointer' }} 
-                  onClick={() => window.open(actForm.image, '_blank')}
-                  title="Klik untuk lihat gambar penuh (Preview)"
-                />
-              ) : (
-                <div style={{ width: '80px', height: '80px', borderRadius: '8px', border: '2px dashed #CBD5E1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94A3B8', fontSize: '0.75rem', textAlign: 'center' }}>No Image</div>
-              )}
-              <div style={{ flex: 1 }}>
-                <input
-                  type="text"
-                  name="image"
-                  value={actForm.image}
-                  onChange={handleActFormChange}
-                  className={styles.adminInput}
-                  placeholder="URL gambar..."
-                  style={{ marginBottom: '0.5rem' }}
-                />
-                <label className="btn btn-secondary" style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', cursor: 'pointer', display: 'inline-block', margin: 0 }}>
-                  Unggah Gambar
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={handleActImageUpload}
-                  />
-                </label>
-                {actForm.image && (
-                  <a
-                    href={actForm.image}
-                    download
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-outline"
-                    style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', textDecoration: 'none', color: 'var(--color-tosca)', borderColor: 'var(--color-tosca)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', height: 'auto', background: 'transparent', marginLeft: '0.5rem' }}
-                  >
-                    📥 Unduh Gambar Asli
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <div>
-              <label className={styles.adminLabel}>Ringkasan Singkat (ID)</label>
-              <input
-                type="text"
-                name="summary_id"
-                value={actForm.summary_id}
-                onChange={handleActFormChange}
-                className={styles.adminInput}
-              />
-            </div>
-            <div>
-              <label className={styles.adminLabel}>Ringkasan Singkat (EN)</label>
-              <input
-                type="text"
-                name="summary_en"
-                value={actForm.summary_en}
-                onChange={handleActFormChange}
-                className={styles.adminInput}
-              />
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <div>
-              <label className={styles.adminLabel}>Deskripsi Lengkap (ID)</label>
-              <textarea
-                name="description_id"
-                value={actForm.description_id}
-                onChange={handleActFormChange}
-                className={styles.adminTextarea}
-                rows={3}
-              />
-            </div>
-            <div>
-              <label className={styles.adminLabel}>Deskripsi Lengkap (EN)</label>
-              <textarea
-                name="description_en"
-                value={actForm.description_en}
-                onChange={handleActFormChange}
-                className={styles.adminTextarea}
-                rows={3}
-              />
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-            <div>
-              <label className={styles.adminLabel}>Detail Aktivitas (ID)</label>
-              <input
-                type="text"
-                name="details_id"
-                value={actForm.details_id}
-                onChange={handleActFormChange}
-                className={styles.adminInput}
-                placeholder="misal: Durasi: 3 Jam | Lokasi: Ubud"
-              />
-            </div>
-            <div>
-              <label className={styles.adminLabel}>Detail Aktivitas (EN)</label>
-              <input
-                type="text"
-                name="details_en"
-                value={actForm.details_en}
-                onChange={handleActFormChange}
-                className={styles.adminInput}
-                placeholder="e.g. Duration: 3 Hours | Location: Ubud"
-              />
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
-            <button type="button" className="btn btn-outline" style={{ padding: '0.5rem 1.5rem' }} onClick={() => setEditingIndex(null)}>
-              Batal
-            </button>
-            <button type="button" className="btn btn-primary" style={{ padding: '0.5rem 1.5rem' }} onClick={handleSave}>
-              Simpan Aktivitas
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div style={{ marginTop: '1rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <label className={styles.adminLabel} style={{ marginBottom: 0 }}>Daftar Aktivitas Carousel</label>
-          <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem', borderRadius: '8px' }} onClick={handleAddNew}>
-            + Tambah Aktivitas
-          </button>
-        </div>
-
-        {activities.length === 0 ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', border: '1px dashed #CBD5E1', borderRadius: '12px' }}>
-            Belum ada aktivitas. Silakan klik tombol "+ Tambah Aktivitas" untuk menambahkan.
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {activities.map((act, idx) => (
-              <div key={act.id || idx} style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '0.75rem', border: '1px solid #E2E8F0', borderRadius: '10px', background: '#FFFFFF' }}>
-                <div style={{ position: 'relative', display: 'inline-block', flexShrink: 0 }}>
-                  <img 
-                    src={act.image || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=150'} 
-                    alt="" 
-                    style={{ width: '50px', height: '50px', borderRadius: '6px', objectFit: 'cover', cursor: 'pointer', display: 'block' }} 
-                    onClick={() => window.open(act.image || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=150', '_blank')}
-                    title="Klik untuk lihat gambar penuh (Preview)"
-                  />
-                  {act.image && (
-                    <a
-                      href={act.image}
-                      download
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        position: 'absolute',
-                        bottom: '2px',
-                        right: '2px',
-                        background: 'rgba(20, 120, 155, 0.85)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '3px',
-                        width: '16px',
-                        height: '16px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '9px',
-                        cursor: 'pointer',
-                        textDecoration: 'none'
-                      }}
-                      title="Unduh Gambar"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      📥
-                    </a>
-                  )}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>{act.title_id || 'Tanpa Judul'}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#64748B', textTransform: 'capitalize' }}>
-                    Kategori: {act.category} | Detail: {act.details_id || '-'}
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button type="button" className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem', borderRadius: '6px' }} onClick={() => handleEdit(idx)}>
-                    Sunting
-                  </button>
-                  <button type="button" className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem', borderRadius: '6px', color: '#EF4444', borderColor: '#FCA5A5' }} onClick={() => handleDelete(idx)}>
-                    Hapus
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  // Helper Custom Partners List Editor
-  const PartnersEditorSection = () => {
-    const [newLogoUrl, setNewLogoUrl] = useState('');
-    const [uploading, setUploading] = useState(false);
-
-    const partners = form.partners || [];
-
-    const handleFileUpload = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      setUploading(true);
-      const formData = new FormData();
-      formData.append('file', file);
-
-      try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        if (res.ok) {
-          const data = await res.json();
-          // Add to partners list immediately
-          setForm(prev => ({
-            ...prev,
-            partners: [...(prev.partners || []), data.url]
-          }));
-        } else {
-          alert('Gagal mengunggah gambar.');
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Terjadi kesalahan saat mengunggah gambar.');
-      } finally {
-        setUploading(false);
-      }
-    };
-
-    const handleAddUrl = () => {
-      if (!newLogoUrl.trim()) return;
-      setForm(prev => ({
-        ...prev,
-        partners: [...(prev.partners || []), newLogoUrl.trim()]
-      }));
-      setNewLogoUrl('');
-    };
-
-    const handleDelete = (idx) => {
-      if (confirm('Apakah Anda yakin ingin menghapus logo partner ini?')) {
-        const updated = partners.filter((_, i) => i !== idx);
-        setForm(prev => ({ ...prev, partners: updated }));
-      }
-    };
-
-    const moveItem = (idx, direction) => {
-      const updated = [...partners];
-      if (direction === 'up' && idx > 0) {
-        const temp = updated[idx];
-        updated[idx] = updated[idx - 1];
-        updated[idx - 1] = temp;
-      } else if (direction === 'down' && idx < updated.length - 1) {
-        const temp = updated[idx];
-        updated[idx] = updated[idx + 1];
-        updated[idx + 1] = temp;
-      }
-      setForm(prev => ({ ...prev, partners: updated }));
-    };
-
-    return (
-      <div style={{ marginTop: '1rem', borderTop: '1px dashed #E2E8F0', paddingTop: '1.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <label className={styles.adminLabel} style={{ marginBottom: 0 }}>Daftar Logo Partner (Dipercaya Oleh)</label>
-        </div>
-        
-        {/* Tambah Partner Baru */}
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', background: '#F8FAFC', padding: '1rem', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
-          <div style={{ flex: 1, minWidth: '150px' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#64748B' }}>Unggah File Logo Baru</label>
-            <label className="btn btn-secondary" style={{ display: 'inline-block', padding: '0.4rem 1rem', cursor: 'pointer', margin: 0, fontSize: '0.8rem', borderRadius: '8px' }}>
-              {uploading ? 'Mengunggah...' : 'Pilih File Gambar'}
-              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileUpload} disabled={uploading} />
-            </label>
-          </div>
-          <div style={{ flex: 2, minWidth: '220px' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#64748B' }}>Atau Masukkan URL Gambar</label>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <input
-                type="text"
-                className={styles.adminInput}
-                value={newLogoUrl}
-                onChange={(e) => setNewLogoUrl(e.target.value)}
-                placeholder="https://example.com/logo.png"
-                style={{ margin: 0, height: '36px', fontSize: '0.85rem' }}
-              />
-              <button type="button" className="btn btn-primary" onClick={handleAddUrl} style={{ padding: '0.4rem 1.25rem', backgroundColor: 'var(--color-tosca)', color: 'white', borderRadius: '8px', fontSize: '0.8rem', height: '36px' }}>Tambah</button>
-            </div>
-          </div>
-        </div>
-
-        {/* List of Partners */}
-        {partners.length === 0 ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', border: '1px dashed #CBD5E1', borderRadius: '12px' }}>
-            Belum ada logo partner yang ditambahkan. Silakan unggah di atas.
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1rem' }}>
-            {partners.map((url, idx) => (
-              <div key={idx} style={{ border: '1px solid #E2E8F0', borderRadius: '10px', padding: '0.75rem', background: '#FFFFFF', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
-                <span style={{ position: 'absolute', top: '5px', left: '10px', fontSize: '0.7rem', fontWeight: 'bold', color: '#94A3B8' }}>#{idx + 1}</span>
-                
-                {/* Logo Image Preview */}
-                <div style={{ width: '100%', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F8FAFC', borderRadius: '6px', border: '1px solid #E2E8F0', padding: '4px', cursor: 'pointer', marginBottom: '0.75rem', overflow: 'hidden' }} onClick={() => window.open(url, '_blank')} title="Klik untuk preview ukuran penuh">
-                  <img src={url} alt={`Partner ${idx + 1}`} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
-                </div>
-
-                {/* Actions */}
-                <div style={{ display: 'flex', gap: '0.25rem', width: '100%', justifyContent: 'center', marginBottom: '0.5rem' }}>
-                  <button type="button" className="btn btn-outline" style={{ padding: '2px 6px', fontSize: '0.7rem', height: 'auto', background: 'transparent' }} onClick={() => moveItem(idx, 'up')} disabled={idx === 0} title="Geser Kiri">←</button>
-                  <button type="button" className="btn btn-outline" style={{ padding: '2px 6px', fontSize: '0.7rem', height: 'auto', background: 'transparent' }} onClick={() => moveItem(idx, 'down')} disabled={idx === partners.length - 1} title="Geser Kanan">→</button>
-                </div>
-                
-                <div style={{ display: 'flex', gap: '0.25rem', width: '100%', justifyContent: 'center' }}>
-                  <a href={url} download target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '3px 6px', fontSize: '0.65rem', textDecoration: 'none', color: 'var(--color-tosca)', borderColor: 'var(--color-tosca)', display: 'inline-flex', alignItems: 'center', height: 'auto', background: 'transparent' }} title="Unduh gambar asli">
-                    📥
-                  </a>
-                  <button type="button" className="btn btn-outline" style={{ padding: '3px 6px', fontSize: '0.65rem', color: '#EF4444', borderColor: '#FCA5A5', height: 'auto', background: 'transparent' }} onClick={() => handleDelete(idx)} title="Hapus Partner">
-                    Hapus
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  // Helper Custom Testimonials Editor
-  const TestimonialsEditorSection = () => {
-    const [editingIndex, setEditingIndex] = useState(null); // index or 'new'
-     const [testiForm, setTestiForm] = useState({
-       id: '',
-       name: '',
-       avatar: '',
-       rating: 5,
-       comment_id: '',
-       comment_en: '',
-       borderColor: 'var(--color-tosca)',
-       videoThumbnail: '',
-       videoLink: ''
-     });
- 
-     const testimonials = form.testimonials || [];
- 
-     const handleEdit = (idx) => {
-       setEditingIndex(idx);
-       setTestiForm({
-         id: testimonials[idx].id || `testi-${Date.now()}`,
-         name: testimonials[idx].name || '',
-         avatar: testimonials[idx].avatar || '',
-         rating: testimonials[idx].rating || 5,
-         comment_id: testimonials[idx].comment_id || '',
-         comment_en: testimonials[idx].comment_en || '',
-         borderColor: testimonials[idx].borderColor || 'var(--color-tosca)',
-         videoThumbnail: testimonials[idx].videoThumbnail || '',
-         videoLink: testimonials[idx].videoLink || ''
-       });
-     };
- 
-     const handleAddNew = () => {
-       setEditingIndex('new');
-       setTestiForm({
-         id: `testi-${Date.now()}`,
-         name: '',
-         avatar: '',
-         rating: 5,
-         comment_id: '',
-         comment_en: '',
-         borderColor: 'var(--color-tosca)',
-         videoThumbnail: '',
-         videoLink: ''
-       });
-     };
-
-    const handleDelete = (idx) => {
-      if (confirm('Apakah Anda yakin ingin menghapus testimonial ini?')) {
-        const updated = testimonials.filter((_, i) => i !== idx);
-        setForm(prev => ({ ...prev, testimonials: updated }));
-      }
-    };
-
-    const handleSave = () => {
-      if (!testiForm.name || !testiForm.comment_id || !testiForm.comment_en) {
-        alert('Nama reviewer dan isi komentar (ID & EN) wajib diisi!');
-        return;
-      }
-      
-      let updated = [...testimonials];
-      if (editingIndex === 'new') {
-        updated.push(testiForm);
-      } else {
-        updated[editingIndex] = testiForm;
-      }
-      
-      setForm(prev => ({ ...prev, testimonials: updated }));
-      setEditingIndex(null);
-    };
-
-    const handleFormChange = (e) => {
-      const { name, value } = e.target;
-      setTestiForm(prev => ({ ...prev, [name]: name === 'rating' ? parseInt(value) : value }));
-    };
-
-    const handleAvatarUpload = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const formData = new FormData();
-      formData.append('file', file);
-
-      try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setTestiForm(prev => ({ ...prev, avatar: data.url }));
-        } else {
-          alert('Gagal mengunggah avatar.');
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Terjadi kesalahan saat mengunggah.');
-      }
-    };
-
-    return (
-      <div style={{ marginTop: '1rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <label className={styles.adminLabel} style={{ marginBottom: 0 }}>Daftar Testimonial (reviews)</label>
-          <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem', borderRadius: '8px' }} onClick={handleAddNew}>
-            + Tambah Testimonial
-          </button>
-        </div>
-
-        {editingIndex !== null && (
-          <div style={{ background: '#F8FAFC', padding: '1.5rem', borderRadius: '12px', border: '1px solid #E2E8F0', marginTop: '1rem', marginBottom: '1.5rem' }}>
-            <h4 style={{ fontWeight: 'bold', marginBottom: '1.25rem', color: 'var(--color-tosca)', fontSize: '1rem' }}>
-              {editingIndex === 'new' ? 'Tambah Testimonial Baru' : 'Sunting Testimonial'}
-            </h4>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-              <div>
-                <label className={styles.adminLabel}>Nama Reviewer</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={testiForm.name}
-                  onChange={handleFormChange}
-                  className={styles.adminInput}
-                  required
-                />
-              </div>
-              <div>
-                <label className={styles.adminLabel}>Rating (Bintang)</label>
-                <select
-                  name="rating"
-                  value={testiForm.rating}
-                  onChange={handleFormChange}
-                  className={styles.adminSelect}
-                >
-                  <option value={5}>⭐⭐⭐⭐⭐ (5 Bintang)</option>
-                  <option value={4}>⭐⭐⭐⭐ (4 Bintang)</option>
-                  <option value={3}>⭐⭐⭐ (3 Bintang)</option>
-                  <option value={2}>⭐⭐ (2 Bintang)</option>
-                  <option value={1}>⭐ (1 Bintang)</option>
-                </select>
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-              <div>
-                <label className={styles.adminLabel}>Warna Border Card</label>
-                <select
-                  name="borderColor"
-                  value={testiForm.borderColor}
-                  onChange={handleFormChange}
-                  className={styles.adminSelect}
-                >
-                  <option value="var(--color-tosca)">Tosca (Hijau Tosca)</option>
-                  <option value="var(--color-maroon)">Maroon (Merah Maroon)</option>
-                  <option value="var(--color-kunyit)">Kunyit (Kuning Kunyit)</option>
-                </select>
-              </div>
-              <div>
-                {/* Spacer */}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label className={styles.adminLabel}>Foto Avatar Reviewer</label>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                {testiForm.avatar ? (
-                  <img 
-                    src={testiForm.avatar} 
-                    alt="Preview" 
-                    style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #CBD5E1', cursor: 'pointer' }} 
-                    onClick={() => window.open(testiForm.avatar, '_blank')}
-                    title="Klik untuk lihat gambar penuh (Preview)"
-                  />
-                ) : (
-                  <div style={{ width: '80px', height: '80px', borderRadius: '50%', border: '2px dashed #CBD5E1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94A3B8', fontSize: '0.75rem', textAlign: 'center' }}>No Avatar</div>
-                )}
-                <div style={{ flex: 1 }}>
-                  <input
-                    type="text"
-                    name="avatar"
-                    value={testiForm.avatar}
-                    onChange={handleFormChange}
-                    className={styles.adminInput}
-                    placeholder="URL avatar gambar..."
-                    style={{ marginBottom: '0.5rem' }}
-                  />
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <label className="btn btn-secondary" style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', cursor: 'pointer', display: 'inline-block', margin: 0 }}>
-                      Unggah Foto Avatar
-                      <input
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={handleAvatarUpload}
-                      />
-                    </label>
-                    {testiForm.avatar && (
-                      <a
-                        href={testiForm.avatar}
-                        download
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-outline"
-                        style={{ padding: '0.35rem 0.75rem', borderRadius: '8px', fontSize: '0.75rem', textDecoration: 'none', color: 'var(--color-tosca)', borderColor: 'var(--color-tosca)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', height: 'auto', background: 'transparent' }}
-                      >
-                        📥 Unduh Foto
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-              <div>
-                <label className={styles.adminLabel}>Isi Ulasan / Komentar (ID)</label>
-                <textarea
-                  name="comment_id"
-                  value={testiForm.comment_id}
-                  onChange={handleFormChange}
-                  className={styles.adminTextarea}
-                  rows={3}
-                  required
-                />
-              </div>
-              <div>
-                <label className={styles.adminLabel}>Isi Ulasan / Komentar (EN)</label>
-                <textarea
-                  name="comment_en"
-                  value={testiForm.comment_en}
-                  onChange={handleFormChange}
-                  className={styles.adminTextarea}
-                  rows={3}
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Video Review config cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem', borderTop: '1px dashed #E2E8F0', paddingTop: '1.25rem' }}>
-              <div>
-                <label className={styles.adminLabel}>URL Thumbnail Video Review (Gambar Preview - Opsional)</label>
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                  {testiForm.videoThumbnail && (
-                    <img 
-                      src={testiForm.videoThumbnail} 
-                      alt="Thumbnail Preview" 
-                      style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover', border: '1px solid #CBD5E1', cursor: 'pointer' }}
-                      onClick={() => window.open(testiForm.videoThumbnail, '_blank')}
-                      title="Klik untuk lihat gambar penuh"
-                    />
-                  )}
-                  <input
-                    type="text"
-                    name="videoThumbnail"
-                    value={testiForm.videoThumbnail || ''}
-                    onChange={handleFormChange}
-                    placeholder="Masukkan URL gambar atau unggah file..."
-                    className={styles.adminInput}
-                    style={{ flex: 1, margin: 0 }}
-                  />
-                </div>
-                <div style={{ marginTop: '0.5rem' }}>
-                  <label className="btn btn-secondary" style={{ padding: '0.3rem 0.65rem', borderRadius: '6px', fontSize: '0.7rem', cursor: 'pointer', display: 'inline-block', margin: 0 }}>
-                    Unggah Gambar Thumbnail
-                    <input
-                      type="file"
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                      onChange={async (e) => {
-                        const file = e.target.files[0];
-                        if (!file) return;
-                        const formData = new FormData();
-                        formData.append('file', file);
-                        try {
-                          const res = await fetch('/api/upload', { method: 'POST', body: formData });
-                          if (res.ok) {
-                            const data = await res.json();
-                            setTestiForm(prev => ({ ...prev, videoThumbnail: data.url }));
-                          } else {
-                            alert('Gagal mengunggah thumbnail.');
-                          }
-                        } catch (err) {
-                          alert('Terjadi kesalahan saat mengunggah.');
-                        }
-                      }}
-                    />
-                  </label>
-                </div>
-              </div>
-              <div>
-                <label className={styles.adminLabel}>Tautan Video Review (YouTube, TikTok, dll - Opsional)</label>
-                <input
-                  type="text"
-                  name="videoLink"
-                  value={testiForm.videoLink || ''}
-                  onChange={handleFormChange}
-                  placeholder="e.g. https://www.youtube.com/watch?v=..."
-                  className={styles.adminInput}
-                />
-                <span style={{ fontSize: '0.75rem', color: '#64748B', display: 'block', marginTop: '0.35rem' }}>
-                  Jika diisi, ulasan ini akan menampilkan card preview video interaktif di bagian paling atas.
-                </span>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
-              <button type="button" className="btn btn-outline" style={{ padding: '0.5rem 1.5rem' }} onClick={() => setEditingIndex(null)}>
-                Batal
-              </button>
-              <button type="button" className="btn btn-primary" style={{ padding: '0.5rem 1.5rem' }} onClick={handleSave}>
-                Simpan Testimonial
-              </button>
-            </div>
-          </div>
-        )}
-
-        {testimonials.length === 0 ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', border: '1px dashed #CBD5E1', borderRadius: '12px' }}>
-            Belum ada testimonial. Silakan klik tombol "+ Tambah Testimonial" untuk menambahkan.
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {testimonials.map((testi, idx) => (
-              <div key={testi.id || idx} style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '0.75rem', border: '1px solid #E2E8F0', borderRadius: '10px', background: '#FFFFFF' }}>
-                <div style={{ position: 'relative', display: 'inline-block', flexShrink: 0 }}>
-                  <img 
-                    src={testi.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150'} 
-                    alt="" 
-                    style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', cursor: 'pointer', display: 'block' }} 
-                    onClick={() => window.open(testi.avatar, '_blank')}
-                    title="Klik untuk lihat gambar penuh (Preview)"
-                  />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    <strong style={{ fontSize: '0.9rem', color: '#1E293B' }}>{testi.name}</strong>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--color-kunyit)' }}>
-                      {'⭐'.repeat(testi.rating || 5)}
-                    </span>
-                    <span 
-                      style={{ 
-                        display: 'inline-block', 
-                        width: '10px', 
-                        height: '10px', 
-                        borderRadius: '50%', 
-                        backgroundColor: testi.borderColor === 'var(--color-tosca)' ? 'var(--color-tosca)' : testi.borderColor === 'var(--color-maroon)' ? 'var(--color-maroon)' : 'var(--color-kunyit)' 
-                      }} 
-                      title={`Border: ${testi.borderColor}`}
-                    />
-                    {testi.videoLink && (
-                      <span style={{ fontSize: '0.65rem', padding: '1px 5px', borderRadius: '4px', background: '#E0F2FE', color: '#0369A1', fontWeight: 'bold' }}>
-                        📹 Video
-                      </span>
-                    )}
-                  </div>
-                  <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: '#64748B', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                    {testi.comment_id}
-                  </p>
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
-                  <button type="button" className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', height: 'auto', background: 'transparent' }} onClick={() => handleEdit(idx)}>
-                    Edit
-                  </button>
-                  <button type="button" className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', color: '#EF4444', borderColor: '#FCA5A5', height: 'auto', background: 'transparent' }} onClick={() => handleDelete(idx)}>
-                    Hapus
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
-
   const currentPageConfig = pagesConfig[selectedPage];
 
   return (
@@ -1978,17 +1978,17 @@ export default function PageContentEditor({ showToast }) {
 
             {/* Custom render for Activities list */}
             {currentPageConfig.sections[activeSection].customRender === 'activities_editor' && (
-              <ActivitiesEditorSection />
+              <ActivitiesEditorSection form={form} setForm={setForm} />
             )}
 
             {/* Custom render for Partners list */}
             {currentPageConfig.sections[activeSection].customRender === 'partners_editor' && (
-              <PartnersEditorSection />
+              <PartnersEditorSection form={form} setForm={setForm} />
             )}
 
             {/* Custom render for Testimonials list */}
             {currentPageConfig.sections[activeSection].customRender === 'testimonials_editor' && (
-              <TestimonialsEditorSection />
+              <TestimonialsEditorSection form={form} setForm={setForm} />
             )}
 
             <div className={styles.formActions} style={{ marginTop: '2rem' }}>

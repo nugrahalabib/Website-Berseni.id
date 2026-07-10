@@ -87,6 +87,9 @@ export default async function BlogPostPage({ params }) {
   const content = await db.get('content') || {};
   const postImage = post.image ? (post.image.startsWith('http') ? post.image : `${SITE_URL}${post.image}`) : `${SITE_URL}/og-image.jpg`;
 
+  const defaultLanguage = content?.content?.defaultLanguage || content?.defaultLanguage || 'id';
+  const pick = (id, en) => (defaultLanguage === 'en' ? (en || id) : (id || en));
+
   const blogPostJsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -95,16 +98,11 @@ export default async function BlogPostPage({ params }) {
       "@type": "WebPage",
       "@id": `${SITE_URL}/blog/${slug}`
     },
-    "headline": [
-      { "@value": post.title_id || post.title_en, "@language": "id" },
-      { "@value": post.title_en || post.title_id, "@language": "en" }
-    ],
-    "description": [
-      { "@value": post.excerpt_id || post.excerpt_en, "@language": "id" },
-      { "@value": post.excerpt_en || post.excerpt_id, "@language": "en" }
-    ],
+    "headline": pick(post.title_id || post.title_en, post.title_en || post.title_id),
+    "description": pick(post.excerpt_id || post.excerpt_en, post.excerpt_en || post.excerpt_id),
     "image": postImage,
     "datePublished": post.date ? convertDate(post.date) : undefined,
+    "dateModified": post.date ? convertDate(post.date) : undefined,
     "author": {
       "@type": "Organization",
       "@id": `${SITE_URL}/#organization`,
@@ -116,16 +114,24 @@ export default async function BlogPostPage({ params }) {
       "name": "Berseni"
     },
     "mainEntityOfPage": `${SITE_URL}/blog/${slug}`,
-    "articleBody": [
-      { "@value": post.content_id || post.content_en, "@language": "id" },
-      { "@value": post.content_en || post.content_id, "@language": "en" }
-    ],
+    "articleBody": pick(post.content_id || post.content_en, post.content_en || post.content_id),
     "inLanguage": ["id-ID", "en-US"]
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": defaultLanguage === 'en' ? "Home" : "Beranda", "item": `${SITE_URL}/` },
+      { "@type": "ListItem", "position": 2, "name": "Blog", "item": `${SITE_URL}/blog` },
+      { "@type": "ListItem", "position": 3, "name": pick(post.title_id || post.title_en, post.title_en || post.title_id), "item": `${SITE_URL}/blog/${post.slug}` }
+    ]
   };
 
   return (
     <>
       <JsonLd data={blogPostJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <BlogPostPageClient content={content} post={post} />
     </>
   );

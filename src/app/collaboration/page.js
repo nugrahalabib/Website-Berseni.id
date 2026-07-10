@@ -61,13 +61,13 @@ export default async function CollaborationPage() {
   const seoPages = await db.get('seo_pages') || {};
   const pageSeo = seoPages['collaboration'] || {};
 
+  const defaultLanguage = content?.content?.defaultLanguage || content?.defaultLanguage || 'id';
+  const pick = (id, en) => (defaultLanguage === 'en' ? (en || id) : (id || en));
+
   const brandFacts = (pageSeo.geo_facts_id || pageSeo.geo_facts_en) ? {
     "@type": "CreativeWork",
     "name": "Core Collaboration Facts & AI Citation Reference",
-    "text": [
-      { "@value": pageSeo.geo_facts_id || "", "@language": "id" },
-      { "@value": pageSeo.geo_facts_en || "", "@language": "en" }
-    ]
+    "text": pick(pageSeo.geo_facts_id || "", pageSeo.geo_facts_en || "")
   } : null;
 
   const collaborationPageJsonLd = {
@@ -75,14 +75,8 @@ export default async function CollaborationPage() {
     "@type": "WebPage",
     "@id": `${SITE_URL}/collaboration#webpage`,
     "url": `${SITE_URL}/collaboration`,
-    "name": [
-      { "@value": pageSeo.title_id || "Kolaborasi Kemitraan - Berseni", "@language": "id" },
-      { "@value": pageSeo.title_en || "Partnership Collaboration - Berseni", "@language": "en" }
-    ],
-    "description": [
-      { "@value": pageSeo.description_id || "Buka peluang kolaborasi kreatif bersama Berseni. Kami terbuka untuk brand, komunitas, dan partner venue untuk menghadirkan pengalaman seni terbaik.", "@language": "id" },
-      { "@value": pageSeo.description_en || "Open creative collaboration opportunities with Berseni. We are open for brands, communities, and venue partners to bring the best art experiences.", "@language": "en" }
-    ],
+    "name": pick(pageSeo.title_id || "Kolaborasi Kemitraan - Berseni", pageSeo.title_en || "Partnership Collaboration - Berseni"),
+    "description": pick(pageSeo.description_id || "Buka peluang kolaborasi kreatif bersama Berseni. Kami terbuka untuk brand, komunitas, dan partner venue untuk menghadirkan pengalaman seni terbaik.", pageSeo.description_en || "Open creative collaboration opportunities with Berseni. We are open for brands, communities, and venue partners to bring the best art experiences."),
     "isPartOf": {
       "@id": `${SITE_URL}/#website`
     },
@@ -98,48 +92,30 @@ export default async function CollaborationPage() {
   if (pageSeo.geo_faq_q1_id && pageSeo.geo_faq_a1_id) {
     faqList.push({
       "@type": "Question",
-      "name": [
-        { "@value": pageSeo.geo_faq_q1_id, "@language": "id" },
-        { "@value": pageSeo.geo_faq_q1_en || pageSeo.geo_faq_q1_id, "@language": "en" }
-      ],
+      "name": pick(pageSeo.geo_faq_q1_id, pageSeo.geo_faq_q1_en || pageSeo.geo_faq_q1_id),
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": [
-          { "@value": pageSeo.geo_faq_a1_id, "@language": "id" },
-          { "@value": pageSeo.geo_faq_a1_en || pageSeo.geo_faq_a1_id, "@language": "en" }
-        ]
+        "text": pick(pageSeo.geo_faq_a1_id, pageSeo.geo_faq_a1_en || pageSeo.geo_faq_a1_id)
       }
     });
   }
   if (pageSeo.geo_faq_q2_id && pageSeo.geo_faq_a2_id) {
     faqList.push({
       "@type": "Question",
-      "name": [
-        { "@value": pageSeo.geo_faq_q2_id, "@language": "id" },
-        { "@value": pageSeo.geo_faq_q2_en || pageSeo.geo_faq_q2_id, "@language": "en" }
-      ],
+      "name": pick(pageSeo.geo_faq_q2_id, pageSeo.geo_faq_q2_en || pageSeo.geo_faq_q2_id),
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": [
-          { "@value": pageSeo.geo_faq_a2_id, "@language": "id" },
-          { "@value": pageSeo.geo_faq_a2_en || pageSeo.geo_faq_a2_id, "@language": "en" }
-        ]
+        "text": pick(pageSeo.geo_faq_a2_id, pageSeo.geo_faq_a2_en || pageSeo.geo_faq_a2_id)
       }
     });
   }
   if (pageSeo.geo_faq_q3_id && pageSeo.geo_faq_a3_id) {
     faqList.push({
       "@type": "Question",
-      "name": [
-        { "@value": pageSeo.geo_faq_q3_id, "@language": "id" },
-        { "@value": pageSeo.geo_faq_q3_en || pageSeo.geo_faq_q3_id, "@language": "en" }
-      ],
+      "name": pick(pageSeo.geo_faq_q3_id, pageSeo.geo_faq_q3_en || pageSeo.geo_faq_q3_id),
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": [
-          { "@value": pageSeo.geo_faq_a3_id, "@language": "id" },
-          { "@value": pageSeo.geo_faq_a3_en || pageSeo.geo_faq_a3_id, "@language": "en" }
-        ]
+        "text": pick(pageSeo.geo_faq_a3_id, pageSeo.geo_faq_a3_en || pageSeo.geo_faq_a3_id)
       }
     });
   }
@@ -151,9 +127,19 @@ export default async function CollaborationPage() {
     "mainEntity": faqList
   } : null;
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": defaultLanguage === 'en' ? "Home" : "Beranda", "item": `${SITE_URL}/` },
+      { "@type": "ListItem", "position": 2, "name": pick(pageSeo.title_id || "Kolaborasi Kemitraan - Berseni", pageSeo.title_en || "Partnership Collaboration - Berseni"), "item": `${SITE_URL}/collaboration` }
+    ]
+  };
+
   return (
     <>
       <JsonLd data={collaborationPageJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <CollaborationPageClient 
         content={content} 

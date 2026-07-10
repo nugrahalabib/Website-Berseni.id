@@ -95,7 +95,7 @@ export async function generateMetadata() {
 
 // JSON-LD Organization Schema — global untuk semua halaman
 // Ini membuat AI generatif mengenali Berseni sebagai entitas organisasi
-const organizationJsonLd = {
+const buildOrganizationJsonLd = (pick) => ({
   "@context": "https://schema.org",
   "@type": "Organization",
   "@id": `${SITE_URL}/#organization`,
@@ -103,16 +103,7 @@ const organizationJsonLd = {
   alternateName: "Berseni",
   url: SITE_URL,
   logo: `${SITE_URL}/logo.png`,
-  description: [
-    {
-      "@value": "Platform edukasi seni rupa Indonesia yang menghubungkan masyarakat umum dengan seniman profesional melalui kelas online, workshop offline, dan karya seni orisinal.",
-      "@language": "id"
-    },
-    {
-      "@value": "Indonesian visual art education platform connecting the general public with professional artists through online classes, offline workshops, and original artwork.",
-      "@language": "en"
-    }
-  ],
+  description: pick("Platform edukasi seni rupa Indonesia yang menghubungkan masyarakat umum dengan seniman profesional melalui kelas online, workshop offline, dan karya seni orisinal.", "Indonesian visual art education platform connecting the general public with professional artists through online classes, offline workshops, and original artwork."),
   foundingDate: "2026",
   sameAs: [
     "https://www.instagram.com/berseni.id",
@@ -137,30 +128,21 @@ const organizationJsonLd = {
     "Oil Painting",
     "Art Education",
   ],
-};
+});
 
 // JSON-LD WebSite Schema — memberi tahu AI bahwa ini adalah situs web resmi
-const websiteJsonLd = {
+const buildWebsiteJsonLd = (pick) => ({
   "@context": "https://schema.org",
   "@type": "WebSite",
   "@id": `${SITE_URL}/#website`,
   url: SITE_URL,
   name: "Berseni.id",
-  description: [
-    {
-      "@value": "Platform edukasi seni rupa Indonesia — kelas melukis online, workshop offline, dan galeri karya seni orisinal.",
-      "@language": "id"
-    },
-    {
-      "@value": "Indonesian visual art education platform — online painting classes, offline workshops, and original art gallery.",
-      "@language": "en"
-    }
-  ],
+  description: pick("Platform edukasi seni rupa Indonesia — kelas melukis online, workshop offline, dan galeri karya seni orisinal.", "Indonesian visual art education platform — online painting classes, offline workshops, and original art gallery."),
   publisher: {
     "@id": `${SITE_URL}/#organization`,
   },
   inLanguage: ["id-ID", "en-US"],
-};
+});
 
 export default async function RootLayout({ children }) {
   const seoPages = await db.get('seo_pages') || {};
@@ -169,6 +151,10 @@ export default async function RootLayout({ children }) {
 
   const content = await db.get('content') || {};
   const defaultLanguage = content.defaultLanguage || 'id';
+  const pick = (id, en) => (defaultLanguage === 'en' ? (en || id) : (id || en));
+
+  const organizationJsonLd = buildOrganizationJsonLd(pick);
+  const websiteJsonLd = buildWebsiteJsonLd(pick);
 
   return (
     <html lang={defaultLanguage} className={`${montserrat.variable} ${dancingScript.variable}`}>
