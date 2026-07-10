@@ -303,7 +303,7 @@
   bottom: 0;
   width: 750px;
   height: 95%;
-  background-image: url('/pohon-kiri.png');
+  background-image: url('/pohon-kiri.webp');
   background-size: contain;
   background-position: left bottom;
   background-repeat: no-repeat;
@@ -320,7 +320,7 @@
   bottom: 0;
   width: 750px;
   height: 95%;
-  background-image: url('/pohon-kanan.png');
+  background-image: url('/pohon-kanan.webp');
   background-size: contain;
   background-position: right bottom;
   background-repeat: no-repeat;
