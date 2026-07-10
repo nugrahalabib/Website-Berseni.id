@@ -249,3 +249,17 @@ a {
   transform: translateX(0);
 }
 
+/* Aksesibilitas: hormati pengguna yang memilih "reduce motion".
+   Menetralkan marquee, pulse, dan animasi tak-terbatas serta mempercepat transisi.
+   (Catatan: hero scroll-zoom digerakkan JS — perlu cek matchMedia terpisah.) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
