@@ -43,3 +43,9 @@ next-env.d.ts
 # local uploads
 /public/uploads/
 
+
+.vercel
+.env*
+
+# handoff document (contains secrets, local only)
+CLAUDE.md
