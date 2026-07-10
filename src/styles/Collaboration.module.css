@@ -309,7 +309,7 @@
   pointer-events: auto;
   display: flex;
   flex-direction: column;
-  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
+  transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
 }
 
 .floatCard:hover {
@@ -470,7 +470,7 @@
   border: 1px solid rgba(20, 120, 155, 0.05);
   box-shadow: 0 10px 30px rgba(20, 120, 155, 0.02);
   text-align: center;
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 0.4s var(--ease-out-expo);
 }
 
 .benefitCard:hover {

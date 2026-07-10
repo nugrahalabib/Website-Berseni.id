@@ -144,7 +144,7 @@
   box-shadow: 
     0 10px 25px rgba(20, 120, 155, 0.05),
     0 20px 45px rgba(0, 0, 0, 0.04);
-  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
+  transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
   background-color: var(--color-white);
   border: 6px solid var(--color-white);
 }
@@ -555,7 +555,7 @@
 .pillarCard {
   border-radius: 24px;
   padding: 3.5rem 2.5rem;
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 0.4s var(--ease-out-expo);
   display: flex;
   flex-direction: column;
   background: rgba(250, 245, 235, 0.45) !important;
