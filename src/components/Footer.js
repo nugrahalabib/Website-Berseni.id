@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Components.module.css';

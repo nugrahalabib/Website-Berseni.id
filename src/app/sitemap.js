@@ -9,6 +9,7 @@ export default async function sitemap() {
     '/about',
     '/collaboration',
     '/store',
+    '/classes',
     '/blog',
   ].map((route) => ({
     url: `${SITE_URL}${route}`,

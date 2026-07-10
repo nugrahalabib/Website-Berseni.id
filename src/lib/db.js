@@ -220,7 +220,7 @@ function initLocalDb() {
         bg_about_feature: "#FFFFFF",
         bg_about_empower: "#FAF5EB",
         bg_about_pillars: "#FFFFFF",
-        bg_about_stats: "#14789B",
+        bg_about_stats: "#0B132B",
         bg_about_cta: "#FAF5EB",
         bg_collab_hero: "#FAF5EB",
         bg_collab_brand: "#FFFFFF",
@@ -779,7 +779,7 @@ function initLocalDb() {
         data.content.bg_navbar = "#FAF5EB";
         data.content.bg_home_hero = "#FAF5EB";
         data.content.bg_home_partners = "#FFFFFF";
-        data.content.bg_home_programs = "#0B132B";
+        data.content.bg_home_programs = "#FAF5EB";
         data.content.bg_home_gallery = "#FFFFFF";
         data.content.bg_home_testimonials = "#FAF5EB";
         data.content.bg_home_blog = "#FFFFFF";

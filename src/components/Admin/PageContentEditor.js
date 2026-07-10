@@ -210,6 +210,76 @@ const ColorPickerInput = ({ label, name, value, onChange }) => {
 };
 
 
+// Editor daftar Misi (bilingual). Di-hoist ke module scope agar identitas komponen
+// stabil antar-render induk — mencegah remount yang membuat input kehilangan fokus.
+function MisiListSection({ misiListId, misiListEn, onMisiChange, onRemoveMisi, onAddMisi }) {
+  const [newMisiId, setNewMisiId] = useState('');
+  const [newMisiEn, setNewMisiEn] = useState('');
+
+  const currentMisiId = misiListId || [];
+  const currentMisiEn = misiListEn || [];
+
+  return (
+    <div style={{ marginTop: '1rem', borderTop: '1px dashed #E2E8F0', paddingTop: '1rem' }}>
+      <label className={styles.adminLabel} style={{ marginBottom: '1rem' }}>Daftar Misi Komunitas (Bilingual)</label>
+
+      {currentMisiId.map((misi, index) => (
+        <div key={index} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 42px', gap: '0.5rem', marginBottom: '0.75rem' }}>
+          <input
+            type="text"
+            className={styles.adminInput}
+            value={misi}
+            onChange={(e) => onMisiChange(index, 'id', e.target.value)}
+            placeholder={`Misi ${index + 1} (Indonesian)`}
+            required
+          />
+          <input
+            type="text"
+            className={styles.adminInput}
+            value={currentMisiEn[index] || ''}
+            onChange={(e) => onMisiChange(index, 'en', e.target.value)}
+            placeholder={`Mission ${index + 1} (English)`}
+            required
+          />
+          <button
+            type="button"
+            className={styles.misiRemoveBtn}
+            onClick={() => onRemoveMisi(index)}
+            title="Hapus misi ini"
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '0.5rem', marginTop: '1rem' }}>
+        <input
+          type="text"
+          className={styles.adminInput}
+          value={newMisiId}
+          onChange={(e) => setNewMisiId(e.target.value)}
+          placeholder="Tambah Misi Baru (ID)..."
+        />
+        <input
+          type="text"
+          className={styles.adminInput}
+          value={newMisiEn}
+          onChange={(e) => setNewMisiEn(e.target.value)}
+          placeholder="Add New Mission (EN)..."
+        />
+        <button
+          type="button"
+          className="btn btn-secondary"
+          style={{ padding: '0 1.5rem', borderRadius: '10px', height: '100%', whiteSpace: 'nowrap' }}
+          onClick={() => onAddMisi(newMisiId, newMisiEn, () => { setNewMisiId(''); setNewMisiEn(''); })}
+        >
+          + Tambah
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function PageContentEditor({ showToast }) {
   const { refreshContent } = useLanguage();
   const [loading, setLoading] = useState(true);
@@ -888,74 +958,8 @@ export default function PageContentEditor({ showToast }) {
     }
   };
 
-  // Helper Custom Visi Misi List
-  const MisiListSection = () => {
-    const [newMisiId, setNewMisiId] = useState('');
-    const [newMisiEn, setNewMisiEn] = useState('');
-
-    const currentMisiId = form.misiList_id || [];
-    const currentMisiEn = form.misiList_en || [];
-
-    return (
-      <div style={{ marginTop: '1rem', borderTop: '1px dashed #E2E8F0', paddingTop: '1rem' }}>
-        <label className={styles.adminLabel} style={{ marginBottom: '1rem' }}>Daftar Misi Komunitas (Bilingual)</label>
-        
-        {currentMisiId.map((misi, index) => (
-          <div key={index} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 42px', gap: '0.5rem', marginBottom: '0.75rem' }}>
-            <input
-              type="text"
-              className={styles.adminInput}
-              value={misi}
-              onChange={(e) => handleMisiChange(index, 'id', e.target.value)}
-              placeholder={`Misi ${index + 1} (Indonesian)`}
-              required
-            />
-            <input
-              type="text"
-              className={styles.adminInput}
-              value={currentMisiEn[index] || ''}
-              onChange={(e) => handleMisiChange(index, 'en', e.target.value)}
-              placeholder={`Mission ${index + 1} (English)`}
-              required
-            />
-            <button
-              type="button"
-              className={styles.misiRemoveBtn}
-              onClick={() => removeMisiItem(index)}
-              title="Hapus misi ini"
-            >
-              ✕
-            </button>
-          </div>
-        ))}
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '0.5rem', marginTop: '1rem' }}>
-          <input
-            type="text"
-            className={styles.adminInput}
-            value={newMisiId}
-            onChange={(e) => setNewMisiId(e.target.value)}
-            placeholder="Tambah Misi Baru (ID)..."
-          />
-          <input
-            type="text"
-            className={styles.adminInput}
-            value={newMisiEn}
-            onChange={(e) => setNewMisiEn(e.target.value)}
-            placeholder="Add New Mission (EN)..."
-          />
-          <button
-            type="button"
-            className="btn btn-secondary"
-            style={{ padding: '0 1.5rem', borderRadius: '10px', height: '100%', whiteSpace: 'nowrap' }}
-            onClick={() => addMisiItem(newMisiId, newMisiEn, () => { setNewMisiId(''); setNewMisiEn(''); })}
-          >
-            + Tambah
-          </button>
-        </div>
-      </div>
-    );
-  };
+  // MisiListSection di-hoist ke module scope (didefinisikan di atas komponen ini)
+  // agar tidak remount & kehilangan fokus input saat mengetik.
 
   // Helper Custom Activities Carousel Editor
   const ActivitiesEditorSection = () => {
@@ -1963,7 +1967,13 @@ export default function PageContentEditor({ showToast }) {
 
             {/* Custom render for Visi & Misi list */}
             {currentPageConfig.sections[activeSection].customRender === 'visimisi_list' && (
-              <MisiListSection />
+              <MisiListSection
+                misiListId={form.misiList_id}
+                misiListEn={form.misiList_en}
+                onMisiChange={handleMisiChange}
+                onRemoveMisi={removeMisiItem}
+                onAddMisi={addMisiItem}
+              />
             )}
 
             {/* Custom render for Activities list */}
