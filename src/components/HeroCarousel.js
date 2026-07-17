@@ -105,7 +105,12 @@ export default function HeroCarousel({ items = [], onCardClick }) {
       transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg)`,
       opacity,
       zIndex,
-      pointerEvents: absDiff > 2 ? 'none' : 'auto'
+      // JANGAN paksa 'auto' di sini. pointer-events itu inherited, dan induknya
+      // (.showcaseWrapper) sengaja men-set 'none' selama showcase belum terlihat
+      // (opacity 0 di awal hero). Memaksa 'auto' membatalkan 'none' induk itu,
+      // sehingga kartu yang TAK TERLIHAT (z-index 30) menutupi tombol CTA hero
+      // (z-index 20) dan memakan semua klik. undefined = warisi induk.
+      pointerEvents: absDiff > 2 ? 'none' : undefined
     };
   };
 
