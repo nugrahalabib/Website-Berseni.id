@@ -695,6 +695,8 @@
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh; /* dvh = tinggi viewport nyata di HP (address bar diperhitungkan) */
+  overflow-y: auto; /* jaring pengaman bila modal lebih tinggi dari layar */
   background-color: rgba(11, 19, 43, 0.65);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -709,9 +711,15 @@
 .modalContent {
   width: 100%;
   max-width: 900px;
+  /* Batasi tinggi modal ke layar; kalau isinya lebih tinggi (deskripsi panjang di
+     HP), modal bisa di-scroll ke dalam sampai tombol CTA — dulu overflow:hidden +
+     tanpa max-height memotong bagian bawah sehingga tombol tak terjangkau. */
+  max-height: calc(100vh - 3rem);
+  max-height: calc(100dvh - 3rem);
+  overflow-x: hidden;
+  overflow-y: auto;
   background: var(--color-cream-bg);
   border-radius: 24px;
-  overflow: hidden;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.4);

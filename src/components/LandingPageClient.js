@@ -462,23 +462,24 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
   useEffect(() => {
     let rafId = null;
 
-    const measureProgress = () => {
+    // Geometri hero DI-CACHE dan hanya diukur ulang saat RESIZE — bukan tiap scroll.
+    // Di HP, address bar yang muncul/hilang saat men-scroll mengubah
+    // window.innerHeight (dan tinggi 200vh) frame demi frame; kalau progress
+    // dihitung ulang dari innerHeight tiap scroll, nilainya "gemetar" sehingga
+    // parallax hero terlihat kejang. Dengan cache, handler scroll hanya membaca
+    // window.scrollY yang mulus & monoton.
+    let heroTop = 0;
+    let totalScrollable = 1;
+
+    const measureGeometry = () => {
       const heroEl = document.getElementById('hero-scroll-container');
       if (!heroEl) return;
+      heroTop = heroEl.offsetTop;
+      totalScrollable = Math.max(1, heroEl.offsetHeight - window.innerHeight);
+    };
 
-      const heroHeight = heroEl.offsetHeight;
-      const viewportHeight = window.innerHeight;
-
-      // Hitung seberapa jauh area hero ter-scroll relatif terhadap viewport
-      const scrollStart = window.scrollY;
-      const containerTop = heroEl.offsetTop;
-      const totalScrollable = heroHeight - viewportHeight;
-
-      let progress = 0;
-      if (totalScrollable > 0) {
-        progress = (scrollStart - containerTop) / totalScrollable;
-        progress = Math.max(0, Math.min(1, progress));
-      }
+    const measureProgress = () => {
+      const progress = Math.max(0, Math.min(1, (window.scrollY - heroTop) / totalScrollable));
       setScrollProgress(progress);
     };
 
@@ -491,12 +492,19 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       });
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    // Jalankan sekali di awal untuk menetapkan state inisial
+    const handleResize = () => {
+      measureGeometry();
+      measureProgress();
+    };
+
+    measureGeometry();
     measureProgress();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
       if (rafId !== null) window.cancelAnimationFrame(rafId);
       scrollTickingRef.current = false;
     };
