@@ -186,6 +186,7 @@ const getMarqueeItems = (arr) => {
 const MS_PER_SECOND = 1000;
 const MS_PER_MINUTE = 60 * MS_PER_SECOND;
 const MS_PER_HOUR = 60 * MS_PER_MINUTE;
+const MS_PER_DAY = 24 * MS_PER_HOUR;
 
 // Parse an admin-supplied promo end date into a timestamp.
 // Returns null when absent or unparseable so the caller can hide the timer.
@@ -200,7 +201,8 @@ const getRemainingTime = (endsAt) => {
   const difference = endsAt - Date.now();
   if (difference <= 0) return null;
   return {
-    hours: Math.floor(difference / MS_PER_HOUR),
+    days: Math.floor(difference / MS_PER_DAY),
+    hours: Math.floor((difference % MS_PER_DAY) / MS_PER_HOUR),
     minutes: Math.floor((difference % MS_PER_HOUR) / MS_PER_MINUTE),
     seconds: Math.floor((difference % MS_PER_MINUTE) / MS_PER_SECOND)
   };
@@ -234,7 +236,16 @@ function PromoCountdown({ endsAt }) {
     <div className={styles.countdownBox}>
       <span className={styles.countdownLabel}>{getTranslation('promoEnds')}</span>
       <div className={styles.countdownTimer}>
-        {remaining.hours > 0 && (
+        {remaining.days > 0 && (
+          <>
+            <div className={styles.timerDigit}>
+              <span>{String(remaining.days).padStart(2, '0')}</span>
+              <label>{language === 'en' ? 'Days' : 'Hari'}</label>
+            </div>
+            <span className={styles.timerColon}>:</span>
+          </>
+        )}
+        {(remaining.days > 0 || remaining.hours > 0) && (
           <>
             <div className={styles.timerDigit}>
               <span>{String(remaining.hours).padStart(2, '0')}</span>
