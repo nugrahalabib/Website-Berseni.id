@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback, useLayoutEffect } from 'react';
 import Link from 'next/link';
 import SafeImage from '@/components/SafeImage';
 import Navbar from '@/components/Navbar';
@@ -307,10 +307,29 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  // scrollProgress dipertahankan pada 0 sebagai baseline SSR/render awal (JSX hero
+  // memakai motionProgress turunannya). Animasi nyata dijalankan imperatif via
+  // applyHeroTransforms (lihat heroProgressRef) sehingga tidak ada re-render/frame.
+  const [scrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const scrollTickingRef = useRef(false);
+
+  // === Hero parallax imperatif (Option A) ===
+  // Transform hero di-set langsung ke DOM via ref di dalam rAF, TANPA setState
+  // per frame. Menghilangkan re-render React tiap scroll frame -> di HP tidak ada
+  // lagi "drrrr"/getar. Desktop identik: rumus sama persis dgn nilai turunan lama.
+  const heroProgressRef = useRef(0);
+  const reducedMotionRef = useRef(false);
+  const heroBrush1Ref = useRef(null);
+  const heroBrush2Ref = useRef(null);
+  const heroStage3Ref = useRef(null);
+  const heroSunsetRef = useRef(null);
+  const heroBirdsRef = useRef(null);
+  const heroContentRef = useRef(null);
+  const heroShowcaseRef = useRef(null);
+  const heroScrollIndicatorRef = useRef(null);
+
   const galleryTrackRef = useRef(null);
   const [scrollPct, setScrollPct] = useState(0);
 
@@ -456,6 +475,85 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
     return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
+  // Terapkan SELURUH transform hero secara imperatif untuk progress tertentu.
+  // Rumus di sini WAJIB identik dengan blok "Nilai yang menggerakkan animasi hero"
+  // di bawah, agar tampilan (khususnya desktop yang sudah aman) tidak berubah.
+  const applyHeroTransforms = useCallback((progress) => {
+    heroProgressRef.current = progress;
+    const mp = reducedMotionRef.current
+      ? (progress >= 0.5 ? 1 : 0)
+      : progress;
+
+    const sunsetOpacity = mp < 0.85 ? 1 : 1 - (mp - 0.85) / 0.15;
+    const sunsetTranslateY = mp * 50;
+    const birdsOpacity = mp < 0.85 ? 1 : 1 - (mp - 0.85) / 0.15;
+    const birdsTranslateX = mp * 150;
+    const birdsTranslateY = mp * -50;
+    const textOpacity = mp < 0.45 ? 1 - (mp / 0.45) : 0;
+    const textScale = mp < 0.45 ? 1 - (mp / 0.45) * 0.05 : 0.95;
+    const textTranslateY = mp < 0.45 ? -((mp / 0.45) * 40) : -40;
+    const showcaseOpacity = mp < 0.50 ? 0 : Math.min(1, (mp - 0.50) / 0.35);
+    const showcaseScale = mp < 0.50 ? 0.92 : 0.92 + Math.min(1, (mp - 0.50) / 0.35) * 0.08;
+    const showcaseTranslateY = mp < 0.50 ? 40 : 40 - Math.min(1, (mp - 0.50) / 0.35) * 40;
+    const scrollBtnOpacity = mp < 0.05 ? 1 : (mp < 0.15 ? 1 - (mp - 0.05) / 0.1 : 0);
+
+    const brush1 = heroBrush1Ref.current;
+    if (brush1) {
+      brush1.style.transform = `translate(${-mp * 150}px, ${mp * 50}px)`;
+      brush1.style.opacity = 0.1 * (1 - mp);
+    }
+    const brush2 = heroBrush2Ref.current;
+    if (brush2) {
+      brush2.style.transform = `translate(${mp * 150}px, ${-mp * 50}px)`;
+      brush2.style.opacity = 0.1 * (1 - mp);
+    }
+    const stage3 = heroStage3Ref.current;
+    if (stage3) {
+      stage3.style.display = mp > 0.95 ? 'none' : 'block';
+    }
+    const sunset = heroSunsetRef.current;
+    if (sunset) {
+      sunset.style.opacity = sunsetOpacity;
+      sunset.style.transform = `scale(${1.02 + mp * 0.03}) translate(${mp * -8}px, ${sunsetTranslateY - mp * 4}px)`;
+    }
+    const birds = heroBirdsRef.current;
+    if (birds) {
+      birds.style.opacity = birdsOpacity;
+      birds.style.transform = `scale(${1 + mp * 0.1}) translate(${birdsTranslateX + mp * 20}px, ${birdsTranslateY - mp * 12}px)`;
+    }
+    const heroCard = heroContentRef.current;
+    if (heroCard) {
+      heroCard.style.opacity = textOpacity;
+      heroCard.style.transform = `translate(-50%, -50%) translateY(${textTranslateY}px) scale(${textScale})`;
+      heroCard.style.pointerEvents = textOpacity < 0.3 ? 'none' : 'auto';
+      heroCard.style.display = mp > 0.45 ? 'none' : 'block';
+    }
+    const showcase = heroShowcaseRef.current;
+    if (showcase) {
+      showcase.style.opacity = showcaseOpacity;
+      showcase.style.transform = `translateY(${showcaseTranslateY}px) scale(${showcaseScale})`;
+      showcase.style.pointerEvents = showcaseOpacity < 0.3 ? 'none' : 'auto';
+    }
+    const scrollBtn = heroScrollIndicatorRef.current;
+    if (scrollBtn) {
+      scrollBtn.style.opacity = scrollBtnOpacity;
+      scrollBtn.style.pointerEvents = scrollBtnOpacity < 0.2 ? 'none' : 'auto';
+    }
+  }, []);
+
+  // Sinkronkan preferensi reduced-motion ke ref, lalu snap ulang ke end-state.
+  useEffect(() => {
+    reducedMotionRef.current = prefersReducedMotion;
+    applyHeroTransforms(heroProgressRef.current);
+  }, [prefersReducedMotion, applyHeroTransforms]);
+
+  // Re-apply setelah SETIAP render React (mis. buka filter/modal). Tanpa ini,
+  // render ulang mengembalikan inline-style hero ke baseline progress=0.
+  // useLayoutEffect berjalan sebelum paint sehingga tidak ada kedip.
+  useLayoutEffect(() => {
+    applyHeroTransforms(heroProgressRef.current);
+  });
+
   // Hook untuk memantau progress scroll di Hero Section.
   // Di-throttle dengan requestAnimationFrame: pembacaan layout + setState
   // maksimal sekali per frame, bukan sekali per event scroll.
@@ -480,7 +578,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
 
     const measureProgress = () => {
       const progress = Math.max(0, Math.min(1, (window.scrollY - heroTop) / totalScrollable));
-      setScrollProgress(progress);
+      applyHeroTransforms(progress);
     };
 
     const handleScroll = () => {
@@ -508,7 +606,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       if (rafId !== null) window.cancelAnimationFrame(rafId);
       scrollTickingRef.current = false;
     };
-  }, []);
+  }, [applyHeroTransforms]);
 
 
   // Fallback konten jika database kosong / error
@@ -690,12 +788,12 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
         <div className={styles.heroStickyWrapper}>
 
           {/* Background Decorative Brush Accents */}
-          <div className={styles.heroBrush1} style={{ transform: `translate(${-motionProgress * 150}px, ${motionProgress * 50}px)`, opacity: 0.1 * (1 - motionProgress) }}>
+          <div ref={heroBrush1Ref} className={styles.heroBrush1} style={{ transform: `translate(${-motionProgress * 150}px, ${motionProgress * 50}px)`, opacity: 0.1 * (1 - motionProgress) }}>
             <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 80 C 40 10, 60 10, 100 80 C 130 150, 160 150, 190 80" stroke="var(--color-tosca)" strokeWidth="8" strokeLinecap="round"/>
             </svg>
           </div>
-          <div className={styles.heroBrush2} style={{ transform: `translate(${motionProgress * 150}px, ${-motionProgress * 50}px)`, opacity: 0.1 * (1 - motionProgress) }}>
+          <div ref={heroBrush2Ref} className={styles.heroBrush2} style={{ transform: `translate(${motionProgress * 150}px, ${-motionProgress * 50}px)`, opacity: 0.1 * (1 - motionProgress) }}>
             <svg width="250" height="250" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M20 20 C 80 180, 120 180, 180 20" stroke="var(--color-kunyit)" strokeWidth="6" strokeLinecap="round" strokeDasharray="5,5"/>
             </svg>
@@ -704,7 +802,8 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
 
 
           {/* BACKGROUND UNTUK TAHAP 3 (HERO TEXT) - STAGGERED ACCENTS */}
-          <div 
+          <div
+            ref={heroStage3Ref}
             className={styles.heroStage3Bg}
             style={{
               pointerEvents: 'none',
@@ -712,7 +811,8 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
             }}
           >
             {/* Latar Belakang Ombak Sunset (Slides up and fades in) */}
-            <div 
+            <div
+              ref={heroSunsetRef}
               className={styles.sunsetParallaxWrapper}
               style={{
                 opacity: sunsetOpacity,
@@ -723,7 +823,8 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
             </div>
 
             {/* Overlay Burung-Burung Terbang (Slides from left-bottom and fades in) */}
-            <div 
+            <div
+              ref={heroBirdsRef}
               className={styles.birdsParallaxWrapper}
               style={{
                 opacity: birdsOpacity,
@@ -735,7 +836,8 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           </div>
 
           {/* TAHAP 3: HERO TEXT CONTENT */}
-          <div 
+          <div
+            ref={heroContentRef}
             className={styles.heroContent}
             style={{
               backgroundColor: `rgba(250, 245, 235, ${cardOpacity})`,
@@ -755,7 +857,8 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           </div>
 
           {/* TAHAP 4: SHOWCASE CAROUSEL (AKTIVITAS BERSENI) */}
-          <div 
+          <div
+            ref={heroShowcaseRef}
             className={styles.showcaseWrapper}
             style={{
               opacity: showcaseOpacity,
@@ -785,6 +888,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           {/* Scroll Indicator (Fades out dynamically on scroll) */}
           {showScrollButton && (
             <button
+              ref={heroScrollIndicatorRef}
               type="button"
               className={styles.scrollIndicator}
               style={{

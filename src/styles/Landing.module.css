@@ -1005,7 +1005,9 @@
 
   .bgBirds {
     background-size: 125% auto !important;
-    background-position: center 45px !important;
+    /* Burung dinaikkan di HP saja (dulu 45px -> tenggelam/ketutupan kartu hero).
+       Desktop tidak terpengaruh: aturan ini hanya di dalam @media max-width:768px. */
+    background-position: center 8px !important;
     height: 48vh !important;
     top: 0 !important; /* dulu di-set JS via isMobile (post-mount) -> sumber CLS */
   }
