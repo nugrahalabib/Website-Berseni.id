@@ -145,6 +145,35 @@ const buildWebsiteJsonLd = (pick) => ({
   inLanguage: ["id-ID", "en-US"],
 });
 
+// Ubah hex admin -> "r, g, b" untuk varian --color-*-rgb (dipakai di rgba()).
+function hexToRgbParts(hex) {
+  if (typeof hex !== 'string') return null;
+  const m = hex.trim().replace(/^#/, '');
+  if (!/^[0-9a-fA-F]{6}$/.test(m)) return null;
+  return `${parseInt(m.slice(0, 2), 16)}, ${parseInt(m.slice(2, 4), 16)}, ${parseInt(m.slice(4, 6), 16)}`;
+}
+
+// Bangun override CSS variable dari warna brand yang di-set admin. HANYA hex 6-digit
+// yang lolos regex yang di-inject (mencegah CSS/HTML injection lewat field admin).
+// Meng-override --color-<name> DAN --color-<name>-rgb agast token & rgba() konsisten.
+function buildThemeStyle(content) {
+  const brand = [
+    ['tosca', content?.theme_tosca],
+    ['maroon', content?.theme_maroon],
+    ['kunyit', content?.theme_kunyit],
+  ];
+  let vars = '';
+  for (const [name, value] of brand) {
+    if (typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value.trim())) {
+      const hex = value.trim();
+      vars += `--color-${name}:${hex};`;
+      const rgb = hexToRgbParts(hex);
+      if (rgb) vars += `--color-${name}-rgb:${rgb};`;
+    }
+  }
+  return vars ? `:root{${vars}}` : '';
+}
+
 export default async function RootLayout({ children }) {
   const seoPages = await db.get('seo_pages') || {};
   const globalSettings = seoPages.global || {};
@@ -167,9 +196,13 @@ export default async function RootLayout({ children }) {
   const organizationJsonLd = buildOrganizationJsonLd(pick);
   const websiteJsonLd = buildWebsiteJsonLd(pick);
 
+  // Override warna brand dari admin (kosong = pakai default globals.css).
+  const themeStyle = buildThemeStyle(content);
+
   return (
     <html lang={defaultLanguage} className={`${montserrat.variable} ${dancingScript.variable}`}>
       <body>
+        {themeStyle ? <style dangerouslySetInnerHTML={{ __html: themeStyle }} /> : null}
         <a href="#main-content" className="skip-link">
           {pick('Lewati ke konten utama', 'Skip to main content')}
         </a>

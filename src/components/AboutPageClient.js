@@ -250,14 +250,6 @@ export default function AboutPageClient({ content }) {
                     sizes="(max-width: 768px) 90vw, 500px"
                     fallbackSrc="/about-studio.webp"
                   />
-                  
-                  {/* Play/Interact Badge overlay */}
-                  <div className={styles.playBadge}>
-                    <div className={styles.playPulse}></div>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </div>
                 </div>
 
                 {/* Floating Testimonial/Quote Card */}

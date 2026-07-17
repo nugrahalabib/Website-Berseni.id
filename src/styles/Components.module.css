@@ -338,6 +338,16 @@
     background-color: #FF0000;
     box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
   }
+
+  .socialIcon.facebook:hover {
+    background-color: #1877F2;
+    box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+  }
+
+  .socialIcon.email:hover {
+    background-color: var(--color-tosca);
+    box-shadow: 0 4px 12px rgba(var(--color-tosca-rgb), 0.3);
+  }
 }
 
 /* Touch feedback: replaces the lift that hover-capable pointers get. */

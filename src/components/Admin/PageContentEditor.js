@@ -1294,7 +1294,10 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
               { value: 'floating', label: 'Capsule Melayang (Melayang dengan sudut tumpul di atas)' },
               { value: 'full', label: 'Kotak Penuh Lebar (Full-width rectangle di atas)' }
             ]},
-            { name: 'navOpacity', label: 'Opasitas Latar Belakang Navbar (Nilai 0.0 s.d 1.0. Semakin dekat ke 0.0 semakin transparan, semakin dekat ke 1.0 semakin tebal/solid. Default: 0.65)', type: 'text', placeholder: '0.65' }
+            { name: 'navOpacity', label: 'Opasitas Latar Belakang Navbar (Nilai 0.0 s.d 1.0. Semakin dekat ke 0.0 semakin transparan, semakin dekat ke 1.0 semakin tebal/solid. Default: 0.65)', type: 'text', placeholder: '0.65' },
+            { name: 'theme_tosca', label: 'Warna Brand Utama / Tosca (ikon, aksen, tombol tosca di seluruh situs)', type: 'color', defaultValue: '#14789B' },
+            { name: 'theme_maroon', label: 'Warna Brand Aksen / Maroon (tombol utama, aksen judul di seluruh situs)', type: 'color', defaultValue: '#AB2223' },
+            { name: 'theme_kunyit', label: 'Warna Brand Sorot / Kuning Kunyit (tombol CTA, bintang rating di seluruh situs)', type: 'color', defaultValue: '#FAA433' }
           ]
         },
         hero: {
@@ -1450,7 +1453,9 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'footerLinkWa', label: 'Tautan WhatsApp (https://wa.me/...)', type: 'text' },
             { name: 'footerLinkIg', label: 'Tautan Instagram', type: 'text' },
             { name: 'footerLinkTiktok', label: 'Tautan TikTok', type: 'text' },
-            { name: 'footerLinkYoutube', label: 'Tautan YouTube', type: 'text' }
+            { name: 'footerLinkYoutube', label: 'Tautan YouTube', type: 'text' },
+            { name: 'footerLinkFacebook', label: 'Tautan Facebook (opsional — kosongkan untuk menyembunyikan)', type: 'text', placeholder: 'https://facebook.com/berseni.id' },
+            { name: 'footerLinkEmail', label: 'Email Kontak (opsional — muncul sebagai ikon amplop)', type: 'text', placeholder: 'halo@berseni.id' }
           ]
         },
         backgrounds: {
