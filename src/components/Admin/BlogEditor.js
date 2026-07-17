@@ -3,12 +3,16 @@
 import { useState, useEffect } from 'react';
 import styles from '@/styles/Admin.module.css';
 
-export default function BlogEditor({ showToast }) {
+// Jumlah artikel yang ditampilkan per halaman tabel
+const ITEMS_PER_PAGE = 10;
+
+export default function BlogEditor({ showToast, setIsDirty = () => {} }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingPost, setEditingPost] = useState(null); // null means listing mode, 'new' means creating, { ... } means editing
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Form states
   const [form, setForm] = useState({
@@ -57,11 +61,13 @@ export default function BlogEditor({ showToast }) {
 
   useEffect(() => {
     fetchPosts();
+    setIsDirty(false);
   }, []);
 
   // Set form when edit button clicked
   const handleEditClick = (post) => {
     setEditingPost(post);
+    setIsDirty(false);
     setForm({
       originalSlug: post.slug,
       slug: post.slug,
@@ -95,6 +101,7 @@ export default function BlogEditor({ showToast }) {
   // Set form when adding new post
   const handleAddNewClick = () => {
     setEditingPost('new');
+    setIsDirty(false);
     setForm({
       originalSlug: '',
       slug: '',
@@ -128,6 +135,7 @@ export default function BlogEditor({ showToast }) {
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     const val = type === 'checkbox' ? checked : value;
+    setIsDirty(true);
     setForm(prev => {
       const updated = { ...prev, [name]: val };
       
@@ -158,14 +166,15 @@ export default function BlogEditor({ showToast }) {
       });
       if (res.ok) {
         const data = await res.json();
+        setIsDirty(true);
         setForm(prev => ({ ...prev, image: data.url }));
         showToast('Gambar artikel berhasil diunggah!');
       } else {
         const errData = await res.json();
-        alert(errData.error || 'Gagal mengunggah gambar');
+        showToast(errData.error || 'Gagal mengunggah gambar');
       }
     } catch (err) {
-      alert('Terjadi kesalahan koneksi saat mengunggah.');
+      showToast('Terjadi kesalahan koneksi saat mengunggah.');
     } finally {
       setUploading(false);
     }
@@ -189,14 +198,15 @@ export default function BlogEditor({ showToast }) {
 
       if (res.ok) {
         showToast(isNew ? 'Artikel baru berhasil diterbitkan!' : 'Artikel berhasil diperbarui!');
+        setIsDirty(false);
         setEditingPost(null);
         fetchPosts();
       } else {
         const errData = await res.json();
-        alert(errData.error || 'Gagal memproses artikel.');
+        showToast(errData.error || 'Gagal memproses artikel.');
       }
     } catch (err) {
-      alert('Terjadi kesalahan koneksi.');
+      showToast('Terjadi kesalahan koneksi.');
     } finally {
       setSubmitting(false);
     }
@@ -218,10 +228,10 @@ export default function BlogEditor({ showToast }) {
         fetchPosts();
       } else {
         const errData = await res.json();
-        alert(errData.error || 'Gagal menghapus artikel.');
+        showToast(errData.error || 'Gagal menghapus artikel.');
       }
     } catch (err) {
-      alert('Terjadi kesalahan koneksi.');
+      showToast('Terjadi kesalahan koneksi.');
     }
   };
 
@@ -232,6 +242,13 @@ export default function BlogEditor({ showToast }) {
       </div>
     );
   }
+
+  // Potong daftar artikel sesuai halaman aktif.
+  // activePage diturunkan saat render agar halaman tetap valid walau daftar menyusut (mis. setelah hapus).
+  const totalPages = Math.max(1, Math.ceil(posts.length / ITEMS_PER_PAGE));
+  const activePage = Math.min(currentPage, totalPages);
+  const pageStartIndex = (activePage - 1) * ITEMS_PER_PAGE;
+  const visiblePosts = posts.slice(pageStartIndex, pageStartIndex + ITEMS_PER_PAGE);
 
   return (
     <div>
@@ -257,7 +274,7 @@ export default function BlogEditor({ showToast }) {
                 </tr>
               </thead>
               <tbody>
-                {posts.map((post) => (
+                {visiblePosts.map((post) => (
                   <tr key={post.slug} className={styles.tableRow}>
                     <td>
                       <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -340,6 +357,35 @@ export default function BlogEditor({ showToast }) {
               </tbody>
             </table>
           </div>
+
+          {/* Navigasi Halaman Tabel */}
+          {posts.length > ITEMS_PER_PAGE && (
+            <div className={styles.tableHeaderActions} style={{ marginTop: '1rem', marginBottom: 0 }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                Halaman {activePage} dari {totalPages} ({posts.length} artikel)
+              </span>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  style={{ fontSize: '0.8rem', padding: '0.4rem 1rem' }}
+                  onClick={() => setCurrentPage(Math.max(1, activePage - 1))}
+                  disabled={activePage === 1}
+                >
+                  ← Sebelumnya
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  style={{ fontSize: '0.8rem', padding: '0.4rem 1rem' }}
+                  onClick={() => setCurrentPage(Math.min(totalPages, activePage + 1))}
+                  disabled={activePage === totalPages}
+                >
+                  Berikutnya →
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         /* 2. FORM VIEW (ADD / EDIT) */
@@ -348,7 +394,7 @@ export default function BlogEditor({ showToast }) {
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-text-dark)' }}>
               {editingPost === 'new' ? '📝 Tulis Artikel Baru' : '✏️ Sunting Artikel'}
             </h3>
-            <button className="btn btn-outline" onClick={() => setEditingPost(null)} style={{ fontSize: '0.85rem' }}>
+            <button className="btn btn-outline" onClick={() => { setIsDirty(false); setEditingPost(null); }} style={{ fontSize: '0.85rem' }}>
               Kembali ke Daftar
             </button>
           </div>
@@ -448,7 +494,7 @@ export default function BlogEditor({ showToast }) {
                       />
                       <button
                         type="button"
-                        onClick={() => setForm(prev => ({ ...prev, image: '' }))}
+                        onClick={() => { setIsDirty(true); setForm(prev => ({ ...prev, image: '' })); }}
                         className={styles.uploadRemove}
                         title="Hapus gambar"
                       >
@@ -743,7 +789,7 @@ export default function BlogEditor({ showToast }) {
               <button
                 type="button"
                 className="btn btn-outline"
-                onClick={() => setEditingPost(null)}
+                onClick={() => { setIsDirty(false); setEditingPost(null); }}
                 style={{ marginRight: '1rem' }}
               >
                 Batal

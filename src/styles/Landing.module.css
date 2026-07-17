@@ -84,7 +84,9 @@
 
 .heroDesc {
   font-size: 1.15rem;
-  color: var(--color-text-muted);
+  /* Sits on cream (--color-cream-bg): --color-text-muted is only ~4.38:1 there.
+     WCAG 1.4.3 needs 4.5:1 for normal text. */
+  color: var(--color-text-muted-on-cream);
   line-height: 1.7;
   max-width: 650px;
   margin: 0 auto 2rem auto;
@@ -381,7 +383,7 @@
   max-width: 600px;
 }
 
-.carouselShowcaseHeader h3 {
+.carouselShowcaseHeader h2 {
   font-size: 2rem;
   font-weight: 800;
   color: var(--color-text-dark);
@@ -428,7 +430,8 @@
   border-radius: 50%;
   filter: blur(140px);
   opacity: 0.05;
-  will-change: transform, opacity;
+  /* No `will-change` here on purpose: these blobs are never animated, and the hint
+     was pinning a `blur(140px)` composited layer in memory for nothing. */
 }
 
 .glowMaroon {
@@ -489,7 +492,8 @@
 
 .sectionHeader h2 span {
   font-family: var(--font-cursive);
-  color: var(--color-kunyit);
+  /* Kunyit murni sebagai teks hanya 2.01:1 — pakai varian gelap yang terbaca. */
+  color: var(--color-kunyit-text);
   text-transform: none;
   font-size: 3.2rem;
   margin-left: 0.5rem;
@@ -505,6 +509,11 @@
 
 .programs .sectionHeader p {
   color: var(--color-text-muted);
+}
+
+/* Section testimoni berlatar cream: --color-text-muted hanya 4.37:1 di sana. */
+.testimonials .sectionHeader p {
+  color: var(--color-text-muted-on-cream);
 }
 
 .programsGrid {
@@ -595,39 +604,46 @@
 .programCard:nth-child(2) .cardAccentLine { background-color: var(--color-tosca); }
 .programCard:nth-child(3) .cardAccentLine { background-color: var(--color-kunyit); }
 
-.programCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(20, 120, 155, 0.1);
+@media (hover: hover) and (pointer: fine) {
+  .programCard:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(20, 120, 155, 0.1);
+  }
+
+  .programCard:nth-child(1):hover {
+    border-color: rgba(171, 34, 35, 0.2);
+  }
+
+  .programCard:nth-child(2):hover {
+    border-color: rgba(20, 120, 155, 0.2);
+  }
+
+  .programCard:nth-child(3):hover {
+    border-color: rgba(250, 164, 51, 0.2);
+  }
+
+  /* Hover Scaling Transitions */
+  .programCard:hover .cardImageBg {
+    transform: scale(1.06);
+  }
+
+  .programCard:hover .cardAccentLine {
+    width: 100%;
+  }
+
+  .programCard:hover .cardIndicator {
+    opacity: 0.65;
+    transform: translateY(-2px);
+  }
+
+  .programCard:hover .cardContent {
+    transform: translateY(-2px);
+  }
 }
 
-.programCard:nth-child(1):hover {
-  border-color: rgba(171, 34, 35, 0.2);
-}
-
-.programCard:nth-child(2):hover {
-  border-color: rgba(20, 120, 155, 0.2);
-}
-
-.programCard:nth-child(3):hover {
-  border-color: rgba(250, 164, 51, 0.2);
-}
-
-/* Hover Scaling Transitions */
-.programCard:hover .cardImageBg {
-  transform: scale(1.06);
-}
-
-.programCard:hover .cardAccentLine {
-  width: 100%;
-}
-
-.programCard:hover .cardIndicator {
-  opacity: 0.65;
-  transform: translateY(-2px);
-}
-
-.programCard:hover .cardContent {
-  transform: translateY(-2px);
+/* Touch feedback: replaces the lift that hover-capable pointers get. */
+.programCard:active {
+  transform: scale(0.98);
 }
 
 /* Icon & Elements inside Content */
@@ -664,8 +680,10 @@
   box-shadow: 0 6px 15px rgba(250, 164, 51, 0.2);
 }
 
-.programCard:hover .iconWrapper {
-  transform: translateY(-2px) scale(1.05);
+@media (hover: hover) and (pointer: fine) {
+  .programCard:hover .iconWrapper {
+    transform: translateY(-2px) scale(1.05);
+  }
 }
 
 .programCard h3 {
@@ -677,9 +695,11 @@
   transition: color 0.3s ease;
 }
 
-.programCard:nth-child(1):hover h3 { color: var(--color-maroon); }
-.programCard:nth-child(2):hover h3 { color: var(--color-tosca); }
-.programCard:nth-child(3):hover h3 { color: var(--color-kunyit); }
+@media (hover: hover) and (pointer: fine) {
+  .programCard:nth-child(1):hover h3 { color: var(--color-maroon); }
+  .programCard:nth-child(2):hover h3 { color: var(--color-tosca); }
+  .programCard:nth-child(3):hover h3 { color: var(--color-kunyit); }
+}
 
 .programCard p {
   color: var(--color-text-muted);
@@ -706,10 +726,13 @@
 
 .programCard:nth-child(1) .learnMoreBtn { color: var(--color-maroon); }
 .programCard:nth-child(2) .learnMoreBtn { color: var(--color-tosca); }
-.programCard:nth-child(3) .learnMoreBtn { color: var(--color-kunyit); }
+/* Kunyit sebagai teks di atas kartu putih hanya 2.01:1 — pakai varian gelap. */
+.programCard:nth-child(3) .learnMoreBtn { color: var(--color-kunyit-text); }
 
-.programCard:hover .learnMoreBtn {
-  gap: 0.75rem;
+@media (hover: hover) and (pointer: fine) {
+  .programCard:hover .learnMoreBtn {
+    gap: 0.75rem;
+  }
 }
 
 /* PRODUCT GALLERY SECTION */
@@ -740,10 +763,12 @@
   letter-spacing: 0.5px;
 }
 
-.filterTab:hover {
-  background-color: var(--color-tosca);
-  color: var(--color-white);
-  border-color: var(--color-tosca);
+@media (hover: hover) and (pointer: fine) {
+  .filterTab:hover {
+    background-color: var(--color-tosca);
+    color: var(--color-white);
+    border-color: var(--color-tosca);
+  }
 }
 
 .activeFilterTab {
@@ -753,9 +778,11 @@
   box-shadow: 0 4px 12px rgba(171, 34, 35, 0.25);
 }
 
-.activeFilterTab:hover {
-  background-color: var(--color-maroon);
-  border-color: var(--color-maroon);
+@media (hover: hover) and (pointer: fine) {
+  .activeFilterTab:hover {
+    background-color: var(--color-maroon);
+    border-color: var(--color-maroon);
+  }
 }
 
 .galleryGrid {
@@ -905,8 +932,10 @@
   transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.heroLogo:hover {
-  transform: scale(1.05) rotate(1deg);
+@media (hover: hover) and (pointer: fine) {
+  .heroLogo:hover {
+    transform: scale(1.05) rotate(1deg);
+  }
 }
 
 @media (max-width: 960px) {
@@ -935,8 +964,10 @@
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.scrollIndicator:hover {
-  transform: translateX(-50%) translateY(2px);
+@media (hover: hover) and (pointer: fine) {
+  .scrollIndicator:hover {
+    transform: translateX(-50%) translateY(2px);
+  }
 }
 
 .scrollText {
@@ -1002,7 +1033,7 @@
   flex-grow: 1;
 }
 
-.promoTextCol h4 {
+.promoTextCol h3 {
   font-size: 1.15rem;
   font-weight: 800;
   color: var(--color-text-dark);
@@ -1150,11 +1181,13 @@
   z-index: 10;
 }
 
-.gallerySliderBtn:hover {
-  background: var(--color-tosca);
-  color: var(--color-white);
-  box-shadow: 0 6px 18px rgba(20, 120, 155, 0.25);
-  transform: translateY(-50%) scale(1.05);
+@media (hover: hover) and (pointer: fine) {
+  .gallerySliderBtn:hover {
+    background: var(--color-tosca);
+    color: var(--color-white);
+    box-shadow: 0 6px 18px rgba(20, 120, 155, 0.25);
+    transform: translateY(-50%) scale(1.05);
+  }
 }
 
 .gallerySliderBtnLeft {
@@ -1255,10 +1288,19 @@
   animation: scrollRight 40s linear infinite;
 }
 
-/* Pause animation on hover for readability */
-.marqueeWrapper:hover .marqueeTrackLeft,
-.marqueeWrapper:hover .marqueeTrackRight {
+/* Pause for readability. :focus-within is deliberately NOT pointer-guarded — the
+   review cards contain focusable links, and WCAG 2.2.2 (Pause/Stop/Hide) needs a
+   keyboard-reachable way to stop this auto-scroll on every device. */
+.marqueeWrapper:focus-within .marqueeTrackLeft,
+.marqueeWrapper:focus-within .marqueeTrackRight {
   animation-play-state: paused;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .marqueeWrapper:hover .marqueeTrackLeft,
+  .marqueeWrapper:hover .marqueeTrackRight {
+    animation-play-state: paused;
+  }
 }
 
 @keyframes scrollLeft {
@@ -1299,10 +1341,12 @@
   transform: translate3d(0, 0, 0);
 }
 
-.reviewCard:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 15px 35px rgba(20, 120, 155, 0.08);
-  border-color: rgba(20, 120, 155, 0.15);
+@media (hover: hover) and (pointer: fine) {
+  .reviewCard:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(20, 120, 155, 0.08);
+    border-color: rgba(20, 120, 155, 0.15);
+  }
 }
 
 .reviewHeader {
@@ -1382,8 +1426,16 @@
   transition: all 0.3s ease;
 }
 
-/* Pulsating Play Button shadow ripple animation */
+/* Pulsating Play Button ripple.
+   The ripple used to be an infinite `box-shadow` animation on this element, which
+   repaints forever and is on screen by default. It now runs on a pseudo-element
+   animating transform + opacity only (same technique as .whatsapp-float::before in
+   globals.css). `position: relative` + `z-index: 0` makes this a stacking context so
+   the ::before can sit at z-index -1 — behind the button's own fill, but still in
+   front of the overlay gradient underneath it. */
 .playButtonIcon {
+  position: relative;
+  z-index: 0;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -1394,6 +1446,19 @@
   justify-content: center;
   box-shadow: 0 4px 15px rgba(20, 120, 155, 0.5);
   transition: all 0.3s var(--ease-in-out);
+}
+
+.playButtonIcon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--color-tosca);
+  z-index: -1;
+  pointer-events: none;
   animation: playButtonPulse 2s infinite ease-in-out;
 }
 
@@ -1434,34 +1499,41 @@
 }
 
 /* Hover Zoom & Pulse acceleration */
-.videoPreviewWrapper:hover .videoPreviewImage {
-  transform: scale(1.08);
+@media (hover: hover) and (pointer: fine) {
+  .videoPreviewWrapper:hover .videoPreviewImage {
+    transform: scale(1.08);
+  }
+
+  .videoPreviewWrapper:hover .videoPlayOverlay {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.1) 60%, rgba(0, 0, 0, 0.4) 100%);
+  }
+
+  .videoPreviewWrapper:hover .playButtonIcon {
+    transform: scale(1.12) rotate(10deg);
+    background: var(--color-maroon);
+    box-shadow: 0 6px 18px rgba(186, 45, 50, 0.6);
+  }
+
+  .videoPreviewWrapper:hover .playText {
+    background: var(--color-maroon);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
 }
 
-.videoPreviewWrapper:hover .videoPlayOverlay {
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.1) 60%, rgba(0, 0, 0, 0.4) 100%);
-}
-
-.videoPreviewWrapper:hover .playButtonIcon {
-  transform: scale(1.12) rotate(10deg);
-  background: var(--color-maroon);
-  box-shadow: 0 6px 18px rgba(186, 45, 50, 0.6);
-}
-
-.videoPreviewWrapper:hover .playText {
-  background: var(--color-maroon);
-  border-color: rgba(255, 255, 255, 0.35);
-}
-
+/* Compositor-only equivalent of the old ring: an 8px spread on a 44px circle grew
+   the ring to 60px across, hence scale(1.364). */
 @keyframes playButtonPulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(20, 120, 155, 0.65);
+    transform: scale(1);
+    opacity: 0.65;
   }
   70% {
-    box-shadow: 0 0 0 8px rgba(20, 120, 155, 0);
+    transform: scale(1.364);
+    opacity: 0;
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(20, 120, 155, 0);
+    transform: scale(1.364);
+    opacity: 0;
   }
 }
 
@@ -1487,10 +1559,12 @@
   transform: translate3d(0, 0, 0);
 }
 
-.videoReviewCard:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 15px 35px rgba(20, 120, 155, 0.12);
-  border-color: rgba(20, 120, 155, 0.2);
+@media (hover: hover) and (pointer: fine) {
+  .videoReviewCard:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(20, 120, 155, 0.12);
+    border-color: rgba(20, 120, 155, 0.2);
+  }
 }
 
 .videoCardImage {
@@ -1504,8 +1578,10 @@
   transition: transform 0.6s var(--ease-in-out);
 }
 
-.videoReviewCard:hover .videoCardImage {
-  transform: scale(1.08);
+@media (hover: hover) and (pointer: fine) {
+  .videoReviewCard:hover .videoCardImage {
+    transform: scale(1.08);
+  }
 }
 
 .videoCardPlayOverlay {
@@ -1524,11 +1600,16 @@
   padding-bottom: 75px; /* Offset to center the play button relative to the visible area above the footer */
 }
 
-.videoReviewCard:hover .videoCardPlayOverlay {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.55) 100%);
+@media (hover: hover) and (pointer: fine) {
+  .videoReviewCard:hover .videoCardPlayOverlay {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.55) 100%);
+  }
 }
 
+/* Same box-shadow -> pseudo-element ripple rewrite as .playButtonIcon above. */
 .playButtonIconLarge {
+  position: relative;
+  z-index: 0;
   width: 52px;
   height: 52px;
   border-radius: 50%;
@@ -1539,6 +1620,19 @@
   justify-content: center;
   box-shadow: 0 4px 15px rgba(20, 120, 155, 0.5);
   transition: all 0.3s var(--ease-in-out);
+}
+
+.playButtonIconLarge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--color-tosca);
+  z-index: -1;
+  pointer-events: none;
   animation: playButtonPulseLarge 2s infinite ease-in-out;
 }
 
@@ -1547,10 +1641,12 @@
   fill: #ffffff;
 }
 
-.videoReviewCard:hover .playButtonIconLarge {
-  transform: scale(1.1) rotate(8deg);
-  background: var(--color-maroon);
-  box-shadow: 0 6px 20px rgba(186, 45, 50, 0.65);
+@media (hover: hover) and (pointer: fine) {
+  .videoReviewCard:hover .playButtonIconLarge {
+    transform: scale(1.1) rotate(8deg);
+    background: var(--color-maroon);
+    box-shadow: 0 6px 20px rgba(186, 45, 50, 0.65);
+  }
 }
 
 .playBadge {
@@ -1569,9 +1665,11 @@
   transition: all 0.3s ease;
 }
 
-.videoReviewCard:hover .playBadge {
-  background: var(--color-maroon);
-  border-color: rgba(255, 255, 255, 0.35);
+@media (hover: hover) and (pointer: fine) {
+  .videoReviewCard:hover .playBadge {
+    background: var(--color-maroon);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
 }
 
 .videoCardProgress {
@@ -1649,15 +1747,20 @@
   text-overflow: ellipsis;
 }
 
+/* Compositor-only equivalent of the old ring: a 10px spread on a 52px circle grew
+   the ring to 72px across, hence scale(1.385). */
 @keyframes playButtonPulseLarge {
   0% {
-    box-shadow: 0 0 0 0 rgba(20, 120, 155, 0.7);
+    transform: scale(1);
+    opacity: 0.7;
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(20, 120, 155, 0);
+    transform: scale(1.385);
+    opacity: 0;
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(20, 120, 155, 0);
+    transform: scale(1.385);
+    opacity: 0;
   }
 }
 
@@ -1745,9 +1848,24 @@
   transition: all 0.3s var(--ease-in-out);
 }
 
-.partnerLogo:hover {
-  opacity: 1;
-  transform: scale(1.08);
+@media (hover: hover) and (pointer: fine) {
+  .partnerLogo:hover {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+/* WCAG 2.2.2 (Pause/Stop/Hide): this ticker had no pause affordance at all.
+   Mirrors the testimonials marquee — :focus-within stays unguarded for keyboard
+   users, the hover half is pointer-guarded. */
+.partnersMarquee:focus-within .partnersTrack {
+  animation-play-state: paused;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .partnersMarquee:hover .partnersTrack {
+    animation-play-state: paused;
+  }
 }
 
 @keyframes scrollPartners {
@@ -1841,11 +1959,13 @@
   z-index: 10;
 }
 
-.blogSliderBtn:hover {
-  background: var(--color-tosca);
-  color: var(--color-white);
-  box-shadow: 0 6px 18px rgba(20, 120, 155, 0.25);
-  transform: translateY(-50%) scale(1.05);
+@media (hover: hover) and (pointer: fine) {
+  .blogSliderBtn:hover {
+    background: var(--color-tosca);
+    color: var(--color-white);
+    box-shadow: 0 6px 18px rgba(20, 120, 155, 0.25);
+    transform: translateY(-50%) scale(1.05);
+  }
 }
 
 .blogSliderBtnLeft {
@@ -1902,10 +2022,17 @@
   transition: all 0.4s var(--ease-in-out);
 }
 
-.blogSlideCard:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 15px 35px rgba(20, 120, 155, 0.08);
-  border-color: rgba(20, 120, 155, 0.15);
+@media (hover: hover) and (pointer: fine) {
+  .blogSlideCard:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(20, 120, 155, 0.08);
+    border-color: rgba(20, 120, 155, 0.15);
+  }
+}
+
+/* Touch feedback: replaces the lift that hover-capable pointers get. */
+.blogSlideCard:active {
+  transform: scale(0.98);
 }
 
 .blogSlideImageWrapper {
@@ -1922,8 +2049,10 @@
   transition: transform 0.6s var(--ease-in-out);
 }
 
-.blogSlideCard:hover .blogSlideImage {
-  transform: scale(1.05);
+@media (hover: hover) and (pointer: fine) {
+  .blogSlideCard:hover .blogSlideImage {
+    transform: scale(1.05);
+  }
 }
 
 .blogSlideTag {
@@ -1962,7 +2091,10 @@
   color: var(--color-text-dark);
   margin-bottom: 0.75rem;
   line-height: 1.4;
-  height: 3.4rem;
+  /* min-height, not height: the line-clamp already caps this at 2 lines, and a
+     fixed height computed to fit exactly clips descenders while the fallback
+     font is swapping in. */
+  min-height: 3.4rem;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1970,8 +2102,10 @@
   transition: color 0.3s;
 }
 
-.blogSlideTitle a:hover {
-  color: var(--color-tosca);
+@media (hover: hover) and (pointer: fine) {
+  .blogSlideTitle a:hover {
+    color: var(--color-tosca);
+  }
 }
 
 .blogSlideExcerpt {
@@ -1979,7 +2113,10 @@
   font-size: 0.9rem;
   line-height: 1.5;
   margin-bottom: 1.5rem;
-  height: 4.1rem;
+  /* min-height, not height: the line-clamp already caps this at 3 lines, and a
+     fixed height computed to fit exactly clips descenders while the fallback
+     font is swapping in. */
+  min-height: 4.1rem;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -1998,9 +2135,11 @@
   transition: all 0.3s;
 }
 
-.blogSlideBtn:hover {
-  color: var(--color-tosca);
-  gap: 0.5rem;
+@media (hover: hover) and (pointer: fine) {
+  .blogSlideBtn:hover {
+    color: var(--color-tosca);
+    gap: 0.5rem;
+  }
 }
 
 @media (max-width: 1024px) {

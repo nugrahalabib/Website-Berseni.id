@@ -7,7 +7,16 @@
   width: 90%;
   max-width: 1100px;
   z-index: 1000;
-  transition: all 0.4s var(--ease-in-out);
+  /* Was `transition: all`, which animated top/width/padding — real layout
+     properties — on a fixed element every time the scroll threshold was crossed.
+     Only compositor/paint-safe properties transition now; the vertical shift
+     rides on transform (see .scrolled) instead of `top`. */
+  transition: transform 0.4s var(--ease-in-out),
+              background-color 0.4s var(--ease-in-out),
+              border-color 0.4s var(--ease-in-out),
+              border-radius 0.4s var(--ease-in-out),
+              box-shadow 0.4s var(--ease-in-out),
+              backdrop-filter 0.4s var(--ease-in-out);
   padding: 0.75rem 2.5rem;
   background: rgba(250, 245, 235, 0.65); /* Semi-transparent cream glass */
   backdrop-filter: blur(16px);
@@ -18,8 +27,10 @@
 }
 
 .scrolled {
-  top: 14px;
-  width: 86%; /* Slightly more compact horizontal width on scroll */
+  /* Was `top: 14px` (base is 24px). Expressed as transform so the 10px slide runs
+     on the compositor instead of re-laying out the navbar subtree each frame. */
+  transform: translateX(-50%) translateY(-10px);
+  width: 86%; /* Slightly more compact horizontal width on scroll — snaps, see .navbar */
   background: rgba(250, 245, 235, 0.88); /* More solid backdrop for readability on scroll */
   border: 1px solid rgba(20, 120, 155, 0.2);
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
@@ -50,8 +61,10 @@
 }
 
 
-.logoImage:hover {
-  transform: scale(1.05);
+@media (hover: hover) and (pointer: fine) {
+  .logoImage:hover {
+    transform: scale(1.05);
+  }
 }
 
 
@@ -78,8 +91,10 @@
   opacity: 0.85;
 }
 
-.logoFrame:hover {
-  border-color: var(--color-maroon);
+@media (hover: hover) and (pointer: fine) {
+  .logoFrame:hover {
+    border-color: var(--color-maroon);
+  }
 }
 
 .logoTextContainer {
@@ -101,7 +116,8 @@
   text-transform: uppercase;
   letter-spacing: 1.5px;
   font-weight: 800;
-  color: var(--color-text-muted);
+  /* Navbar duduk di atas cream: --color-text-muted hanya 4.37:1 di sana. */
+  color: var(--color-text-muted-on-cream);
 }
 
 .navLinks {
@@ -133,12 +149,14 @@
   transition: width 0.3s ease;
 }
 
-.navLink:hover {
-  color: var(--color-maroon);
-}
+@media (hover: hover) and (pointer: fine) {
+  .navLink:hover {
+    color: var(--color-maroon);
+  }
 
-.navLink:hover::after {
-  width: 100%;
+  .navLink:hover::after {
+    width: 100%;
+  }
 }
 
 .activeLink {
@@ -159,17 +177,38 @@
   transition: all 0.3s;
 }
 
-.adminBtn:hover {
-  background-color: var(--color-maroon);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .adminBtn:hover {
+    background-color: var(--color-maroon);
+    transform: translateY(-1px);
+  }
+}
+
+/* Touch feedback: replaces the lift that hover-capable pointers get. */
+.adminBtn:active {
+  transform: scale(0.98);
 }
 
 .menuToggle {
   display: none;
   flex-direction: column;
+  /* Bars are only ~25x19px together — below the WCAG 2.5.8 24x24 minimum target.
+     Pad the target out to 44x44 and centre the bars inside it. */
+  justify-content: center;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
   gap: 5px;
   cursor: pointer;
   z-index: 1001;
+  /* Neutralise <button> UA defaults (this renders as a real button). */
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .bar {
@@ -201,7 +240,7 @@
   margin-bottom: 3rem;
 }
 
-.footerCol h4 {
+.footerCol h3 {
   font-size: 1.1rem;
   margin-bottom: 1.5rem;
   text-transform: uppercase;
@@ -221,7 +260,8 @@
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-bottom: 1.25rem;
-  color: var(--color-text-muted);
+  /* Footer berlatar gelap: --color-text-muted hanya 3.86:1 di atas #0B132B. */
+  color: var(--color-text-muted-on-dark);
 }
 
 .footerDesc {
@@ -244,9 +284,11 @@
   transition: color 0.3s;
 }
 
-.footerLink:hover {
-  color: var(--color-kunyit);
-  padding-left: 4px;
+@media (hover: hover) and (pointer: fine) {
+  .footerLink:hover {
+    color: var(--color-kunyit);
+    padding-left: 4px;
+  }
 }
 
 .socials {
@@ -268,30 +310,39 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.socialIcon:hover {
-  background-color: var(--color-tosca);
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(20, 120, 155, 0.3);
+/* All five kept in one guard block so the per-network overrides keep winning
+   over the generic .socialIcon:hover above them. */
+@media (hover: hover) and (pointer: fine) {
+  .socialIcon:hover {
+    background-color: var(--color-tosca);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(20, 120, 155, 0.3);
+  }
+
+  .socialIcon.whatsapp:hover {
+    background-color: #25D366;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+  }
+
+  .socialIcon.instagram:hover {
+    background-color: #E1306C;
+    box-shadow: 0 4px 12px rgba(225, 48, 108, 0.3);
+  }
+
+  .socialIcon.tiktok:hover {
+    background-color: #000000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  .socialIcon.youtube:hover {
+    background-color: #FF0000;
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+  }
 }
 
-.socialIcon.whatsapp:hover {
-  background-color: #25D366;
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-}
-
-.socialIcon.instagram:hover {
-  background-color: #E1306C;
-  box-shadow: 0 4px 12px rgba(225, 48, 108, 0.3);
-}
-
-.socialIcon.tiktok:hover {
-  background-color: #000000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
-
-.socialIcon.youtube:hover {
-  background-color: #FF0000;
-  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+/* Touch feedback: replaces the lift that hover-capable pointers get. */
+.socialIcon:active {
+  transform: scale(0.94);
 }
 
 .footerDivider {
@@ -348,6 +399,14 @@
   transform-style: preserve-3d;
 }
 
+/* Kartu produk & kartu carousel kini fokusable keyboard (role="button").
+   Beri ring fokus berbrand, bukan outline default browser. */
+.card:focus-visible,
+.carouselCard:focus-visible {
+  outline: 3px solid var(--color-tosca);
+  outline-offset: 3px;
+}
+
 .carouselCard {
   position: absolute;
   width: 280px;
@@ -377,8 +436,10 @@
   transition: transform 0.6s ease;
 }
 
-.carouselCard:hover .carouselImage {
-  transform: scale(1.08);
+@media (hover: hover) and (pointer: fine) {
+  .carouselCard:hover .carouselImage {
+    transform: scale(1.08);
+  }
 }
 
 .carouselInfo {
@@ -400,6 +461,11 @@
   font-weight: 800;
   text-transform: uppercase;
   color: var(--color-white);
+  /* The badge background is set inline by JS (tosca / maroon / kunyit). White on
+     kunyit (#FAA433) is only ~1.98:1, but a fixed dark text colour would then fail
+     on maroon and tosca. The shadow lifts effective contrast on the light kunyit
+     case without breaking the two dark cases. Proper fix needs JS to pick the text
+     colour per background — see the report. */
   z-index: 10;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
@@ -467,11 +533,18 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.controlBtn:hover {
-  background: var(--color-tosca);
-  color: var(--color-white);
-  box-shadow: 0 6px 16px rgba(20, 120, 155, 0.25);
-  transform: scale(1.05);
+@media (hover: hover) and (pointer: fine) {
+  .controlBtn:hover {
+    background: var(--color-tosca);
+    color: var(--color-white);
+    box-shadow: 0 6px 16px rgba(20, 120, 155, 0.25);
+    transform: scale(1.05);
+  }
+}
+
+/* Touch feedback: replaces the scale-up that hover-capable pointers get. */
+.controlBtn:active {
+  transform: scale(0.94);
 }
 
 /* PRODUCT CARD */
@@ -489,10 +562,17 @@
   position: relative;
 }
 
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 15px 35px rgba(20, 120, 155, 0.12);
-  border-color: rgba(20, 120, 155, 0.2);
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(20, 120, 155, 0.12);
+    border-color: rgba(20, 120, 155, 0.2);
+  }
+}
+
+/* Touch feedback: replaces the lift that hover-capable pointers get. */
+.card:active {
+  transform: scale(0.98);
 }
 
 .cardImageWrapper {
@@ -510,8 +590,10 @@
   transition: transform 0.5s ease;
 }
 
-.card:hover .cardImage {
-  transform: scale(1.06);
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .cardImage {
+    transform: scale(1.06);
+  }
 }
 
 .cardCategoryBadge {
@@ -524,6 +606,7 @@
   font-weight: 800;
   text-transform: uppercase;
   color: var(--color-white);
+  /* Same inline-background situation as .carouselBadge — see the note there. */
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   z-index: 5;
 }
@@ -541,7 +624,10 @@
   color: var(--color-text-dark);
   margin-bottom: 0.5rem;
   line-height: 1.4;
-  height: 3.2rem;
+  /* min-height, not height: the line-clamp already caps this at 2 lines, and a
+     fixed height computed to fit exactly clips descenders while the fallback
+     font is swapping in. */
+  min-height: 3.2rem;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -586,8 +672,10 @@
   transition: color 0.3s;
 }
 
-.cardDetailBtn:hover {
-  color: var(--color-maroon);
+@media (hover: hover) and (pointer: fine) {
+  .cardDetailBtn:hover {
+    color: var(--color-maroon);
+  }
 }
 
 /* PRODUCT DETAIL MODAL */
@@ -639,10 +727,18 @@
   transition: all 0.3s;
 }
 
-.modalClose:hover {
-  background: var(--color-maroon);
-  color: var(--color-white);
-  transform: rotate(90deg);
+@media (hover: hover) and (pointer: fine) {
+  .modalClose:hover {
+    background: var(--color-maroon);
+    color: var(--color-white);
+    transform: rotate(90deg);
+  }
+}
+
+/* Touch feedback: replaces the rotate that hover-capable pointers get (which
+   previously stuck at 90deg for the rest of the modal's life after a tap). */
+.modalClose:active {
+  transform: scale(0.92);
 }
 
 .modalGrid {
@@ -809,7 +905,8 @@
   }
   
   .scrolled {
-    top: 10px;
+    /* Was `top: 10px` against a 16px base — same transform treatment as desktop. */
+    transform: translateX(-50%) translateY(-6px);
     width: 92%;
     padding: 0.5rem 1.5rem;
   }
@@ -902,10 +999,20 @@
   display: block;
 }
 
-.mobileNavLink:hover {
+/* This lives inside the mobile drawer, so in practice only touch users ever see it —
+   the padding-left shift stuck on the last-tapped link. Guarded, plus a real
+   press state for touch. */
+@media (hover: hover) and (pointer: fine) {
+  .mobileNavLink:hover {
+    background: rgba(20, 120, 155, 0.06);
+    color: var(--color-maroon);
+    padding-left: 1.5rem;
+  }
+}
+
+.mobileNavLink:active {
   background: rgba(20, 120, 155, 0.06);
   color: var(--color-maroon);
-  padding-left: 1.5rem;
 }
 
 /* Pricing Discount Styles */
@@ -919,8 +1026,9 @@
 .cardOriginalPrice {
   font-size: 0.82rem;
   text-decoration: line-through;
+  /* opacity 0.7 dulu melunturkan #64748B jadi ~#939EAE (2.71:1). Tanpa opacity,
+     #64748B di atas kartu putih = 4.76:1 — tetap terbaca sebagai harga coret. */
   color: var(--color-text-muted);
-  opacity: 0.7;
   font-weight: 600;
   line-height: 1;
 }
@@ -958,9 +1066,11 @@
   gap: 4px;
 }
 
-.langSwitchBtn:hover {
-  background: rgba(20, 120, 155, 0.08);
-  border-color: var(--color-tosca);
+@media (hover: hover) and (pointer: fine) {
+  .langSwitchBtn:hover {
+    background: rgba(20, 120, 155, 0.08);
+    border-color: var(--color-tosca);
+  }
 }
 
 .mobileLangSwitchBtn {
@@ -980,7 +1090,9 @@
   gap: 8px;
 }
 
-.mobileLangSwitchBtn:hover {
-  background: rgba(20, 120, 155, 0.08);
-  border-color: var(--color-tosca);
+@media (hover: hover) and (pointer: fine) {
+  .mobileLangSwitchBtn:hover {
+    background: rgba(20, 120, 155, 0.08);
+    border-color: var(--color-tosca);
+  }
 }

@@ -24,6 +24,11 @@ export default function ProductCard({ product, onClick }) {
     }
   };
 
+  // Warna teks badge harus mengikuti latarnya: putih di atas kunyit (#FAA433)
+  // hanya 1.98:1 (WCAG 1.4.3 butuh 4.5:1). Maroon/tosca aman dengan teks putih.
+  const getCategoryTextColor = (cat) =>
+    cat === 'offline' ? 'var(--color-badge-kunyit-text)' : 'var(--color-white)';
+
   const getCategoryLabel = (cat) => {
     switch (cat) {
       case 'artwork': return language === 'id' ? 'Karya Seni' : 'Artwork';
@@ -33,13 +38,38 @@ export default function ProductCard({ product, onClick }) {
     }
   };
 
+  const handleActivate = () => {
+    if (onClick) onClick(product);
+  };
+
+  // Keyboard parity for the card: Enter and Space activate, like a native button
+  const handleKeyDown = (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.key === ' ') e.preventDefault(); // stop page scroll on Space
+    handleActivate();
+  };
+
+  const detailsAriaLabel = language === 'id'
+    ? `Lihat detail untuk ${t(product, 'title')}`
+    : `View details for ${t(product, 'title')}`;
+
   return (
-    <div className={styles.card} onClick={() => onClick && onClick(product)}>
+    <div
+      className={styles.card}
+      role="button"
+      tabIndex={0}
+      aria-label={detailsAriaLabel}
+      onClick={handleActivate}
+      onKeyDown={handleKeyDown}
+    >
       {/* Image & Badge */}
       <div className={styles.cardImageWrapper}>
         <span 
           className={styles.cardCategoryBadge}
-          style={{ backgroundColor: getCategoryColor(product.category) }}
+          style={{
+            backgroundColor: getCategoryColor(product.category),
+            color: getCategoryTextColor(product.category),
+          }}
         >
           {getCategoryLabel(product.category)}
         </span>

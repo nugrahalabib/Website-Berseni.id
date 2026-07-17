@@ -3,11 +3,16 @@
 import { useState, useEffect } from 'react';
 import styles from '@/styles/Admin.module.css';
 
-export default function SeoEditor({ showToast }) {
+export default function SeoEditor({ showToast, setIsDirty = () => {} }) {
   const [seoData, setSeoData] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [selectedPage, setSelectedPage] = useState('home');
+
+  // Mulai dari kondisi bersih setiap kali editor ini dibuka
+  useEffect(() => {
+    setIsDirty(false);
+  }, []);
 
   useEffect(() => {
     const fetchSeo = async () => {
@@ -28,6 +33,7 @@ export default function SeoEditor({ showToast }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setIsDirty(true);
     setSeoData(prev => ({
       ...prev,
       [selectedPage]: {
@@ -50,12 +56,13 @@ export default function SeoEditor({ showToast }) {
 
       if (res.ok) {
         showToast('Pengaturan SEO & GEO halaman berhasil disimpan!');
+        setIsDirty(false);
       } else {
         const errData = await res.json();
-        alert(errData.error || 'Gagal menyimpan data SEO.');
+        showToast(errData.error || 'Gagal menyimpan data SEO.');
       }
     } catch (err) {
-      alert('Terjadi kesalahan koneksi.');
+      showToast('Terjadi kesalahan koneksi.');
     } finally {
       setSaving(false);
     }

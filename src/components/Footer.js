@@ -23,7 +23,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div className={styles.footerCol}>
-            <h4>{getTranslation('footerNavTitle')}</h4>
+            <h3>{getTranslation('footerNavTitle')}</h3>
             <ul className={styles.footerLinks}>
               <li>
                 <Link href="/" className={styles.footerLink}>
@@ -60,7 +60,7 @@ export default function Footer() {
 
           {/* Connect & Socials */}
           <div className={styles.footerCol}>
-            <h4>{getTranslation('footerContactTitle')}</h4>
+            <h3>{getTranslation('footerContactTitle')}</h3>
             <p className={styles.footerDesc} style={{ marginBottom: '1rem' }}>
               {t(dbContent, 'footerContactDesc') || (language === 'id' 
                 ? 'Punya pertanyaan seputar workshop, lukisan, atau kelas? Jangan ragu untuk menghubungi kami.' 

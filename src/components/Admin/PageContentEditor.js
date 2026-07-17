@@ -5,7 +5,7 @@ import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Admin.module.css';
 
 // Component for uploading and editing media URLs / files
-const MediaUploadInput = ({ label, name, value, type, onChange }) => {
+const MediaUploadInput = ({ label, name, value, type, onChange, showToast }) => {
   const [uploading, setUploading] = useState(false);
 
   const handleFileChange = async (e) => {
@@ -25,11 +25,11 @@ const MediaUploadInput = ({ label, name, value, type, onChange }) => {
         const data = await res.json();
         onChange(name, data.url);
       } else {
-        alert('Gagal mengunggah file.');
+        showToast('Gagal mengunggah file.');
       }
     } catch (err) {
       console.error(err);
-      alert('Terjadi kesalahan saat mengunggah file.');
+      showToast('Terjadi kesalahan saat mengunggah file.');
     } finally {
       setUploading(false);
     }
@@ -281,7 +281,7 @@ function MisiListSection({ misiListId, misiListEn, onMisiChange, onRemoveMisi, o
 }
 
 // Helper Custom Activities Carousel Editor (hoisted ke module scope agar tidak remount)
-function ActivitiesEditorSection({ form, setForm }) {
+function ActivitiesEditorSection({ form, setForm, showToast }) {
     const [editingIndex, setEditingIndex] = useState(null); // index or 'new'
     const [actForm, setActForm] = useState({
       id: '',
@@ -345,7 +345,7 @@ function ActivitiesEditorSection({ form, setForm }) {
 
     const handleSave = () => {
       if (!actForm.title_id || !actForm.title_en) {
-        alert('Judul Aktivitas (ID & EN) wajib diisi keduanya!');
+        showToast('Judul Aktivitas (ID & EN) wajib diisi keduanya!');
         return;
       }
       
@@ -381,11 +381,11 @@ function ActivitiesEditorSection({ form, setForm }) {
           const data = await res.json();
           setActForm(prev => ({ ...prev, image: data.url }));
         } else {
-          alert('Gagal mengunggah gambar.');
+          showToast('Gagal mengunggah gambar.');
         }
       } catch (err) {
         console.error(err);
-        alert('Terjadi kesalahan saat mengunggah.');
+        showToast('Terjadi kesalahan saat mengunggah.');
       }
     };
 
@@ -657,7 +657,7 @@ function ActivitiesEditorSection({ form, setForm }) {
 }
 
 // Helper Custom Partners List Editor (hoisted ke module scope agar tidak remount)
-function PartnersEditorSection({ form, setForm }) {
+function PartnersEditorSection({ form, setForm, showToast }) {
     const [newLogoUrl, setNewLogoUrl] = useState('');
     const [uploading, setUploading] = useState(false);
 
@@ -684,11 +684,11 @@ function PartnersEditorSection({ form, setForm }) {
             partners: [...(prev.partners || []), data.url]
           }));
         } else {
-          alert('Gagal mengunggah gambar.');
+          showToast('Gagal mengunggah gambar.');
         }
       } catch (err) {
         console.error(err);
-        alert('Terjadi kesalahan saat mengunggah gambar.');
+        showToast('Terjadi kesalahan saat mengunggah gambar.');
       } finally {
         setUploading(false);
       }
@@ -794,7 +794,7 @@ function PartnersEditorSection({ form, setForm }) {
 }
 
 // Helper Custom Testimonials Editor (hoisted ke module scope agar tidak remount)
-function TestimonialsEditorSection({ form, setForm }) {
+function TestimonialsEditorSection({ form, setForm, showToast }) {
     const [editingIndex, setEditingIndex] = useState(null); // index or 'new'
      const [testiForm, setTestiForm] = useState({
        id: '',
@@ -849,7 +849,7 @@ function TestimonialsEditorSection({ form, setForm }) {
 
     const handleSave = () => {
       if (!testiForm.name || !testiForm.comment_id || !testiForm.comment_en) {
-        alert('Nama reviewer dan isi komentar (ID & EN) wajib diisi!');
+        showToast('Nama reviewer dan isi komentar (ID & EN) wajib diisi!');
         return;
       }
       
@@ -885,11 +885,11 @@ function TestimonialsEditorSection({ form, setForm }) {
           const data = await res.json();
           setTestiForm(prev => ({ ...prev, avatar: data.url }));
         } else {
-          alert('Gagal mengunggah avatar.');
+          showToast('Gagal mengunggah avatar.');
         }
       } catch (err) {
         console.error(err);
-        alert('Terjadi kesalahan saat mengunggah.');
+        showToast('Terjadi kesalahan saat mengunggah.');
       }
     };
 
@@ -1074,10 +1074,10 @@ function TestimonialsEditorSection({ form, setForm }) {
                             const data = await res.json();
                             setTestiForm(prev => ({ ...prev, videoThumbnail: data.url }));
                           } else {
-                            alert('Gagal mengunggah thumbnail.');
+                            showToast('Gagal mengunggah thumbnail.');
                           }
                         } catch (err) {
-                          alert('Terjadi kesalahan saat mengunggah.');
+                          showToast('Terjadi kesalahan saat mengunggah.');
                         }
                       }}
                     />
@@ -1170,7 +1170,7 @@ function TestimonialsEditorSection({ form, setForm }) {
     );
 }
 
-export default function PageContentEditor({ showToast }) {
+export default function PageContentEditor({ showToast, setIsDirty = () => {} }) {
   const { refreshContent } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -1201,26 +1201,34 @@ export default function PageContentEditor({ showToast }) {
       }
     };
     fetchContent();
+    setIsDirty(false);
   }, []);
+
+  // Semua mutasi form milik user lewat sini, agar status "belum disimpan" selalu akurat.
+  // Fetch awal sengaja memakai setForm langsung supaya tidak menandai form kotor.
+  const updateForm = (updater) => {
+    setIsDirty(true);
+    setForm(updater);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    updateForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handleMisiChange = (index, lang, value) => {
     const fieldName = `misiList_${lang}`;
     const list = [...(form[fieldName] || [])];
     list[index] = value;
-    setForm(prev => ({ ...prev, [fieldName]: list }));
+    updateForm(prev => ({ ...prev, [fieldName]: list }));
   };
 
   const addMisiItem = (newMisiId, newMisiEn, clearInputs) => {
     if (!newMisiId.trim() || !newMisiEn.trim()) {
-      alert('Isian Misi (ID & EN) wajib diisi keduanya!');
+      showToast('Isian Misi (ID & EN) wajib diisi keduanya!');
       return;
     }
-    setForm(prev => ({
+    updateForm(prev => ({
       ...prev,
       misiList_id: [...(prev.misiList_id || []), newMisiId.trim()],
       misiList_en: [...(prev.misiList_en || []), newMisiEn.trim()]
@@ -1231,7 +1239,7 @@ export default function PageContentEditor({ showToast }) {
   const removeMisiItem = (index) => {
     const listId = (form.misiList_id || []).filter((_, idx) => idx !== index);
     const listEn = (form.misiList_en || []).filter((_, idx) => idx !== index);
-    setForm(prev => ({ ...prev, misiList_id: listId, misiList_en: listEn }));
+    updateForm(prev => ({ ...prev, misiList_id: listId, misiList_en: listEn }));
   };
 
   const handleSubmit = async (e) => {
@@ -1247,15 +1255,16 @@ export default function PageContentEditor({ showToast }) {
 
       if (res.ok) {
         showToast('Konten halaman berhasil disimpan!');
+        setIsDirty(false);
         if (refreshContent) {
           refreshContent();
         }
       } else {
         const data = await res.json();
-        alert(data.error || 'Gagal menyimpan konten.');
+        showToast(data.error || 'Gagal menyimpan konten.');
       }
     } catch (err) {
-      alert('Terjadi kesalahan koneksi saat menyimpan.');
+      showToast('Terjadi kesalahan koneksi saat menyimpan.');
     } finally {
       setSaving(false);
     }
@@ -1390,7 +1399,8 @@ export default function PageContentEditor({ showToast }) {
             { name: 'promoSubtitle_id', label: 'Promo Subtitle (ID)', type: 'textarea' },
             { name: 'promoSubtitle_en', label: 'Promo Subtitle (EN)', type: 'textarea' },
             { name: 'promoEnds_id', label: 'Promo Ends label (ID)', type: 'text', placeholder: 'Berakhir Dalam:' },
-            { name: 'promoEnds_en', label: 'Promo Ends label (EN)', type: 'text', placeholder: 'Ends In:' }
+            { name: 'promoEnds_en', label: 'Promo Ends label (EN)', type: 'text', placeholder: 'Ends In:' },
+            { name: 'promoEndDate', label: 'Tanggal & Jam Berakhir Promo (countdown asli — kosongkan untuk menyembunyikan timer)', type: 'text', placeholder: '2026-08-17T23:59' }
           ]
         },
         testimonials: {
@@ -1913,14 +1923,15 @@ export default function PageContentEditor({ showToast }) {
                       name={field.name}
                       value={form[field.name] || ''}
                       type={field.type}
-                      onChange={(name, val) => setForm(prev => ({ ...prev, [name]: val }))}
+                      showToast={showToast}
+                      onChange={(name, val) => updateForm(prev => ({ ...prev, [name]: val }))}
                     />
                   ) : field.type === 'color' ? (
                     <ColorPickerInput
                       label={field.label}
                       name={field.name}
                       value={form[field.name] || ''}
-                      onChange={(name, val) => setForm(prev => ({ ...prev, [name]: val }))}
+                      onChange={(name, val) => updateForm(prev => ({ ...prev, [name]: val }))}
                     />
                   ) : field.type === 'textarea' ? (
                     <>
@@ -1978,17 +1989,17 @@ export default function PageContentEditor({ showToast }) {
 
             {/* Custom render for Activities list */}
             {currentPageConfig.sections[activeSection].customRender === 'activities_editor' && (
-              <ActivitiesEditorSection form={form} setForm={setForm} />
+              <ActivitiesEditorSection form={form} setForm={updateForm} showToast={showToast} />
             )}
 
             {/* Custom render for Partners list */}
             {currentPageConfig.sections[activeSection].customRender === 'partners_editor' && (
-              <PartnersEditorSection form={form} setForm={setForm} />
+              <PartnersEditorSection form={form} setForm={updateForm} showToast={showToast} />
             )}
 
             {/* Custom render for Testimonials list */}
             {currentPageConfig.sections[activeSection].customRender === 'testimonials_editor' && (
-              <TestimonialsEditorSection form={form} setForm={setForm} />
+              <TestimonialsEditorSection form={form} setForm={updateForm} showToast={showToast} />
             )}
 
             <div className={styles.formActions} style={{ marginTop: '2rem' }}>

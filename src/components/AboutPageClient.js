@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
@@ -10,13 +9,8 @@ import styles from '@/styles/About.module.css';
 
 export default function AboutPageClient({ content }) {
   const { language, t, getTranslation, dbContent } = useLanguage();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const renderDynamicButton = (text, defaultLink, linkKey, statusKey, className, extraProps = {}) => {
+  const renderDynamicButton =(text, defaultLink, linkKey, statusKey, className, extraProps = {}) => {
     const link = dbContent?.[linkKey] !== undefined ? dbContent[linkKey] : defaultLink;
     const status = dbContent?.[statusKey] || 'active';
 
@@ -114,13 +108,11 @@ export default function AboutPageClient({ content }) {
     return data.misiList || [];
   };
 
-  if (!mounted) return null;
-
   return (
     <div className={styles.pageContainer}>
       <Navbar />
 
-      <main className={styles.aboutMain}>
+      <main id="main-content" className={styles.aboutMain}>
         
         {/* 1. HERO HEADER SECTION (Lighter background with elegant curves) */}
         <section className={styles.heroSection} style={{ backgroundColor: dbContent?.bg_about_hero || content?.bg_about_hero || '', backgroundImage: (dbContent?.bg_about_hero || content?.bg_about_hero) ? 'none' : '' }}>

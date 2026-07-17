@@ -29,7 +29,8 @@
   border-radius: 50%;
   filter: blur(140px);
   opacity: 0.06;
-  will-change: transform;
+  /* will-change dihapus: blob ini tidak pernah dianimasikan, tapi memaksa layer
+     GPU permanen berisi blur(140px) — mahal di GPU mobile tanpa manfaat. */
 }
 
 .glowTosca {
@@ -119,7 +120,9 @@
 
 .heroDesc {
   font-size: 1.05rem;
-  color: var(--color-text-muted);
+  /* Sits on cream (--color-cream-bg): --color-text-muted is only ~4.38:1 there.
+     WCAG 1.4.3 needs 4.5:1 for normal text. */
+  color: var(--color-text-muted-on-cream);
   line-height: 1.65;
 }
 
@@ -202,9 +205,11 @@
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.clearSearch:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: var(--color-maroon);
+@media (hover: hover) and (pointer: fine) {
+  .clearSearch:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--color-maroon);
+  }
 }
 
 /* Controls Layout Row */
@@ -236,10 +241,12 @@
   letter-spacing: 0.5px;
 }
 
-.filterTab:hover {
-  background-color: var(--color-tosca);
-  color: var(--color-white);
-  border-color: var(--color-tosca);
+@media (hover: hover) and (pointer: fine) {
+  .filterTab:hover {
+    background-color: var(--color-tosca);
+    color: var(--color-white);
+    border-color: var(--color-tosca);
+  }
 }
 
 .activeFilterTab {
@@ -249,9 +256,11 @@
   box-shadow: 0 4px 12px rgba(171, 34, 35, 0.25);
 }
 
-.activeFilterTab:hover {
-  background-color: var(--color-maroon);
-  border-color: var(--color-maroon);
+@media (hover: hover) and (pointer: fine) {
+  .activeFilterTab:hover {
+    background-color: var(--color-maroon);
+    border-color: var(--color-maroon);
+  }
 }
 
 /* Sorting Selection Dropdown */
@@ -319,8 +328,10 @@
   padding: 4px 8px;
 }
 
-.resetFilters:hover {
-  color: #8c1a1b;
+@media (hover: hover) and (pointer: fine) {
+  .resetFilters:hover {
+    color: #8c1a1b;
+  }
 }
 
 /* Product Grid */
@@ -385,7 +396,7 @@
   margin-bottom: 1.5rem;
 }
 
-.emptyStore h3 {
+.emptyStore h2 {
   font-size: 1.35rem;
   font-weight: 800;
   color: var(--color-text-dark);

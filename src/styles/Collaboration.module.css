@@ -208,7 +208,7 @@
   color: var(--color-kunyit);
 }
 
-.featureText h4 {
+.featureText h3 {
   font-size: 1.15rem;
   font-weight: 800;
   color: var(--color-text-dark);
@@ -312,11 +312,13 @@
   transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
 }
 
-.floatCard:hover {
-  transform: translateY(-6px) rotate(1deg);
-  box-shadow: 
-    0 10px 25px rgba(0,0,0,0.06),
-    0 25px 45px rgba(20, 120, 155, 0.12);
+@media (hover: hover) and (pointer: fine) {
+  .floatCard:hover {
+    transform: translateY(-6px) rotate(1deg);
+    box-shadow:
+      0 10px 25px rgba(0,0,0,0.06),
+      0 25px 45px rgba(20, 120, 155, 0.12);
+  }
 }
 
 .toteCard {
@@ -446,7 +448,8 @@
 
 .venueSubtitle {
   font-size: 1.2rem;
-  color: var(--color-text-muted);
+  /* Duduk di atas cream: --color-text-muted hanya 4.37:1 di sana. */
+  color: var(--color-text-muted-on-cream);
   line-height: 1.65;
   margin-top: 1.5rem;
 }
@@ -473,9 +476,11 @@
   transition: all 0.4s var(--ease-out-expo);
 }
 
-.benefitCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(20, 120, 155, 0.08);
+@media (hover: hover) and (pointer: fine) {
+  .benefitCard:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(20, 120, 155, 0.08);
+  }
 }
 
 .benefitIconBox {

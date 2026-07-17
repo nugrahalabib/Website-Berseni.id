@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { Montserrat, Dancing_Script } from "next/font/google";
 import { LanguageProvider } from "@/components/LanguageContext";
 import JsonLd from "@/components/JsonLd";
@@ -150,7 +151,17 @@ export default async function RootLayout({ children }) {
   const pixelId = (globalSettings.meta_pixel_enabled === 'true' || globalSettings.meta_pixel_enabled === true) ? globalSettings.meta_pixel_id : '';
 
   const content = await db.get('content') || {};
-  const defaultLanguage = content.defaultLanguage || 'id';
+
+  // Bahasa ditentukan di SERVER dari cookie pengunjung, bukan localStorage yang
+  // baru terbaca setelah hydration. Ini menghilangkan flash/kedip bahasa dan
+  // membuat <html lang> benar sejak paint pertama. Crawler (tanpa cookie) tetap
+  // mendapat bahasa default situs.
+  const cookieStore = await cookies();
+  const cookieLang = cookieStore.get('berseni_lang')?.value;
+  const defaultLanguage = (cookieLang === 'id' || cookieLang === 'en')
+    ? cookieLang
+    : (content.defaultLanguage || 'id');
+
   const pick = (id, en) => (defaultLanguage === 'en' ? (en || id) : (id || en));
 
   const organizationJsonLd = buildOrganizationJsonLd(pick);
@@ -159,6 +170,9 @@ export default async function RootLayout({ children }) {
   return (
     <html lang={defaultLanguage} className={`${montserrat.variable} ${dancingScript.variable}`}>
       <body>
+        <a href="#main-content" className="skip-link">
+          {pick('Lewati ke konten utama', 'Skip to main content')}
+        </a>
         <LanguageProvider defaultLanguage={defaultLanguage} initialContent={content}>
           {pixelId && <MetaPixelTracker pixelId={pixelId} />}
           {/* Global JSON-LD Structured Data untuk SEO + GEO */}

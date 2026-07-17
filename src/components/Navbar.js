@@ -3,16 +3,14 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Components.module.css';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileActive, setMobileActive] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
   const { language, toggleLanguage, getTranslation, dbContent } = useLanguage();
 
   // Efek scroll navbar
@@ -24,27 +22,9 @@ export default function Navbar() {
         setScrolled(false);
       }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Cek apakah user adalah admin
-  useEffect(() => {
-    const checkAdmin = async () => {
-      try {
-        const res = await fetch('/api/auth');
-        const data = await res.json();
-        if (data.authenticated) {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
-        }
-      } catch (err) {
-        setIsAdmin(false);
-      }
-    };
-    checkAdmin();
-  }, [pathname]); // Cek ulang setiap pindah halaman
 
   const toggleMobileMenu = () => {
     setMobileActive(!mobileActive);
@@ -62,6 +42,12 @@ export default function Navbar() {
     { name: getTranslation('navCollab'), path: '/collaboration' },
     { name: getTranslation('navBlog'), path: '/blog' },
   ];
+
+  const langSwitchLabel = `Switch language, currently ${language === 'id' ? 'Indonesian' : 'English'}`;
+
+  const menuToggleLabel = mobileActive
+    ? (language === 'id' ? 'Tutup menu navigasi' : 'Close navigation menu')
+    : (language === 'id' ? 'Buka menu navigasi' : 'Open navigation menu');
 
   const navLayout = dbContent?.navLayout || 'floating';
   const navOpacity = dbContent?.navOpacity || '0.65';
@@ -116,14 +102,15 @@ export default function Navbar() {
     >
       <div className={styles.navInner}>
         {/* Brand Logo */}
-        <div 
-          className={styles.logo} 
-          onClick={() => { 
-            closeMobileMenu(); 
+        <Link
+          href="/"
+          className={styles.logo}
+          aria-label={language === 'id' ? 'Berseni, kembali ke beranda' : 'Berseni, go to homepage'}
+          onClick={(e) => {
+            closeMobileMenu();
             if (pathname === '/') {
+              e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-              router.push('/');
             }
           }}
         >
@@ -131,26 +118,13 @@ export default function Navbar() {
           <div className={styles.logoTextContainer}>
             <span className={styles.logoTagline}>{getTranslation('footerTagline')}</span>
           </div>
-        </div>
+        </Link>
 
         {/* Desktop Links */}
         <div className={styles.navLinks}>
           {navLinks.map((link) => {
-            const isAnchor = link.path.startsWith('#');
-            const isActive = pathname === '/' && isAnchor ? false : pathname === link.path;
-            
-            if (isAnchor) {
-              return (
-                <a
-                  key={link.name}
-                  href={pathname === '/' ? link.path : `/${link.path}`}
-                  className={styles.navLink}
-                >
-                  {link.name}
-                </a>
-              );
-            }
-            
+            const isActive = pathname === link.path;
+
             return (
               <Link
                 key={link.name}
@@ -169,7 +143,7 @@ export default function Navbar() {
           })}
           
           {/* Language Switcher Desktop */}
-          <button onClick={toggleLanguage} className={styles.langSwitchBtn} aria-label="Switch Language">
+          <button onClick={toggleLanguage} className={styles.langSwitchBtn} aria-label={langSwitchLabel}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-tosca)' }}>
               <circle cx="12" cy="12" r="10" />
               <line x1="2" y1="12" x2="22" y2="12" />
@@ -195,23 +169,32 @@ export default function Navbar() {
         </div>
 
         {/* Hamburger Menu Toggle (Mobile) */}
-        <div 
+        <button
+          type="button"
           className={`${styles.menuToggle} ${mobileActive ? styles.menuActive : ''}`}
           onClick={toggleMobileMenu}
+          aria-expanded={mobileActive}
+          aria-controls="mobile-menu"
+          aria-label={menuToggleLabel}
+          // Neutralize native button chrome; .menuToggle owns display/gap/cursor
+          style={{ background: 'none', border: 'none', padding: 0, appearance: 'none' }}
         >
           <span className={styles.bar}></span>
           <span className={styles.bar}></span>
           <span className={styles.bar}></span>
-        </div>
+        </button>
       </div>
 
       {/* Mobile Dropdown Expanded Menu Links */}
-      <div className={`${styles.mobileMenuContent} ${mobileActive ? styles.mobileMenuVisible : ''}`}>
+      <div
+        id="mobile-menu"
+        className={`${styles.mobileMenuContent} ${mobileActive ? styles.mobileMenuVisible : ''}`}
+      >
         {navLinks.map((link) => {
           return (
-            <a
+            <Link
               key={link.name}
-              href={pathname === '/' ? link.path : `/${link.path}`}
+              href={link.path}
               className={styles.mobileNavLink}
               onClick={(e) => {
                 closeMobileMenu();
@@ -222,12 +205,12 @@ export default function Navbar() {
               }}
             >
               {link.name}
-            </a>
+            </Link>
           );
         })}
 
         {/* Language Switcher Mobile */}
-        <button onClick={toggleLanguage} className={styles.mobileLangSwitchBtn}>
+        <button onClick={toggleLanguage} className={styles.mobileLangSwitchBtn} aria-label={langSwitchLabel}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-tosca)' }}>
             <circle cx="12" cy="12" r="10" />
             <line x1="2" y1="12" x2="22" y2="12" />

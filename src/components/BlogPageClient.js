@@ -25,7 +25,7 @@ export default function BlogPageClient({ content, initialPosts }) {
 
       <Navbar />
       
-      <main className={styles.blogPage}>
+      <main id="main-content" className={styles.blogPage}>
         {/* Page Header */}
         <div className={styles.blogHeader} style={{ backgroundColor: dbContent?.bg_blog_header || content?.bg_blog_header || '' }}>
           <h1 className={styles.blogTitle}>

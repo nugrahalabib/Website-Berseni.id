@@ -139,10 +139,18 @@
   transition: all 0.3s;
 }
 
-.menuItem:hover,
+/* Split from the old `.menuItem:hover, .menuItemActive` pair: the active state must
+   stay unconditional, only the hover half gets the pointer guard. */
 .menuItemActive {
   background-color: rgba(20, 120, 155, 0.15);
   color: var(--color-white);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menuItem:hover {
+    background-color: rgba(20, 120, 155, 0.15);
+    color: var(--color-white);
+  }
 }
 
 .logoutBtn {
@@ -163,9 +171,11 @@
   text-align: left;
 }
 
-.logoutBtn:hover {
-  background-color: rgba(171, 34, 35, 0.2);
-  color: var(--color-white);
+@media (hover: hover) and (pointer: fine) {
+  .logoutBtn:hover {
+    background-color: rgba(171, 34, 35, 0.2);
+    color: var(--color-white);
+  }
 }
 
 /* MAIN CONTENT AREA */
@@ -285,9 +295,11 @@
   transition: all 0.3s;
 }
 
-.misiRemoveBtn:hover {
-  background-color: var(--color-maroon);
-  color: var(--color-white);
+@media (hover: hover) and (pointer: fine) {
+  .misiRemoveBtn:hover {
+    background-color: var(--color-maroon);
+    color: var(--color-white);
+  }
 }
 
 .formActions {
@@ -349,8 +361,10 @@
   vertical-align: middle;
 }
 
-.tableRow:hover {
-  background-color: #F8FAFC;
+@media (hover: hover) and (pointer: fine) {
+  .tableRow:hover {
+    background-color: #F8FAFC;
+  }
 }
 
 .tableThumb {
@@ -396,9 +410,11 @@
   color: var(--color-tosca);
 }
 
-.actionEdit:hover {
-  background-color: var(--color-tosca);
-  color: var(--color-white);
+@media (hover: hover) and (pointer: fine) {
+  .actionEdit:hover {
+    background-color: var(--color-tosca);
+    color: var(--color-white);
+  }
 }
 
 .actionDelete {
@@ -406,9 +422,11 @@
   color: var(--color-maroon);
 }
 
-.actionDelete:hover {
-  background-color: var(--color-maroon);
-  color: var(--color-white);
+@media (hover: hover) and (pointer: fine) {
+  .actionDelete:hover {
+    background-color: var(--color-maroon);
+    color: var(--color-white);
+  }
 }
 
 /* IMAGE UPLOAD AREA */
@@ -427,9 +445,11 @@
   gap: 0.75rem;
 }
 
-.uploadArea:hover {
-  border-color: var(--color-tosca);
-  background-color: rgba(20, 120, 155, 0.02);
+@media (hover: hover) and (pointer: fine) {
+  .uploadArea:hover {
+    border-color: var(--color-tosca);
+    background-color: rgba(20, 120, 155, 0.02);
+  }
 }
 
 .uploadPreview {
@@ -466,8 +486,10 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.uploadRemove:hover {
-  background-color: var(--color-maroon);
+@media (hover: hover) and (pointer: fine) {
+  .uploadRemove:hover {
+    background-color: var(--color-maroon);
+  }
 }
 
 .toast {

@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { kv } from '@vercel/kv';
 import fs from 'fs';
 import path from 'path';
@@ -811,7 +812,12 @@ function initLocalDb() {
 }
 
 export const db = {
-  async get(key) {
+  // Dimemo per-request dengan React cache(): satu request (layout +
+  // generateMetadata + body halaman) sering meminta key yang sama berkali-kali.
+  // Tanpa ini, satu request homepage menembak KV ~9x (content 3x, seo_pages 4x).
+  // CATATAN: jangan panggil db.get(key) lagi SETELAH db.set(key) di request yang
+  // sama — nilai memo akan terpakai (stale). Saat ini tidak ada pola seperti itu.
+  get: cache(async (key) => {
     if (isLocal) {
       initLocalDb();
       try {
@@ -841,7 +847,7 @@ export const db = {
         return null;
       }
     }
-  },
+  }),
 
   async set(key, value) {
     if (isLocal) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import SafeImage from '@/components/SafeImage';
 import Navbar from '@/components/Navbar';
@@ -85,10 +85,18 @@ const activitiesData = [
   }
 ];
 
-export default function LandingPageClient({ initialContent, initialProducts, initialPosts = [] }) {
-  const { language, t, getTranslation, dbContent } = useLanguage();
+const DEFAULT_PARTNERS = [
+  "/support/1.png",
+  "/support/2.png",
+  "/support/3.png",
+  "/support/4.png",
+  "/support/5.png",
+  "/support/6.png",
+  "/support/7.png",
+  "/support/8.png"
+];
 
-  const allTestimonials = dbContent?.testimonials || initialContent?.testimonials || [
+const DEFAULT_TESTIMONIALS = [
     {
       id: "testi-1",
       name: "Ahmad Fauzi",
@@ -161,52 +169,137 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       comment_en: "Love the concept of the Berseni community. We can share painting progress in the WhatsApp group and get direct feedback from professional tutors.",
       borderColor: "var(--color-maroon)"
     }
-  ];
+];
 
-  const videoReviews = allTestimonials.filter(t => t.videoThumbnail && t.videoLink);
-  const textReviews = allTestimonials.filter(t => !t.videoThumbnail || !t.videoLink);
+// Ensure marquee has enough elements to loop seamlessly on wide screens
+const MIN_MARQUEE_ITEMS = 12;
 
-  const showVideoRow = videoReviews.length > 0;
-  let reviewsRow1 = [];
-  let reviewsRow2 = [];
-
-  if (showVideoRow) {
-    reviewsRow1 = videoReviews;
-    reviewsRow2 = textReviews;
-  } else {
-    const mid = Math.ceil(allTestimonials.length / 2);
-    reviewsRow1 = allTestimonials.slice(0, mid);
-    reviewsRow2 = allTestimonials.slice(mid);
+const getMarqueeItems = (arr) => {
+  if (!arr || arr.length === 0) return [];
+  let items = [...arr];
+  while (items.length < MIN_MARQUEE_ITEMS) {
+    items = items.concat(arr);
   }
+  return items;
+};
 
-  // Ensure marquee has enough elements to loop seamlessly on wide screens
-  const getMarqueeItems = (arr) => {
-    if (!arr || arr.length === 0) return [];
-    let items = [...arr];
-    while (items.length < 12) {
-      items = items.concat(arr);
-    }
-    return items;
+const MS_PER_SECOND = 1000;
+const MS_PER_MINUTE = 60 * MS_PER_SECOND;
+const MS_PER_HOUR = 60 * MS_PER_MINUTE;
+
+// Parse an admin-supplied promo end date into a timestamp.
+// Returns null when absent or unparseable so the caller can hide the timer.
+const parsePromoEnd = (rawValue) => {
+  if (!rawValue) return null;
+  const timestamp = new Date(rawValue).getTime();
+  return Number.isNaN(timestamp) ? null : timestamp;
+};
+
+// Remaining time until `endsAt`, or null once the promo has expired.
+const getRemainingTime = (endsAt) => {
+  const difference = endsAt - Date.now();
+  if (difference <= 0) return null;
+  return {
+    hours: Math.floor(difference / MS_PER_HOUR),
+    minutes: Math.floor((difference % MS_PER_HOUR) / MS_PER_MINUTE),
+    seconds: Math.floor((difference % MS_PER_MINUTE) / MS_PER_SECOND)
   };
+};
 
-  const marqueeRow1 = getMarqueeItems(reviewsRow1);
-  const marqueeRow2 = getMarqueeItems(reviewsRow2);
-  const partnersList = dbContent?.partners || initialContent?.partners || [
-    "/support/1.png",
-    "/support/2.png",
-    "/support/3.png",
-    "/support/4.png",
-    "/support/5.png",
-    "/support/6.png",
-    "/support/7.png",
-    "/support/8.png"
-  ];
+/**
+ * Real countdown to a promo end date. Kept as its own component so the 1s tick
+ * only re-renders this small subtree instead of the whole landing page.
+ * Renders nothing once the promo has expired.
+ */
+function PromoCountdown({ endsAt }) {
+  const { getTranslation, language } = useLanguage();
+  // Starts null so server and client markup agree; filled in right after mount.
+  const [remaining, setRemaining] = useState(null);
+
+  useEffect(() => {
+    setRemaining(getRemainingTime(endsAt));
+
+    const interval = setInterval(() => {
+      const next = getRemainingTime(endsAt);
+      setRemaining(next);
+      if (!next) clearInterval(interval);
+    }, MS_PER_SECOND);
+
+    return () => clearInterval(interval);
+  }, [endsAt]);
+
+  if (!remaining) return null;
+
+  return (
+    <div className={styles.countdownBox}>
+      <span className={styles.countdownLabel}>{getTranslation('promoEnds')}</span>
+      <div className={styles.countdownTimer}>
+        {remaining.hours > 0 && (
+          <>
+            <div className={styles.timerDigit}>
+              <span>{String(remaining.hours).padStart(2, '0')}</span>
+              <label>{language === 'en' ? 'Hours' : 'Jam'}</label>
+            </div>
+            <span className={styles.timerColon}>:</span>
+          </>
+        )}
+        <div className={styles.timerDigit}>
+          <span>{String(remaining.minutes).padStart(2, '0')}</span>
+          <label>{getTranslation('minutes')}</label>
+        </div>
+        <span className={styles.timerColon}>:</span>
+        <div className={styles.timerDigit}>
+          <span>{String(remaining.seconds).padStart(2, '0')}</span>
+          <label>{getTranslation('seconds')}</label>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function LandingPageClient({ initialContent, initialProducts, initialPosts = [] }) {
+  const { language, t, getTranslation, dbContent } = useLanguage();
+
+  const allTestimonials = useMemo(
+    () => dbContent?.testimonials || initialContent?.testimonials || DEFAULT_TESTIMONIALS,
+    [dbContent?.testimonials, initialContent?.testimonials]
+  );
+
+  // Split reviews into the two marquee rows. Memoized so scroll ticks (which
+  // change scrollProgress only) never rebuild these arrays.
+  const { showVideoRow, marqueeRow1, marqueeRow2 } = useMemo(() => {
+    const videoReviews = allTestimonials.filter(review => review.videoThumbnail && review.videoLink);
+    const textReviews = allTestimonials.filter(review => !review.videoThumbnail || !review.videoLink);
+    const hasVideoRow = videoReviews.length > 0;
+
+    let reviewsRow1;
+    let reviewsRow2;
+
+    if (hasVideoRow) {
+      reviewsRow1 = videoReviews;
+      reviewsRow2 = textReviews;
+    } else {
+      const mid = Math.ceil(allTestimonials.length / 2);
+      reviewsRow1 = allTestimonials.slice(0, mid);
+      reviewsRow2 = allTestimonials.slice(mid);
+    }
+
+    return {
+      showVideoRow: hasVideoRow,
+      marqueeRow1: getMarqueeItems(reviewsRow1),
+      marqueeRow2: getMarqueeItems(reviewsRow2)
+    };
+  }, [allTestimonials]);
+
+  const partnersList = dbContent?.partners || initialContent?.partners || DEFAULT_PARTNERS;
+
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const [timeLeft, setTimeLeft] = useState({ minutes: 59, seconds: 59 });
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const scrollTickingRef = useRef(false);
   const galleryTrackRef = useRef(null);
   const [scrollPct, setScrollPct] = useState(0);
 
@@ -330,21 +423,16 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
     );
   };
 
-  // Countdown timer logic (resets to 1hr on refresh or end)
+  // Hook untuk memantau preferensi reduced-motion pengguna (a11y).
+  // CSS hanya menetralkan animasi CSS; animasi hero di sini digerakkan JS,
+  // jadi preferensi ini harus dibaca manual.
   useEffect(() => {
-    const targetTime = Date.now() + 60 * 60 * 1000;
-    const interval = setInterval(() => {
-      const difference = targetTime - Date.now();
-      if (difference <= 0) {
-        clearInterval(interval);
-        setTimeLeft({ minutes: 59, seconds: 59 });
-      } else {
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-        setTimeLeft({ minutes, seconds });
-      }
-    }, 1000);
-    return () => clearInterval(interval);
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handler = (e) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
   // Hook untuk memantau apakah layar berukuran mobile
@@ -357,14 +445,17 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
     return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
-  // Hook untuk memantau progress scroll di Hero Section
+  // Hook untuk memantau progress scroll di Hero Section.
+  // Di-throttle dengan requestAnimationFrame: pembacaan layout + setState
+  // maksimal sekali per frame, bukan sekali per event scroll.
   useEffect(() => {
-    const handleScroll = () => {
+    let rafId = null;
+
+    const measureProgress = () => {
       const heroEl = document.getElementById('hero-scroll-container');
       if (!heroEl) return;
 
-      const rect = heroEl.getBoundingClientRect();
-      const heroHeight = rect.height;
+      const heroHeight = heroEl.offsetHeight;
       const viewportHeight = window.innerHeight;
 
       // Hitung seberapa jauh area hero ter-scroll relatif terhadap viewport
@@ -380,11 +471,24 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       setScrollProgress(progress);
     };
 
+    const handleScroll = () => {
+      if (scrollTickingRef.current) return;
+      scrollTickingRef.current = true;
+      rafId = window.requestAnimationFrame(() => {
+        scrollTickingRef.current = false;
+        measureProgress();
+      });
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     // Jalankan sekali di awal untuk menetapkan state inisial
-    handleScroll();
+    measureProgress();
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
+      scrollTickingRef.current = false;
+    };
   }, []);
 
 
@@ -423,13 +527,22 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
     statsDescription_en: "Berseni Users"
   };
 
-  // Filter produk berdasarkan kategori tab yang aktif
-  const filteredProducts = selectedFilter === 'all'
-    ? initialProducts
-    : initialProducts.filter(p => p.category === selectedFilter);
+  // Filter produk berdasarkan kategori tab yang aktif.
+  // Memoized agar tick scroll tidak menghitung ulang daftar ini.
+  const filteredProducts = useMemo(
+    () => (selectedFilter === 'all'
+      ? initialProducts
+      : initialProducts.filter(p => p.category === selectedFilter)),
+    [initialProducts, selectedFilter]
+  );
 
   // Ambil beberapa produk unggulan untuk carousel 3D (maks 5 produk)
   const featuredProducts = initialProducts.slice(0, 5);
+
+  // Tanggal berakhirnya promo diambil dari database (bisa diatur dari admin).
+  // Jika kosong / tidak valid, countdown tidak dirender sama sekali.
+  const promoEnd = dbContent?.promoEndDate || initialContent?.promoEndDate;
+  const promoEndsAt = useMemo(() => parsePromoEnd(promoEnd), [promoEnd]);
 
   const handleCardSelect = (product) => {
     setSelectedProduct(product);
@@ -462,55 +575,72 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
     return title;
   };
 
-  // Hitung nilai animasi staggered berdasarkan scrollProgress (0 - 1)
-  
-  // 1. Sunset & Waves Transition (stays visible, fades out near the end of container)
-  const sunsetOpacity = scrollProgress < 0.85 
-    ? 1 
-    : 1 - (scrollProgress - 0.85) / 0.15;
+  // Nilai yang menggerakkan seluruh animasi hero.
+  //
+  // Normal: mengikuti scrollProgress secara kontinu (0 - 1) sehingga tiap
+  // elemen bergerak/parallax mengikuti scroll.
+  //
+  // prefers-reduced-motion: reduce -> tidak ada gerakan sama sekali. Kita
+  // "snap" ke salah satu dari dua end-state yang sudah settled (0 = kartu teks
+  // hero terpasang rapi, 1 = showcase aktivitas terpasang rapi) berdasarkan
+  // posisi scroll. Tidak ada transform parsial, tidak ada opacity pecahan, dan
+  // tidak ada state setengah jadi -- keduanya adalah tampilan akhir yang benar,
+  // sementara halaman tetap bisa di-scroll seperti biasa dan seluruh konten
+  // (termasuk carousel aktivitas) tetap dapat dijangkau.
+  const HERO_STAGE_SWAP_POINT = 0.5;
+  const motionProgress = prefersReducedMotion
+    ? (scrollProgress >= HERO_STAGE_SWAP_POINT ? 1 : 0)
+    : scrollProgress;
 
-  const sunsetTranslateY = scrollProgress * 50;
+  // Hitung nilai animasi staggered berdasarkan motionProgress (0 - 1)
+
+  // 1. Sunset & Waves Transition (stays visible, fades out near the end of container)
+  const sunsetOpacity = motionProgress < 0.85
+    ? 1
+    : 1 - (motionProgress - 0.85) / 0.15;
+
+  const sunsetTranslateY = motionProgress * 50;
 
   // 2. Birds Transition (stays visible, translates dynamically)
-  const birdsOpacity = scrollProgress < 0.85 
-    ? 1 
-    : 1 - (scrollProgress - 0.85) / 0.15;
+  const birdsOpacity = motionProgress < 0.85
+    ? 1
+    : 1 - (motionProgress - 0.85) / 0.15;
 
-  const birdsTranslateX = scrollProgress * 150;
-  const birdsTranslateY = scrollProgress * -50;
+  const birdsTranslateX = motionProgress * 150;
+  const birdsTranslateY = motionProgress * -50;
 
   // 3. Experience Art Text Card (visible on load, fades out from 0 to 0.45)
-  const textOpacity = scrollProgress < 0.45 
-    ? 1 - (scrollProgress / 0.45) 
+  const textOpacity = motionProgress < 0.45
+    ? 1 - (motionProgress / 0.45)
     : 0;
 
-  const textScale = scrollProgress < 0.45 
-    ? 1 - (scrollProgress / 0.45) * 0.05 
+  const textScale = motionProgress < 0.45
+    ? 1 - (motionProgress / 0.45) * 0.05
     : 0.95;
 
-  const textTranslateY = scrollProgress < 0.45 
-    ? -((scrollProgress / 0.45) * 40) 
+  const textTranslateY = motionProgress < 0.45
+    ? -((motionProgress / 0.45) * 40)
     : -40;
 
   // 4. Showcase (carousel) Transition (fades in from 0.50 to 0.85)
-  const showcaseOpacity = scrollProgress < 0.50 
-    ? 0 
-    : Math.min(1, (scrollProgress - 0.50) / 0.35);
+  const showcaseOpacity = motionProgress < 0.50
+    ? 0
+    : Math.min(1, (motionProgress - 0.50) / 0.35);
 
-  const showcaseScale = scrollProgress < 0.50 
-    ? 0.92 
-    : 0.92 + Math.min(1, (scrollProgress - 0.50) / 0.35) * 0.08;
+  const showcaseScale = motionProgress < 0.50
+    ? 0.92
+    : 0.92 + Math.min(1, (motionProgress - 0.50) / 0.35) * 0.08;
 
-  const showcaseTranslateY = scrollProgress < 0.50 
-    ? 40 
-    : 40 - Math.min(1, (scrollProgress - 0.50) / 0.35) * 40;
+  const showcaseTranslateY = motionProgress < 0.50
+    ? 40
+    : 40 - Math.min(1, (motionProgress - 0.50) / 0.35) * 40;
 
   const showScrollButton = true;
-  
-  const scrollButtonOpacity = scrollProgress < 0.05 
-    ? 1 
-    : scrollProgress < 0.15 
-      ? 1 - (scrollProgress - 0.05) / 0.1 
+
+  const scrollButtonOpacity = motionProgress < 0.05
+    ? 1
+    : motionProgress < 0.15
+      ? 1 - (motionProgress - 0.05) / 0.1
       : 0;
 
   const cardOpacity = dbContent?.heroCardOpacity || initialContent?.heroCardOpacity || '0.85';
@@ -527,21 +657,23 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
     <div className={styles.page}>
       <Navbar />
 
+      <main id="main-content">
+
       {/* 1. HERO SECTION (SCROLL-ZOOM STICKY CONTAINER) */}
-      <section 
-        id="hero-scroll-container" 
+      <section
+        id="hero-scroll-container"
         className={styles.heroScrollContainer}
         style={{ backgroundColor: dbContent?.bg_home_hero || initialContent?.bg_home_hero || '' }}
       >
         <div className={styles.heroStickyWrapper}>
 
           {/* Background Decorative Brush Accents */}
-          <div className={styles.heroBrush1} style={{ transform: `translate(${-scrollProgress * 150}px, ${scrollProgress * 50}px)`, opacity: 0.1 * (1 - scrollProgress) }}>
+          <div className={styles.heroBrush1} style={{ transform: `translate(${-motionProgress * 150}px, ${motionProgress * 50}px)`, opacity: 0.1 * (1 - motionProgress) }}>
             <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 80 C 40 10, 60 10, 100 80 C 130 150, 160 150, 190 80" stroke="var(--color-tosca)" strokeWidth="8" strokeLinecap="round"/>
             </svg>
           </div>
-          <div className={styles.heroBrush2} style={{ transform: `translate(${scrollProgress * 150}px, ${-scrollProgress * 50}px)`, opacity: 0.1 * (1 - scrollProgress) }}>
+          <div className={styles.heroBrush2} style={{ transform: `translate(${motionProgress * 150}px, ${-motionProgress * 50}px)`, opacity: 0.1 * (1 - motionProgress) }}>
             <svg width="250" height="250" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M20 20 C 80 180, 120 180, 180 20" stroke="var(--color-kunyit)" strokeWidth="6" strokeLinecap="round" strokeDasharray="5,5"/>
             </svg>
@@ -554,7 +686,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
             className={styles.heroStage3Bg}
             style={{
               pointerEvents: 'none',
-              display: scrollProgress > 0.95 ? 'none' : 'block',
+              display: motionProgress > 0.95 ? 'none' : 'block',
             }}
           >
             {/* Latar Belakang Ombak Sunset (Slides up and fades in) */}
@@ -562,7 +694,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               className={styles.sunsetParallaxWrapper}
               style={{
                 opacity: sunsetOpacity,
-                transform: `scale(${1.02 + scrollProgress * 0.03}) translate(${scrollProgress * -8}px, ${sunsetTranslateY - scrollProgress * 4}px)`,
+                transform: `scale(${1.02 + motionProgress * 0.03}) translate(${motionProgress * -8}px, ${sunsetTranslateY - motionProgress * 4}px)`,
               }}
             >
               <div className={styles.bgSunset} />
@@ -573,7 +705,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               className={styles.birdsParallaxWrapper}
               style={{
                 opacity: birdsOpacity,
-                transform: `scale(${1 + scrollProgress * 0.1}) translate(${birdsTranslateX + scrollProgress * 20}px, ${birdsTranslateY - scrollProgress * 12}px)`,
+                transform: `scale(${1 + motionProgress * 0.1}) translate(${birdsTranslateX + motionProgress * 20}px, ${birdsTranslateY - motionProgress * 12}px)`,
               }}
             >
               <div className={styles.bgBirds} style={{ top: birdsTop }} />
@@ -588,7 +720,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               opacity: textOpacity,
               transform: `translate(-50%, -50%) translateY(${textTranslateY}px) scale(${textScale})`,
               pointerEvents: textOpacity < 0.3 ? 'none' : 'auto',
-              display: scrollProgress > 0.45 ? 'none' : 'block',
+              display: motionProgress > 0.45 ? 'none' : 'block',
             }}
           >
             <span className={styles.heroSubtitle}>{t(content, 'heroSubtitle')}</span>
@@ -617,7 +749,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
             {((content && content.activities) || activitiesData).length > 0 && (
               <div className={styles.carouselShowcaseContainer}>
                 <div className={styles.carouselShowcaseHeader}>
-                  <h3>{getTranslation('activitiesHeaderTitle')}<span>.</span></h3>
+                  <h2>{getTranslation('activitiesHeaderTitle')}<span>.</span></h2>
                   <p>{getTranslation('activitiesHeaderSubtitle')}</p>
                 </div>
                 <HeroCarousel 
@@ -630,19 +762,26 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           
           {/* Scroll Indicator (Fades out dynamically on scroll) */}
           {showScrollButton && (
-            <div 
+            <button
+              type="button"
               className={styles.scrollIndicator}
               style={{
                 opacity: scrollButtonOpacity,
                 pointerEvents: scrollButtonOpacity < 0.2 ? 'none' : 'auto',
+                background: 'transparent',
+                border: 'none',
+                padding: 0,
+                font: 'inherit',
+                color: 'inherit',
               }}
               onClick={handleScrollDown}
+              aria-label={language === 'en' ? 'Scroll down to content' : 'Gulir ke bawah menuju konten'}
             >
               <span className={styles.scrollText}>{getTranslation('scrollingText')}</span>
-              <svg className={styles.scrollArrow} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <svg className={styles.scrollArrow} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M12 5v14M19 12l-7 7-7-7" />
               </svg>
-            </div>
+            </button>
           )}
         </div>
       </section>
@@ -797,23 +936,10 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           <div className={styles.promoBannerInner}>
             <div className={styles.promoIcon}>⚡</div>
             <div className={styles.promoTextCol}>
-              <h4>{getTranslation('promoTitle')}</h4>
+              <h3>{getTranslation('promoTitle')}</h3>
               <p>{getTranslation('promoSubtitle')}</p>
             </div>
-            <div className={styles.countdownBox}>
-              <span className={styles.countdownLabel}>{getTranslation('promoEnds')}</span>
-              <div className={styles.countdownTimer}>
-                <div className={styles.timerDigit}>
-                  <span>{String(timeLeft.minutes).padStart(2, '0')}</span>
-                  <label>{getTranslation('minutes')}</label>
-                </div>
-                <span className={styles.timerColon}>:</span>
-                <div className={styles.timerDigit}>
-                  <span>{String(timeLeft.seconds).padStart(2, '0')}</span>
-                  <label>{getTranslation('seconds')}</label>
-                </div>
-              </div>
-            </div>
+            {promoEndsAt !== null && <PromoCountdown endsAt={promoEndsAt} />}
           </div>
         </div>
 
@@ -850,21 +976,25 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           <>
             <div className={styles.gallerySliderWrapper}>
               {/* Left Arrow Button */}
-              <button 
-                className={`${styles.gallerySliderBtn} ${styles.gallerySliderBtnLeft}`} 
+              <button
+                className={`${styles.gallerySliderBtn} ${styles.gallerySliderBtnLeft}`}
                 onClick={() => scrollGallery('left')}
                 aria-label="Geser Kiri"
+                disabled={scrollPct <= 0.01}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
 
-              {/* Scrollable Track */}
-              <div 
+              {/* Scrollable Track (focusable so keyboard users can scroll it) */}
+              <div
                 ref={galleryTrackRef}
                 className={styles.galleryScrollTrack}
                 onScroll={handleScroll}
+                tabIndex={0}
+                role="region"
+                aria-label={language === 'en' ? 'Artwork and workshop gallery, scrollable' : 'Galeri karya dan workshop, dapat digulir'}
               >
                 {filteredProducts.map((product) => (
                   <div key={product.id} className={styles.galleryScrollItem}>
@@ -877,10 +1007,11 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               </div>
 
               {/* Right Arrow Button */}
-              <button 
-                className={`${styles.gallerySliderBtn} ${styles.gallerySliderBtnRight}`} 
+              <button
+                className={`${styles.gallerySliderBtn} ${styles.gallerySliderBtnRight}`}
                 onClick={() => scrollGallery('right')}
                 aria-label="Geser Kanan"
+                disabled={scrollPct >= 0.99}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 5l7 7-7 7" />
@@ -915,7 +1046,9 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       <section className={styles.testimonials} style={{ backgroundColor: dbContent?.bg_home_testimonials || initialContent?.bg_home_testimonials || '' }}>
         <div className={styles.sectionHeader}>
           <h2 style={{ color: 'var(--color-text-dark)' }}>{getTranslation('testimonialsTitle')}<span>.</span></h2>
-          <p style={{ color: 'var(--color-text-muted)' }}>{getTranslation('testimonialsSubtitle')}</p>
+          {/* Section ini berlatar cream: --color-text-muted hanya 4.37:1 di sana.
+              Inline style mengalahkan CSS, jadi tokennya harus diganti di sini. */}
+          <p style={{ color: 'var(--color-text-muted-on-cream)' }}>{getTranslation('testimonialsSubtitle')}</p>
         </div>
 
         {/* Row 1: Left to Right movement */}
@@ -1042,21 +1175,25 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           <>
             <div className={styles.blogSliderWrapper}>
               {/* Left Arrow Button */}
-              <button 
-                className={`${styles.blogSliderBtn} ${styles.blogSliderBtnLeft}`} 
+              <button
+                className={`${styles.blogSliderBtn} ${styles.blogSliderBtnLeft}`}
                 onClick={() => scrollBlog('left')}
                 aria-label="Geser Kiri"
+                disabled={blogScrollPct <= 0.01}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
 
-              {/* Scrollable Track */}
-              <div 
+              {/* Scrollable Track (focusable so keyboard users can scroll it) */}
+              <div
                 ref={blogTrackRef}
                 className={styles.blogScrollTrack}
                 onScroll={handleBlogScroll}
+                tabIndex={0}
+                role="region"
+                aria-label={language === 'en' ? 'Latest articles, scrollable' : 'Artikel terbaru, dapat digulir'}
               >
                 {initialPosts.map((post) => (
                   <div key={post.slug} className={styles.blogScrollItem}>
@@ -1094,10 +1231,11 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               </div>
 
               {/* Right Arrow Button */}
-              <button 
-                className={`${styles.blogSliderBtn} ${styles.blogSliderBtnRight}`} 
+              <button
+                className={`${styles.blogSliderBtn} ${styles.blogSliderBtnRight}`}
                 onClick={() => scrollBlog('right')}
                 aria-label="Geser Kanan"
+                disabled={blogScrollPct >= 0.99}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 5l7 7-7 7" />
@@ -1145,6 +1283,8 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           )}
         </div>
       </section>
+
+      </main>
 
       <Footer />
 

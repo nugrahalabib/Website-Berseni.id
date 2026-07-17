@@ -5,9 +5,13 @@ import SafeImage from '@/components/SafeImage';
 import { useLanguage } from '@/components/LanguageContext';
 import styles from '@/styles/Components.module.css';
 
+const AUTO_ADVANCE_MS = 5000;
+
 export default function HeroCarousel({ items = [], onCardClick }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [isInteracting, setIsInteracting] = useState(false);
+  const [isTabHidden, setIsTabHidden] = useState(false);
   const { t, language } = useLanguage();
 
   // Hook to check viewport size for responsive 3D card layout
@@ -20,14 +24,25 @@ export default function HeroCarousel({ items = [], onCardClick }) {
     return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
-  // Auto slide
+  // Don't advance while the tab is in the background
+  useEffect(() => {
+    const handleVisibilityChange = () => setIsTabHidden(document.hidden);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
+  // Auto slide — skipped entirely while the user interacts, while the tab is
+  // hidden, or when the user prefers reduced motion.
   useEffect(() => {
     if (items.length <= 1) return;
+    if (isInteracting || isTabHidden) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % items.length);
-    }, 5000);
+    }, AUTO_ADVANCE_MS);
     return () => clearInterval(interval);
-  }, [items.length]);
+  }, [items.length, isInteracting, isTabHidden]);
 
   if (!items || items.length === 0) {
     return <div className={styles.carouselContainer}>Loading gallery...</div>;
@@ -47,6 +62,12 @@ export default function HeroCarousel({ items = [], onCardClick }) {
     } else {
       setActiveIndex(index);
     }
+  };
+
+  const handleCardKeyDown = (e, index) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.key === ' ') e.preventDefault(); // stop page scroll on Space
+    handleCardClick(index);
   };
 
   const getCardStyle = (index) => {
@@ -109,6 +130,13 @@ export default function HeroCarousel({ items = [], onCardClick }) {
     }
   };
 
+  // Warna teks badge mengikuti latarnya: putih di atas kunyit (#FAA433) hanya
+  // 1.98:1 (WCAG 1.4.3 butuh 4.5:1). Maroon/tosca aman dengan teks putih.
+  const getCategoryTextColor = (cat) =>
+    (cat === 'offline' || cat === 'social')
+      ? 'var(--color-badge-kunyit-text)'
+      : 'var(--color-white)';
+
   const getCategoryLabel = (cat) => {
     const labels = {
       artwork: { id: 'Lukisan', en: 'Artwork' },
@@ -123,7 +151,14 @@ export default function HeroCarousel({ items = [], onCardClick }) {
   };
 
   return (
-    <div className={styles.carouselContainer}>
+    <div
+      className={styles.carouselContainer}
+      onMouseEnter={() => setIsInteracting(true)}
+      onMouseLeave={() => setIsInteracting(false)}
+      onFocus={() => setIsInteracting(true)}
+      onBlur={() => setIsInteracting(false)}
+      onPointerDown={() => setIsInteracting(true)}
+    >
       <div className={styles.carouselTrack}>
         {items.map((item, idx) => {
           const isActive = idx === activeIndex;
@@ -132,12 +167,19 @@ export default function HeroCarousel({ items = [], onCardClick }) {
               key={item.id || idx}
               className={`${styles.carouselCard} ${isActive ? styles.activeCard : ''}`}
               style={getCardStyle(idx)}
+              role="button"
+              tabIndex={isActive ? 0 : -1}
+              aria-current={isActive ? 'true' : undefined}
               onClick={() => handleCardClick(idx)}
+              onKeyDown={(e) => handleCardKeyDown(e, idx)}
             >
               {/* Category Badge */}
               <span 
                 className={styles.carouselBadge}
-                style={{ backgroundColor: getCategoryColor(item.category) }}
+                style={{
+                  backgroundColor: getCategoryColor(item.category),
+                  color: getCategoryTextColor(item.category),
+                }}
               >
                 {getCategoryLabel(item.category)}
               </span>
@@ -151,7 +193,6 @@ export default function HeroCarousel({ items = [], onCardClick }) {
                   width={900}
                   height={1100}
                   sizes="(max-width: 768px) 80vw, 500px"
-                  priority={isActive}
                   fallbackSrc="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop"
                 />
               </div>

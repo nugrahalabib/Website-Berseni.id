@@ -13,6 +13,8 @@ export default function DashboardClient() {
   const [activeTab, setActiveTab] = useState('overview');
   const [toastMessage, setToastMessage] = useState('');
   const [stats, setStats] = useState({ products: 0, posts: 0 });
+  // Dilaporkan oleh tiap editor: true jika ada perubahan form yang belum disimpan
+  const [isDirty, setIsDirty] = useState(false);
   const router = useRouter();
 
   const showToast = (message) => {
@@ -20,6 +22,16 @@ export default function DashboardClient() {
     setTimeout(() => {
       setToastMessage('');
     }, 4000);
+  };
+
+  // Cegah kehilangan editan saat berpindah tab (tab lama akan di-unmount)
+  const handleTabChange = (nextTab) => {
+    if (nextTab === activeTab) return;
+    if (isDirty && !window.confirm('Ada perubahan yang belum disimpan. Yakin pindah tab? Perubahan akan hilang.')) {
+      return;
+    }
+    setIsDirty(false);
+    setActiveTab(nextTab);
   };
 
   // Fetch count stats on mount/tab change to overview
@@ -54,7 +66,7 @@ export default function DashboardClient() {
         router.refresh();
       }
     } catch (err) {
-      alert('Gagal melakukan logout.');
+      showToast('Gagal melakukan logout.');
     }
   };
 
@@ -70,7 +82,7 @@ export default function DashboardClient() {
               <div className={styles.editorCard} style={{ borderLeft: '4px solid var(--color-tosca)', padding: '1.5rem 2rem' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 'bold', textTransform: 'uppercase' }}>Total Koleksi & Kelas</span>
                 <h3 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0.5rem 0', color: 'var(--color-text-dark)' }}>{stats.products}</h3>
-                <button onClick={() => setActiveTab('products')} style={{ color: 'var(--color-tosca)', border: 'none', background: 'transparent', padding: 0, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                <button onClick={() => handleTabChange('products')} style={{ color: 'var(--color-tosca)', border: 'none', background: 'transparent', padding: 0, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
                   Kelola Katalog →
                 </button>
               </div>
@@ -78,7 +90,7 @@ export default function DashboardClient() {
               <div className={styles.editorCard} style={{ borderLeft: '4px solid var(--color-kunyit)', padding: '1.5rem 2rem' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 'bold', textTransform: 'uppercase' }}>Artikel Terbit (Blog)</span>
                 <h3 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0.5rem 0', color: 'var(--color-text-dark)' }}>{stats.posts}</h3>
-                <button onClick={() => setActiveTab('blog')} style={{ color: 'var(--color-kunyit)', border: 'none', background: 'transparent', padding: 0, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                <button onClick={() => handleTabChange('blog')} style={{ color: 'var(--color-kunyit)', border: 'none', background: 'transparent', padding: 0, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
                   Kelola Blog →
                 </button>
               </div>
@@ -92,7 +104,7 @@ export default function DashboardClient() {
               <div className={styles.editorCard} style={{ borderLeft: '4px solid #10B981', padding: '1.5rem 2rem' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 'bold', textTransform: 'uppercase' }}>Status Keamanan</span>
                 <h3 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '1rem 0 0.8rem 0', color: '#10B981' }}>TERPROTEKSI</h3>
-                <button onClick={() => setActiveTab('account')} style={{ color: '#10B981', border: 'none', background: 'transparent', padding: 0, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                <button onClick={() => handleTabChange('account')} style={{ color: '#10B981', border: 'none', background: 'transparent', padding: 0, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
                   Ubah Kata Sandi →
                 </button>
               </div>
@@ -103,10 +115,10 @@ export default function DashboardClient() {
             <div className={styles.editorCard}>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1.25rem', color: 'var(--color-text-dark)' }}>Pintasan Aksi Cepat</h3>
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <button className="btn btn-primary" onClick={() => setActiveTab('page-content')} style={{ fontSize: '0.85rem' }}>
+                <button className="btn btn-primary" onClick={() => handleTabChange('page-content')} style={{ fontSize: '0.85rem' }}>
                   Edit Konten Website
                 </button>
-                <button className="btn btn-secondary" onClick={() => setActiveTab('seo')} style={{ fontSize: '0.85rem' }}>
+                <button className="btn btn-secondary" onClick={() => handleTabChange('seo')} style={{ fontSize: '0.85rem' }}>
                   Optimasi SEO & GEO (AI)
                 </button>
                 <a href="/api/backup" download className="btn btn-outline" style={{ fontSize: '0.85rem', borderColor: 'var(--color-tosca)', color: 'var(--color-tosca)' }}>
@@ -120,13 +132,13 @@ export default function DashboardClient() {
           </div>
         );
       case 'page-content':
-        return <PageContentEditor showToast={showToast} />;
+        return <PageContentEditor showToast={showToast} setIsDirty={setIsDirty} />;
       case 'products':
-        return <ProductEditor showToast={showToast} />;
+        return <ProductEditor showToast={showToast} setIsDirty={setIsDirty} />;
       case 'blog':
-        return <BlogEditor showToast={showToast} />;
+        return <BlogEditor showToast={showToast} setIsDirty={setIsDirty} />;
       case 'seo':
-        return <SeoEditor showToast={showToast} />;
+        return <SeoEditor showToast={showToast} setIsDirty={setIsDirty} />;
       case 'account':
         return <AccountEditor showToast={showToast} />;
       default:
@@ -181,7 +193,7 @@ export default function DashboardClient() {
           <ul className={styles.menuList}>
             <li
               className={`${styles.menuItem} ${activeTab === 'overview' ? styles.menuItemActive : ''}`}
-              onClick={() => setActiveTab('overview')}
+              onClick={() => handleTabChange('overview')}
             >
               <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
@@ -190,7 +202,7 @@ export default function DashboardClient() {
             </li>
             <li
               className={`${styles.menuItem} ${activeTab === 'page-content' ? styles.menuItemActive : ''}`}
-              onClick={() => setActiveTab('page-content')}
+              onClick={() => handleTabChange('page-content')}
             >
               <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -199,7 +211,7 @@ export default function DashboardClient() {
             </li>
             <li
               className={`${styles.menuItem} ${activeTab === 'products' ? styles.menuItemActive : ''}`}
-              onClick={() => setActiveTab('products')}
+              onClick={() => handleTabChange('products')}
             >
               <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -208,7 +220,7 @@ export default function DashboardClient() {
             </li>
             <li
               className={`${styles.menuItem} ${activeTab === 'blog' ? styles.menuItemActive : ''}`}
-              onClick={() => setActiveTab('blog')}
+              onClick={() => handleTabChange('blog')}
             >
               <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -217,7 +229,7 @@ export default function DashboardClient() {
             </li>
             <li
               className={`${styles.menuItem} ${activeTab === 'seo' ? styles.menuItemActive : ''}`}
-              onClick={() => setActiveTab('seo')}
+              onClick={() => handleTabChange('seo')}
             >
               <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -226,7 +238,7 @@ export default function DashboardClient() {
             </li>
             <li
               className={`${styles.menuItem} ${activeTab === 'account' ? styles.menuItemActive : ''}`}
-              onClick={() => setActiveTab('account')}
+              onClick={() => handleTabChange('account')}
             >
               <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />

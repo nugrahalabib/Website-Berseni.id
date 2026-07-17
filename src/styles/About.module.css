@@ -121,7 +121,9 @@
 
 .heroDesc {
   font-size: 1.15rem;
-  color: var(--color-text-muted);
+  /* Sits on cream (--color-cream-bg): --color-text-muted is only ~4.38:1 there.
+     WCAG 1.4.3 needs 4.5:1 for normal text. */
+  color: var(--color-text-muted-on-cream);
   max-width: 650px;
   margin: 1.5rem auto 0 auto;
   line-height: 1.7;
@@ -153,12 +155,14 @@
   transform: translateY(20px);
 }
 
-.collageCard:nth-child(even):hover {
-  transform: translateY(10px) scale(1.03);
-}
+@media (hover: hover) and (pointer: fine) {
+  .collageCard:nth-child(even):hover {
+    transform: translateY(10px) scale(1.03);
+  }
 
-.collageCard:nth-child(odd):hover {
-  transform: translateY(-10px) scale(1.03);
+  .collageCard:nth-child(odd):hover {
+    transform: translateY(-10px) scale(1.03);
+  }
 }
 
 .collageCard img {
@@ -168,8 +172,10 @@
   transition: transform 0.6s ease;
 }
 
-.collageCard:hover img {
-  transform: scale(1.08);
+@media (hover: hover) and (pointer: fine) {
+  .collageCard:hover img {
+    transform: scale(1.08);
+  }
 }
 
 .collageOverlay {
@@ -193,9 +199,11 @@
   letter-spacing: 1.5px;
 }
 
-.collageCard:hover .collageOverlay {
-  opacity: 1;
-  transform: translateY(0);
+@media (hover: hover) and (pointer: fine) {
+  .collageCard:hover .collageOverlay {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 2. QUALITY & EDUCATION SECTION */
@@ -262,10 +270,12 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
-.checkCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(20, 120, 155, 0.05);
-  background: rgba(250, 245, 235, 0.8);
+@media (hover: hover) and (pointer: fine) {
+  .checkCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(20, 120, 155, 0.05);
+    background: rgba(250, 245, 235, 0.8);
+  }
 }
 
 .checkIcon {
@@ -335,8 +345,10 @@
   transition: transform 0.4s ease;
 }
 
-.visualFrame:hover {
-  transform: scale(1.01);
+@media (hover: hover) and (pointer: fine) {
+  .visualFrame:hover {
+    transform: scale(1.01);
+  }
 }
 
 .frameCorner {
@@ -378,9 +390,17 @@
   z-index: 5;
 }
 
-.playBadge:hover {
-  transform: translate(-50%, -50%) scale(1.1);
-  background-color: #e58f24;
+@media (hover: hover) and (pointer: fine) {
+  .playBadge:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    background-color: #e58f24;
+  }
+}
+
+/* Touch feedback: replaces the scale-up that hover-capable pointers get.
+   Keeps the centring translate so the badge does not jump on press. */
+.playBadge:active {
+  transform: translate(-50%, -50%) scale(0.95);
 }
 
 .playPulse {
@@ -416,8 +436,10 @@
   transition: transform 0.3s ease;
 }
 
-.floatingQuoteCard:hover {
-  transform: translateY(-5px);
+@media (hover: hover) and (pointer: fine) {
+  .floatingQuoteCard:hover {
+    transform: translateY(-5px);
+  }
 }
 
 .quoteText {
@@ -462,7 +484,8 @@
 
 .storyPara {
   font-size: 1.05rem;
-  color: var(--color-text-muted);
+  /* Paragraf cerita duduk di atas cream: --color-text-muted hanya 4.37:1. */
+  color: var(--color-text-muted-on-cream);
   line-height: 1.75;
 }
 
@@ -486,8 +509,10 @@
   transition: transform 0.3s ease;
 }
 
-.visionCard:hover {
-  transform: translateX(4px);
+@media (hover: hover) and (pointer: fine) {
+  .visionCard:hover {
+    transform: translateX(4px);
+  }
 }
 
 .visionTitleRow {
@@ -562,11 +587,13 @@
   border: 1px solid rgba(20, 120, 155, 0.06) !important;
 }
 
-.pillarCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(20, 120, 155, 0.08);
-  border-color: rgba(20, 120, 155, 0.18) !important;
-  background: var(--color-white) !important;
+@media (hover: hover) and (pointer: fine) {
+  .pillarCard:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(20, 120, 155, 0.08);
+    border-color: rgba(20, 120, 155, 0.18) !important;
+    background: var(--color-white) !important;
+  }
 }
 
 .pillarCardIcon {
@@ -741,11 +768,6 @@
   .collageCard:nth-child(even) {
     transform: translateY(0); /* Remove staggered layout on 2-col */
   }
-  
-  .collageCard:nth-child(even):hover,
-  .collageCard:nth-child(odd):hover {
-    transform: translateY(-8px) scale(1.02);
-  }
 
   .featureGrid {
     grid-template-columns: 1fr;
@@ -771,6 +793,15 @@
   .statsGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 3rem;
+  }
+}
+
+/* Two-column collage hover, pointer-guarded. Combined rather than nested inside the
+   960px block above so it keeps overriding the unguarded base hover rules. */
+@media (max-width: 960px) and (hover: hover) and (pointer: fine) {
+  .collageCard:nth-child(even):hover,
+  .collageCard:nth-child(odd):hover {
+    transform: translateY(-8px) scale(1.02);
   }
 }
 

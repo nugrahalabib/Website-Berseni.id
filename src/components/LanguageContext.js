@@ -4,50 +4,76 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const LanguageContext = createContext();
 
+const LANG_COOKIE = 'berseni_lang';
+const LANG_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 tahun
+
+function readLangCookie() {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(/(?:^|;\s*)berseni_lang=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function writeLangCookie(lang) {
+  if (typeof document === 'undefined') return;
+  document.cookie = `${LANG_COOKIE}=${lang}; path=/; max-age=${LANG_COOKIE_MAX_AGE}; samesite=lax`;
+}
+
 export function LanguageProvider({ children, defaultLanguage = 'id', initialContent = {} }) {
+  // defaultLanguage sudah ditentukan SERVER dari cookie berseni_lang (lihat layout.js),
+  // jadi paint pertama langsung memakai bahasa yang benar — tidak ada flash/kedip.
   const [language, setLanguage] = useState(defaultLanguage);
   const [dbContent, setDbContent] = useState(initialContent);
 
+  // Dipakai eksplisit (mis. admin selesai menyimpan), TIDAK otomatis saat mount:
+  // initialContent sudah dikirim SSR, jadi refetch saat mount hanya buang round-trip.
   const fetchDbContent = async () => {
     try {
       const res = await fetch('/api/content', { cache: 'no-store' });
       if (res.ok) {
-        const data = await res.json();
-        setDbContent(data);
-        
-        // If there's no saved language preference in localStorage, use default language from DB
-        const savedLang = localStorage.getItem('berseni_lang');
-        if (!savedLang && data.defaultLanguage) {
-          setLanguage(data.defaultLanguage);
-        }
+        setDbContent(await res.json());
       }
     } catch (e) {
       console.error("Gagal memuat dynamic content overrides:", e);
     }
   };
 
-  // Load language preference on mount
+  // Migrasi sekali jalan untuk pengunjung lama yang preferensinya masih di
+  // localStorage: tulis ke cookie supaya request BERIKUTNYA sudah benar dari server.
   useEffect(() => {
-    const savedLang = localStorage.getItem('berseni_lang');
-    if (savedLang === 'id' || savedLang === 'en') {
-      setLanguage(savedLang);
-    } else {
-      setLanguage(defaultLanguage);
+    if (readLangCookie()) return; // server sudah tahu bahasanya
+    let saved = null;
+    try {
+      saved = localStorage.getItem(LANG_COOKIE);
+    } catch (e) {
+      // localStorage bisa diblokir (private mode) — abaikan
     }
-    fetchDbContent();
+    if (saved === 'id' || saved === 'en') {
+      writeLangCookie(saved);
+      if (saved !== defaultLanguage) setLanguage(saved);
+    } else {
+      writeLangCookie(defaultLanguage);
+    }
   }, [defaultLanguage]);
 
-  const toggleLanguage = () => {
-    const newLang = language === 'id' ? 'en' : 'id';
-    setLanguage(newLang);
-    localStorage.setItem('berseni_lang', newLang);
+  // <html lang> wajib mengikuti bahasa yang tampil (WCAG 3.1.1)
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
+  const applyLanguage = (lang) => {
+    setLanguage(lang);
+    writeLangCookie(lang);
+    try {
+      localStorage.setItem(LANG_COOKIE, lang);
+    } catch (e) {
+      // abaikan bila localStorage diblokir
+    }
   };
 
+  const toggleLanguage = () => applyLanguage(language === 'id' ? 'en' : 'id');
+
   const setLang = (lang) => {
-    if (lang === 'id' || lang === 'en') {
-      setLanguage(lang);
-      localStorage.setItem('berseni_lang', lang);
-    }
+    if (lang === 'id' || lang === 'en') applyLanguage(lang);
   };
 
   // Helper function to extract translation from bilingual database properties (e.g. title_id or title_en)

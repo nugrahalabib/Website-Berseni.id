@@ -10,15 +10,15 @@ import styles from '@/styles/Store.module.css';
 
 export default function ClassesPageClient({ content, initialProducts }) {
   const { language, t, getTranslation, dbContent } = useLanguage();
-  const [mounted, setMounted] = useState(false);
   const [products, setProducts] = useState(initialProducts || []);
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('default');
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  // Apply the category filter from the URL (?type= / ?filter=) after hydration.
+  // This only touches filter state — it must never gate the render tree.
   useEffect(() => {
-    setMounted(true);
     const params = new URLSearchParams(window.location.search);
     const filterParam = params.get('type') || params.get('filter');
     if (filterParam === 'offline' || filterParam === 'online') {
@@ -63,21 +63,12 @@ export default function ClassesPageClient({ content, initialProducts }) {
 
   const filteredProducts = getFilteredAndSortedProducts();
 
-  if (!mounted) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.spinner}></div>
-        <p>{getTranslation('loadingClasses')}</p>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.pageWrapper}>
       {/* Shared Header Navigation */}
       <Navbar />
 
-      <main className={styles.storeMain} style={{ backgroundColor: dbContent?.bg_classes_main || content?.bg_classes_main || '' }}>
+      <main id="main-content" className={styles.storeMain} style={{ backgroundColor: dbContent?.bg_classes_main || content?.bg_classes_main || '' }}>
         {/* Ambient Gradient Blobs for premium atmosphere */}
         <div className={styles.storeGlowContainer}>
           <div className={`${styles.glowBlob} ${styles.glowTosca}`}></div>
@@ -107,8 +98,9 @@ export default function ClassesPageClient({ content, initialProducts }) {
                 <path d="M21 21l-4.3-4.3" />
               </svg>
               <input 
-                type="text" 
+                type="text"
                 placeholder={getTranslation('classesSearchPlaceholder')}
+                aria-label={getTranslation('classesSearchPlaceholder')}
                 className={styles.searchInput}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -168,6 +160,9 @@ export default function ClassesPageClient({ content, initialProducts }) {
             </div>
 
             {/* Results Count Summary */}
+            {/* Judul struktural untuk pembaca layar: tanpa ini urutan heading
+                melompat h1 -> h3 (judul kartu produk). Tidak terlihat visual. */}
+            <h2 className="sr-only">{getTranslation('resultsCountClasses').replace('{count}', filteredProducts.length)}</h2>
             <div className={styles.resultsSummary}>
               <span>{getTranslation('resultsCountClasses').replace('{count}', filteredProducts.length)}</span>
               {(selectedFilter !== 'all' || searchQuery || sortBy !== 'default') && (
@@ -205,7 +200,7 @@ export default function ClassesPageClient({ content, initialProducts }) {
                 <svg width="64" height="64" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                 </svg>
-                <h3>{getTranslation('emptyClassesTitle')}</h3>
+                <h2>{getTranslation('emptyClassesTitle')}</h2>
                 <p>{getTranslation('emptyClassesDesc')}</p>
                 <button 
                   className="btn btn-secondary" 

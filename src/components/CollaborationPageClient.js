@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -9,13 +8,8 @@ import styles from '@/styles/Collaboration.module.css';
 
 export default function CollaborationPageClient({ content }) {
   const { language, getTranslation, dbContent } = useLanguage();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const renderDynamicButton = (text, defaultLink, linkKey, statusKey, className, extraProps = {}) => {
+  const renderDynamicButton =(text, defaultLink, linkKey, statusKey, className, extraProps = {}) => {
     const link = dbContent?.[linkKey] !== undefined ? dbContent[linkKey] : defaultLink;
     const status = dbContent?.[statusKey] || 'active';
 
@@ -76,8 +70,6 @@ export default function CollaborationPageClient({ content }) {
     );
   };
 
-  if (!mounted) return null;
-
   const getBrandWALink = () => {
     const textId = "Halo Berseni! Brand/Perusahaan kami tertarik untuk berkolaborasi kreatif dengan Berseni.";
     const textEn = "Hello Berseni! Our brand/company is interested in collaborating creatively with Berseni.";
@@ -96,7 +88,7 @@ export default function CollaborationPageClient({ content }) {
     <div className={styles.pageContainer}>
       <Navbar />
 
-      <main className={styles.mainContent}>
+      <main id="main-content" className={styles.mainContent}>
         
         {/* 1. HERO SECTION */}
         <section className={styles.heroSection} style={{ backgroundColor: dbContent?.bg_collab_hero || content?.bg_collab_hero || '', backgroundImage: (dbContent?.bg_collab_hero || content?.bg_collab_hero) ? 'none' : '' }}>
@@ -141,7 +133,7 @@ export default function CollaborationPageClient({ content }) {
                       </svg>
                     </div>
                     <div className={styles.featureText}>
-                      <h4>{getTranslation('collabBrandFeat1Title')}</h4>
+                      <h3>{getTranslation('collabBrandFeat1Title')}</h3>
                       <p>{getTranslation('collabBrandFeat1Desc')}</p>
                     </div>
                   </div>
@@ -154,7 +146,7 @@ export default function CollaborationPageClient({ content }) {
                       </svg>
                     </div>
                     <div className={styles.featureText}>
-                      <h4>{getTranslation('collabBrandFeat2Title')}</h4>
+                      <h3>{getTranslation('collabBrandFeat2Title')}</h3>
                       <p>{getTranslation('collabBrandFeat2Desc')}</p>
                     </div>
                   </div>
@@ -167,7 +159,7 @@ export default function CollaborationPageClient({ content }) {
                       </svg>
                     </div>
                     <div className={styles.featureText}>
-                      <h4>{getTranslation('collabBrandFeat3Title')}</h4>
+                      <h3>{getTranslation('collabBrandFeat3Title')}</h3>
                       <p>{getTranslation('collabBrandFeat3Desc')}</p>
                     </div>
                   </div>
@@ -180,7 +172,7 @@ export default function CollaborationPageClient({ content }) {
                       </svg>
                     </div>
                     <div className={styles.featureText}>
-                      <h4>{getTranslation('collabBrandFeat4Title')}</h4>
+                      <h3>{getTranslation('collabBrandFeat4Title')}</h3>
                       <p>{getTranslation('collabBrandFeat4Desc')}</p>
                     </div>
                   </div>
@@ -254,7 +246,7 @@ export default function CollaborationPageClient({ content }) {
         <section className={`${styles.collabSection} ${styles.venueSectionBg}`} style={{ backgroundColor: dbContent?.bg_collab_venue || content?.bg_collab_venue || '' }}>
           <div className={styles.sectionInner}>
             <div className={styles.venueHeader}>
-              <span className={styles.sectionBadge} style={{ backgroundColor: 'rgba(20, 120, 155, 0.1)', color: 'var(--color-tosca)' }}>{getTranslation('collabVenueBadge')}</span>
+              <span className={styles.sectionBadge} style={{ backgroundColor: 'rgba(20, 120, 155, 0.1)', color: 'var(--color-tosca-text)' }}>{getTranslation('collabVenueBadge')}</span>
               <h2>{getTranslation('collabVenueTitle')}</h2>
               <div className={`${styles.underline} ${styles.toscaUnderline}`}></div>
               <p className={styles.venueSubtitle} style={{ whiteSpace: 'pre-line' }}>{getTranslation('collabVenueSub')}</p>

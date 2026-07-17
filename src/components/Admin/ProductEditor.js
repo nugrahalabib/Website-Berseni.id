@@ -3,12 +3,16 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from '@/styles/Admin.module.css';
 
-export default function ProductEditor({ showToast }) {
+// Jumlah baris produk yang ditampilkan per halaman tabel
+const ITEMS_PER_PAGE = 10;
+
+export default function ProductEditor({ showToast, setIsDirty = () => {} }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  
+  const [currentPage, setCurrentPage] = useState(1);
+
   // State untuk form tambah/edit (Bilingual ID & EN)
   const [form, setForm] = useState({
     id: '', // Kosong jika tambah baru
@@ -66,11 +70,11 @@ export default function ProductEditor({ showToast }) {
         fetchProducts();
       } else {
         const data = await res.json();
-        alert(data.error || 'Gagal menyimpan urutan baru.');
+        showToast(data.error || 'Gagal menyimpan urutan baru.');
         fetchProducts();
       }
     } catch (err) {
-      alert('Koneksi bermasalah saat memperbarui urutan.');
+      showToast('Koneksi bermasalah saat memperbarui urutan.');
       fetchProducts();
     }
   };
@@ -95,10 +99,12 @@ export default function ProductEditor({ showToast }) {
 
   useEffect(() => {
     fetchProducts();
+    setIsDirty(false);
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setIsDirty(true);
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
@@ -165,14 +171,15 @@ export default function ProductEditor({ showToast }) {
 
       const data = await res.json();
       if (res.ok && data.url) {
+        setIsDirty(true);
         setForm(prev => ({ ...prev, image: data.url }));
         showToast('Gambar berhasil diunggah dan dioptimasi!');
       } else {
-        alert(data.error || 'Gagal mengunggah gambar.');
+        showToast(data.error || 'Gagal mengunggah gambar.');
       }
     } catch (err) {
       console.error(err);
-      alert('Terjadi kesalahan saat mengunggah.');
+      showToast('Terjadi kesalahan saat mengunggah.');
     } finally {
       setUploading(false);
     }
@@ -210,10 +217,10 @@ export default function ProductEditor({ showToast }) {
         fetchProducts();
       } else {
         const data = await res.json();
-        alert(data.error || 'Gagal menghapus item.');
+        showToast(data.error || 'Gagal menghapus item.');
       }
     } catch (err) {
-      alert('Koneksi bermasalah.');
+      showToast('Koneksi bermasalah.');
     }
   };
 
@@ -233,6 +240,7 @@ export default function ProductEditor({ showToast }) {
       link: ''
     });
     setIsEditing(false);
+    setIsDirty(false);
   };
 
   const handleMove = async (index, direction) => {
@@ -258,11 +266,11 @@ export default function ProductEditor({ showToast }) {
         fetchProducts();
       } else {
         const data = await res.json();
-        alert(data.error || 'Gagal menyimpan urutan baru.');
+        showToast(data.error || 'Gagal menyimpan urutan baru.');
         fetchProducts();
       }
     } catch (err) {
-      alert('Koneksi bermasalah saat memperbarui urutan.');
+      showToast('Koneksi bermasalah saat memperbarui urutan.');
       fetchProducts();
     }
   };
@@ -286,10 +294,10 @@ export default function ProductEditor({ showToast }) {
         fetchProducts();
       } else {
         const data = await res.json();
-        alert(data.error || 'Gagal menyimpan data.');
+        showToast(data.error || 'Gagal menyimpan data.');
       }
     } catch (err) {
-      alert('Koneksi bermasalah saat menyimpan.');
+      showToast('Koneksi bermasalah saat menyimpan.');
     } finally {
       setSaving(false);
     }
@@ -315,6 +323,13 @@ export default function ProductEditor({ showToast }) {
   if (loading) {
     return <div className={styles.tableCard}>Memuat data produk...</div>;
   }
+
+  // Potong daftar produk sesuai halaman aktif (urutan asli tetap dipertahankan).
+  // activePage diturunkan saat render agar halaman tetap valid walau daftar menyusut (mis. setelah hapus).
+  const totalPages = Math.max(1, Math.ceil(products.length / ITEMS_PER_PAGE));
+  const activePage = Math.min(currentPage, totalPages);
+  const pageStartIndex = (activePage - 1) * ITEMS_PER_PAGE;
+  const visibleProducts = products.slice(pageStartIndex, pageStartIndex + ITEMS_PER_PAGE);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
@@ -461,7 +476,7 @@ export default function ProductEditor({ showToast }) {
                     <button 
                       type="button" 
                       className={styles.uploadRemove}
-                      onClick={() => setForm(prev => ({ ...prev, image: '' }))}
+                      onClick={() => { setIsDirty(true); setForm(prev => ({ ...prev, image: '' })); }}
                       title="Hapus gambar"
                     >
                       ✕
@@ -557,9 +572,12 @@ export default function ProductEditor({ showToast }) {
             </thead>
             <tbody>
               {products.length > 0 ? (
-                products.map((product, index) => (
-                  <tr 
-                    key={product.id} 
+                visibleProducts.map((product, pageIndex) => {
+                  // Index absolut pada daftar penuh, agar urutan drag/geser tetap benar lintas halaman
+                  const index = pageStartIndex + pageIndex;
+                  return (
+                  <tr
+                    key={product.id}
                     className={styles.tableRow}
                     draggable
                     onDragStart={(e) => handleDragStart(e, index)}
@@ -701,10 +719,11 @@ export default function ProductEditor({ showToast }) {
                       </div>
                     </td>
                   </tr>
-                ))
+                  );
+                })
               ) : (
                 <tr>
-                  <td colSpan="6" style={{ textAlign: 'center', color: 'var(--color-text-muted)', padding: '2rem' }}>
+                  <td colSpan="8" style={{ textAlign: 'center', color: 'var(--color-text-muted)', padding: '2rem' }}>
                     Belum ada item yang terdaftar. Gunakan form di atas untuk menambahkan.
                   </td>
                 </tr>
@@ -712,6 +731,35 @@ export default function ProductEditor({ showToast }) {
             </tbody>
           </table>
         </div>
+
+        {/* Navigasi Halaman Tabel */}
+        {products.length > ITEMS_PER_PAGE && (
+          <div className={styles.tableHeaderActions} style={{ marginTop: '1rem', marginBottom: 0 }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+              Halaman {activePage} dari {totalPages} ({products.length} item)
+            </span>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                type="button"
+                className="btn btn-outline"
+                style={{ fontSize: '0.8rem', padding: '0.4rem 1rem' }}
+                onClick={() => setCurrentPage(Math.max(1, activePage - 1))}
+                disabled={activePage === 1}
+              >
+                ← Sebelumnya
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline"
+                style={{ fontSize: '0.8rem', padding: '0.4rem 1rem' }}
+                onClick={() => setCurrentPage(Math.min(totalPages, activePage + 1))}
+                disabled={activePage === totalPages}
+              >
+                Berikutnya →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
