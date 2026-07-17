@@ -644,7 +644,10 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       : 0;
 
   const cardOpacity = dbContent?.heroCardOpacity || initialContent?.heroCardOpacity || '0.85';
-  const birdsTop = (!isMobile && (dbContent?.heroBirdsTop || initialContent?.heroBirdsTop)) ? (dbContent?.heroBirdsTop || initialContent?.heroBirdsTop) : '0px';
+  // Nilainya TIDAK boleh bergantung pada isMobile (matchMedia baru terisi setelah
+  // mount) — itu membuat server render top:'10%' lalu client menggesernya ke '0px'
+  // di mobile => layout shift. Override mobile ditangani CSS (.bgBirds @768px).
+  const birdsTop = dbContent?.heroBirdsTop || initialContent?.heroBirdsTop || '0px';
 
   const handleScrollDown = () => {
     window.scrollTo({
