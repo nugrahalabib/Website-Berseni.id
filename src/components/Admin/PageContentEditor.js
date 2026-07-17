@@ -1425,7 +1425,7 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'ctaSubtitle_en', label: 'CTA Subtitle (EN)', type: 'textarea' },
             { name: 'ctaBtn_id', label: 'CTA Button Text (ID)', type: 'text' },
             { name: 'ctaBtn_en', label: 'CTA Button Text (EN)', type: 'text' },
-            { name: 'ctaBtnLink', label: 'Tujuan Link Tombol WhatsApp CTA', type: 'text', placeholder: 'https://wa.me/...' },
+            // Link tombol ini otomatis pakai Nomor WhatsApp tunggal (atur di section Footer & Medsos).
             { name: 'ctaBtnStatus', label: 'Status Tombol WhatsApp CTA', type: 'select', defaultValue: 'active', options: [
               { value: 'active', label: 'Tampilkan & Aktif' },
               { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
@@ -1450,7 +1450,7 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'footerDesc_en', label: 'Deskripsi Singkat Footer (EN)', type: 'textarea' },
             { name: 'footerContactDesc_id', label: 'Teks Ajakan Kontak Hubungi Kami (ID)', type: 'textarea' },
             { name: 'footerContactDesc_en', label: 'Teks Ajakan Kontak Hubungi Kami (EN)', type: 'textarea' },
-            { name: 'footerLinkWa', label: 'Tautan WhatsApp (https://wa.me/...)', type: 'text' },
+            { name: 'whatsappNumber', label: '📱 Nomor WhatsApp — SATU nomor untuk SEMUA tombol WA di situs (floating, footer, CTA beranda, kolaborasi brand & venue). Contoh: 6281234567890 atau 08123456789', type: 'text', placeholder: '6281234567890' },
             { name: 'footerLinkIg', label: 'Tautan Instagram', type: 'text' },
             { name: 'footerLinkTiktok', label: 'Tautan TikTok', type: 'text' },
             { name: 'footerLinkYoutube', label: 'Tautan YouTube', type: 'text' },
@@ -1692,7 +1692,7 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             // Button
             { name: 'collabBrandBtn_id', label: 'Button Text (ID)', type: 'text' },
             { name: 'collabBrandBtn_en', label: 'Button Text (EN)', type: 'text' },
-            { name: 'collabBrandBtnLink', label: 'Tujuan Link Tombol WhatsApp Brand Collab', type: 'text', placeholder: 'https://wa.me/...' },
+            // Link tombol ini otomatis pakai Nomor WhatsApp tunggal (atur di section Footer & Medsos).
             { name: 'collabBrandBtnStatus', label: 'Status Tombol Brand Collab', type: 'select', defaultValue: 'active', options: [
               { value: 'active', label: 'Tampilkan & Aktif' },
               { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },
@@ -1733,7 +1733,7 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             // Button
             { name: 'collabVenueBtn_id', label: 'Button Text (ID)', type: 'text' },
             { name: 'collabVenueBtn_en', label: 'Button Text (EN)', type: 'text' },
-            { name: 'collabVenueBtnLink', label: 'Tujuan Link Tombol WhatsApp Venue Collab', type: 'text', placeholder: 'https://wa.me/...' },
+            // Link tombol ini otomatis pakai Nomor WhatsApp tunggal (atur di section Footer & Medsos).
             { name: 'collabVenueBtnStatus', label: 'Status Tombol Venue Collab', type: 'select', defaultValue: 'active', options: [
               { value: 'active', label: 'Tampilkan & Aktif' },
               { value: 'disabled', label: 'Tampilkan tapi Nonaktif/Tidak Berfungsi' },

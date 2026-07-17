@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
+import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
 import styles from '@/styles/Collaboration.module.css';
 
 export default function CollaborationPageClient({ content }) {
@@ -70,18 +71,21 @@ export default function CollaborationPageClient({ content }) {
     );
   };
 
+  // Nomor dari satu sumber admin (content.whatsappNumber); lihat lib/whatsapp.js
+  const waNumber = resolveWaNumber(dbContent || content);
+
   const getBrandWALink = () => {
-    const textId = "Halo Berseni! Brand/Perusahaan kami tertarik untuk berkolaborasi kreatif dengan Berseni.";
-    const textEn = "Hello Berseni! Our brand/company is interested in collaborating creatively with Berseni.";
-    const text = language === 'id' ? encodeURIComponent(textId) : encodeURIComponent(textEn);
-    return `https://wa.me/6281234567890?text=${text}`;
+    const text = language === 'id'
+      ? "Halo Berseni! Brand/Perusahaan kami tertarik untuk berkolaborasi kreatif dengan Berseni."
+      : "Hello Berseni! Our brand/company is interested in collaborating creatively with Berseni.";
+    return buildWaLink(waNumber, text);
   };
 
   const getVenueWALink = () => {
-    const textId = "Halo Berseni! Saya memiliki venue/tempat yang tertarik untuk berkolaborasi dengan komunitas Berseni.";
-    const textEn = "Hello Berseni! I have a venue/space and I am interested in collaborating with the Berseni community.";
-    const text = language === 'id' ? encodeURIComponent(textId) : encodeURIComponent(textEn);
-    return `https://wa.me/6281234567890?text=${text}`;
+    const text = language === 'id'
+      ? "Halo Berseni! Saya memiliki venue/tempat yang tertarik untuk berkolaborasi dengan komunitas Berseni."
+      : "Hello Berseni! I have a venue/space and I am interested in collaborating with the Berseni community.";
+    return buildWaLink(waNumber, text);
   };
 
   return (
@@ -225,7 +229,7 @@ export default function CollaborationPageClient({ content }) {
               {renderDynamicButton(
                 getTranslation('collabBrandBtn'),
                 getBrandWALink(),
-                'collabBrandBtnLink',
+                null, // nomor dari satu sumber (whatsappNumber), abaikan field lama
                 'collabBrandBtnStatus',
                 'btn btn-primary',
                 {
@@ -297,7 +301,7 @@ export default function CollaborationPageClient({ content }) {
               {renderDynamicButton(
                 getTranslation('collabVenueBtn'),
                 getVenueWALink(),
-                'collabVenueBtnLink',
+                null, // nomor dari satu sumber (whatsappNumber), abaikan field lama
                 'collabVenueBtnStatus',
                 'btn btn-secondary',
                 {

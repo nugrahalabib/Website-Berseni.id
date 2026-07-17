@@ -10,6 +10,7 @@ import ProductCard from '@/components/ProductCard';
 import ProductModal from '@/components/ProductModal';
 import ActivityModal from '@/components/ActivityModal';
 import { useLanguage } from '@/components/LanguageContext';
+import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
 import styles from '@/styles/Landing.module.css';
 
 const activitiesData = [
@@ -1399,10 +1400,13 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           <p>{getTranslation('ctaSubtitle')}</p>
           {renderDynamicButton(
             getTranslation('ctaBtn'),
-            language === 'id'
-              ? "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Saya%20tertarik%20untuk%20bergabung%20sebagai%20early%20supporter%20dan%20ingin%20mendapatkan%20info%20terbaru%20mengenai%20karya%20seni%20dan%20workshop."
-              : "https://wa.me/6281234567890?text=Hello%20Berseni%21%20I%20am%20interested%20in%20joining%20as%20an%20early%20supporter%20and%20want%20to%20get%20the%20latest%20info%20about%20artworks%20and%20workshops.",
-            'ctaBtnLink',
+            buildWaLink(
+              resolveWaNumber(dbContent || initialContent),
+              language === 'id'
+                ? "Halo Berseni! Saya tertarik untuk bergabung sebagai early supporter dan ingin mendapatkan info terbaru mengenai karya seni dan workshop."
+                : "Hello Berseni! I am interested in joining as an early supporter and want to get the latest info about artworks and workshops."
+            ),
+            null, // nomor dari satu sumber (whatsappNumber), abaikan field lama ctaBtnLink
             'ctaBtnStatus',
             'btn btn-primary',
             { style: { backgroundColor: 'var(--color-kunyit)', color: 'var(--color-black)', boxShadow: '0 4px 14px rgba(250, 164, 51, 0.4)' } }

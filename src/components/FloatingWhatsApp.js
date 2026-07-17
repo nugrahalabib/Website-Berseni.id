@@ -1,13 +1,13 @@
 'use client';
 
 import { useLanguage } from '@/components/LanguageContext';
+import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
 
 export default function FloatingWhatsApp() {
-  const { getTranslation } = useLanguage();
+  const { getTranslation, dbContent } = useLanguage();
 
-  const message = getTranslation('waFloatMessage');
-  const encodedMessage = encodeURIComponent(message);
-  const waUrl = `https://wa.me/6281234567890?text=${encodedMessage}`;
+  // Nomor dari satu sumber admin (content.whatsappNumber); lihat lib/whatsapp.js
+  const waUrl = buildWaLink(resolveWaNumber(dbContent), getTranslation('waFloatMessage'));
 
   return (
     // Dibungkus landmark complementary: tombol melayang ini di luar <main>/<footer>,

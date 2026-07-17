@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useLanguage } from '@/components/LanguageContext';
+import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
 import styles from '@/styles/Components.module.css';
 
 export default function Footer() {
@@ -69,7 +70,7 @@ export default function Footer() {
             <div className={styles.socials}>
               {/* WhatsApp */}
               <a
-                href={dbContent?.footerLinkWa || "https://wa.me/6281234567890"} 
+                href={buildWaLink(resolveWaNumber(dbContent))}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"

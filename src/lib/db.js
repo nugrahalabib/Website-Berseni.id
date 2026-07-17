@@ -60,6 +60,7 @@ function initLocalDb() {
         footerDesc_en: "Platform bridging the public and Indonesian artists. Discover online painting classes, offline workshops, and the best artwork directly from the maestros.",
         footerContactDesc_id: "Punya pertanyaan seputar workshop, lukisan, atau kelas? Jangan ragu untuk menghubungi kami.",
         footerContactDesc_en: "Have questions about workshops, paintings, or classes? Do not hesitate to contact us.",
+        whatsappNumber: "6281234567890",
         footerLinkWa: "https://wa.me/6281234567890",
         footerLinkIg: "https://www.instagram.com/berseni.id/",
         footerLinkTiktok: "https://www.tiktok.com/@berseni.id",
@@ -614,6 +615,14 @@ function initLocalDb() {
         data.content.collabBrandBtnStatus = "active";
         data.content.collabVenueBtnLink = "https://wa.me/6281234567890?text=Halo%20Berseni%21%20Saya%20memiliki%20venue%2Ftempat%20yang%20tertarik%20untuk%20berkolaborasi%20dengan%20komunitas%20Berseni.";
         data.content.collabVenueBtnStatus = "active";
+        updated = true;
+      }
+      // Nomor WhatsApp TUNGGAL: sumber untuk semua tombol WA. Bila belum ada,
+      // ambil dari footerLinkWa/ctaBtnLink lama supaya nomor yang sudah diset
+      // admin tidak hilang saat migrasi.
+      if (data.content && !data.content.whatsappNumber) {
+        const m = (data.content.footerLinkWa || data.content.ctaBtnLink || '').match(/wa\.me\/(\d+)/);
+        data.content.whatsappNumber = m ? m[1] : '6281234567890';
         updated = true;
       }
       if (data.content && !data.content.defaultLanguage) {
