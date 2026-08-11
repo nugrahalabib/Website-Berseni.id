@@ -139,7 +139,7 @@ export default function AboutPageClient({ content }) {
                 />
               </h1>
               <p className={styles.heroDesc}>
-                {getTranslation('aboutHeroDesc')}
+                <RichText text={getTranslation('aboutHeroDesc')} inline />
               </p>
             </div>
 
@@ -185,7 +185,7 @@ export default function AboutPageClient({ content }) {
                   {getTranslation('aboutCommitmentTitle')}
                 </h2>
                 <p className={styles.sectionDesc}>
-                  {getTranslation('aboutCommitmentDesc')}
+                  <RichText text={getTranslation('aboutCommitmentDesc')} inline />
                 </p>
                 <div className={styles.featureButtons}>
                   {renderDynamicButton(getTranslation('aboutCommitBtn'), '/#products', 'aboutCommitBtnLink', 'aboutCommitBtnStatus', 'btn btn-secondary')}
@@ -263,7 +263,7 @@ export default function AboutPageClient({ content }) {
                 {/* Floating Testimonial/Quote Card */}
                 <div className={styles.floatingQuoteCard}>
                   <p className={styles.quoteText}>
-                    {getTranslation('aboutQuote')}
+                    <RichText text={getTranslation('aboutQuote')} inline />
                   </p>
                   <div className={styles.quoteAuthor}>
                     <span className={styles.authorName}>{getTranslation('aboutQuoteAuthor')}</span>
@@ -407,7 +407,7 @@ export default function AboutPageClient({ content }) {
           >
             <h2 className={styles.ctaTitle}>{getTranslation('aboutCtaTitle')}</h2>
             <p className={styles.ctaDesc}>
-              {getTranslation('aboutCtaDesc')}
+              <RichText text={getTranslation('aboutCtaDesc')} inline />
             </p>
             <div className={styles.ctaButtons}>
               {renderDynamicButton(

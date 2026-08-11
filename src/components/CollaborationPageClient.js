@@ -107,7 +107,7 @@ export default function CollaborationPageClient({ content }) {
             <span className={styles.heroSubtitle}>{getTranslation('collabHeroSubtitle')}</span>
             <h1 className={styles.heroTitle}>{getTranslation('collabHeroTitle')}<span>.</span></h1>
             <p className={styles.heroDesc}>
-              {getTranslation('collabHeroDesc')}
+              <RichText text={getTranslation('collabHeroDesc')} inline />
             </p>
           </div>
         </section>
@@ -126,7 +126,7 @@ export default function CollaborationPageClient({ content }) {
                 </div>
                 
                 <p className={styles.sectionIntro}>
-                  {getTranslation('collabBrandIntro')}
+                  <RichText text={getTranslation('collabBrandIntro')} inline />
                 </p>
                 
                 <div className={styles.featuresList}>

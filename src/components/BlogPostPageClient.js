@@ -57,7 +57,7 @@ export default function BlogPostPageClient({ content, post }) {
                 paddingLeft: '1.25rem',
                 textAlign: 'left'
               }}>
-                {t(post, 'excerpt')}
+                <RichText text={t(post, 'excerpt')} inline />
               </p>
             )}
           </header>

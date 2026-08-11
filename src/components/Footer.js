@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useLanguage } from '@/components/LanguageContext';
 import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
+import RichText from '@/components/RichText';
 import styles from '@/styles/Components.module.css';
 
 export default function Footer() {
@@ -18,7 +19,7 @@ export default function Footer() {
             <div className={styles.footerBrandText}>Berseni</div>
             <div className={styles.footerTagline}>{getTranslation('footerTagline')}</div>
             <p className={styles.footerDesc}>
-              {t(dbContent, 'footerDesc') || getTranslation('footerDesc')}
+              <RichText text={t(dbContent, 'footerDesc') || getTranslation('footerDesc')} inline />
             </p>
           </div>
 
@@ -63,9 +64,12 @@ export default function Footer() {
           <div className={styles.footerCol}>
             <h3>{getTranslation('footerContactTitle')}</h3>
             <p className={styles.footerDesc} style={{ marginBottom: '1rem' }}>
-              {t(dbContent, 'footerContactDesc') || (language === 'id' 
-                ? 'Punya pertanyaan seputar workshop, lukisan, atau kelas? Jangan ragu untuk menghubungi kami.' 
-                : 'Have questions about workshops, paintings, or classes? Do not hesitate to contact us.')}
+              <RichText
+                text={t(dbContent, 'footerContactDesc') || (language === 'id'
+                  ? 'Punya pertanyaan seputar workshop, lukisan, atau kelas? Jangan ragu untuk menghubungi kami.'
+                  : 'Have questions about workshops, paintings, or classes? Do not hesitate to contact us.')}
+                inline
+              />
             </p>
             <div className={styles.socials}>
               {/* WhatsApp */}

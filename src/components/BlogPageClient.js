@@ -38,7 +38,7 @@ export default function BlogPageClient({ content, initialPosts }) {
             />
           </h1>
           <p className={styles.blogSubtitle}>
-            {getTranslation('blogHeaderDesc')}
+            <RichText text={getTranslation('blogHeaderDesc')} inline />
           </p>
         </div>
 

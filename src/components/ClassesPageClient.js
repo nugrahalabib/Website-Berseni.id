@@ -84,7 +84,7 @@ export default function ClassesPageClient({ content, initialProducts }) {
               {getTranslation('classesTitle')}
             </h1>
             <p className={styles.heroDesc}>
-              {getTranslation('classesSubtitle')}
+              <RichText text={getTranslation('classesSubtitle')} inline />
             </p>
           </div>
         </section>

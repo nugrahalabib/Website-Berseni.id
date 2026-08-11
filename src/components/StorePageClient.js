@@ -74,7 +74,7 @@ export default function StorePageClient({ content, initialProducts }) {
               {getTranslation('storeTitle')}
             </h1>
             <p className={styles.heroDesc}>
-              {getTranslation('galleryArtworkSubtitle')}
+              <RichText text={getTranslation('galleryArtworkSubtitle')} inline />
             </p>
           </div>
         </section>
