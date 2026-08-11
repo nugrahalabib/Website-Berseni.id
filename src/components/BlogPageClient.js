@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
 import SplitTitle from '@/components/SplitTitle';
+import RichText from '@/components/RichText';
 import styles from '@/styles/Blog.module.css';
 
 export default function BlogPageClient({ content, initialPosts }) {
@@ -66,7 +67,7 @@ export default function BlogPageClient({ content, initialPosts }) {
                     {t(featuredPost, 'title')}
                   </Link>
                 </h2>
-                <p className={styles.featuredExcerpt}>{t(featuredPost, 'excerpt')}</p>
+                <p className={styles.featuredExcerpt}><RichText text={t(featuredPost, 'excerpt')} inline /></p>
                 <Link href={`/blog/${featuredPost.slug}`} className={styles.featuredBtn}>
                   {getTranslation('blogReadFullBtn')}
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
@@ -104,7 +105,7 @@ export default function BlogPageClient({ content, initialPosts }) {
                         {t(post, 'title')}
                       </Link>
                     </h2>
-                    <p className={styles.blogCardExcerpt}>{t(post, 'excerpt')}</p>
+                    <p className={styles.blogCardExcerpt}><RichText text={t(post, 'excerpt')} inline /></p>
                     <Link href={`/blog/${post.slug}`} className={styles.blogCardBtn}>
                       {getTranslation('readArticle')}
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">

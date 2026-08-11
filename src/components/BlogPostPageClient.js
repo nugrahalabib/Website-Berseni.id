@@ -5,6 +5,7 @@ import SafeImage from '@/components/SafeImage';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
+import RichText, { splitParagraphs } from '@/components/RichText';
 import styles from '@/styles/Blog.module.css';
 
 export default function BlogPostPageClient({ content, post }) {
@@ -12,8 +13,9 @@ export default function BlogPostPageClient({ content, post }) {
 
   if (!post) return null;
 
-  // Split localized content text by newlines to render paragraphs
-  const paragraphs = t(post, 'content').split('\n\n');
+  // Pisah jadi paragraf. splitParagraphs memaafkan baris kosong yang berisi
+  // spasi/tab dan baris kosong beruntun — penulisan klien tidak selalu rapi.
+  const paragraphs = splitParagraphs(t(post, 'content'));
 
   return (
     <div style={{ backgroundColor: dbContent?.bg_blog_detail_main || content?.bg_blog_detail_main || 'var(--color-cream-bg)', minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
@@ -80,11 +82,11 @@ export default function BlogPostPageClient({ content, post }) {
               if (para.trim().startsWith('>')) {
                 return (
                   <blockquote key={index}>
-                    {para.replace('>', '').trim()}
+                    <RichText text={para.replace(/^>[ \t]?/gm, '').trim()} inline />
                   </blockquote>
                 );
               }
-              return <p key={index}>{para}</p>;
+              return <p key={index}><RichText text={para} inline /></p>;
             })}
           </div>
 
@@ -101,7 +103,7 @@ export default function BlogPostPageClient({ content, post }) {
                 {t(post, 'ctaTitle') || (language === 'id' ? 'Tertarik Mencoba?' : 'Interested in Trying?')}
               </h2>
               {(post.ctaDesc_id || post.ctaDesc_en) && (
-                <p className={styles.blogCtaDesc}>{t(post, 'ctaDesc')}</p>
+                <p className={styles.blogCtaDesc}><RichText text={t(post, 'ctaDesc')} inline /></p>
               )}
               {post.ctaShowButton && post.ctaButtonLink && (
                 <a 
@@ -122,7 +124,7 @@ export default function BlogPostPageClient({ content, post }) {
               <div className={styles.authorAvatar}>B</div>
               <div className={styles.authorInfo}>
                 <h2>{getTranslation('blogAboutTitle')}</h2>
-                <p>{getTranslation('blogAboutDesc')}</p>
+                <p><RichText text={getTranslation('blogAboutDesc')} inline /></p>
               </div>
             </div>
           </footer>

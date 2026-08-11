@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { uploadImage } from '@/lib/imageUpload';
+import RichTextArea from '@/components/Admin/RichTextArea';
 import styles from '@/styles/Admin.module.css';
 
 // Jumlah artikel yang ditampilkan per halaman tabel
@@ -521,24 +522,22 @@ export default function BlogEditor({ showToast, setIsDirty = () => {} }) {
 
                 <div>
                   <label className={styles.adminLabel}>Excerpt / Ringkasan Singkat (ID)</label>
-                  <textarea
+                  <RichTextArea
                     name="excerpt_id"
                     value={form.excerpt_id}
                     onChange={handleInputChange}
                     placeholder="Masukkan ringkasan artikel singkat untuk kartu preview..."
-                    className={styles.adminTextarea}
                     style={{ minHeight: '80px' }}
                   />
                 </div>
 
                 <div>
                   <label className={styles.adminLabel}>Excerpt / Ringkasan Singkat (EN)</label>
-                  <textarea
+                  <RichTextArea
                     name="excerpt_en"
                     value={form.excerpt_en}
                     onChange={handleInputChange}
                     placeholder="Enter short article excerpt for card preview in English..."
-                    className={styles.adminTextarea}
                     style={{ minHeight: '80px' }}
                   />
                 </div>
@@ -550,12 +549,11 @@ export default function BlogEditor({ showToast, setIsDirty = () => {} }) {
 
                 <div>
                   <label className={styles.adminLabel}>Konten Lengkap Artikel (ID)</label>
-                  <textarea
+                  <RichTextArea
                     name="content_id"
                     value={form.content_id}
                     onChange={handleInputChange}
                     placeholder="Tulis seluruh paragraf artikel di sini..."
-                    className={styles.adminTextarea}
                     style={{ minHeight: '160px' }}
                     required
                   />
@@ -563,12 +561,11 @@ export default function BlogEditor({ showToast, setIsDirty = () => {} }) {
 
                 <div>
                   <label className={styles.adminLabel}>Konten Lengkap Artikel (EN)</label>
-                  <textarea
+                  <RichTextArea
                     name="content_en"
                     value={form.content_en}
                     onChange={handleInputChange}
                     placeholder="Write whole article paragraphs in English here..."
-                    className={styles.adminTextarea}
                     style={{ minHeight: '160px' }}
                     required
                   />

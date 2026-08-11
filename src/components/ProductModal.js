@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import SafeImage from '@/components/SafeImage';
 import { useLanguage } from '@/components/LanguageContext';
+import RichText from '@/components/RichText';
 import styles from '@/styles/Components.module.css';
 
 const FOCUSABLE_SELECTOR = 'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -151,7 +152,7 @@ export default function ProductModal({ product, onClose }) {
             </div>
 
             <h4 className={styles.modalDescTitle}>{language === 'id' ? 'Deskripsi' : 'Description'}</h4>
-            <p className={styles.modalDesc}>{t(product, 'description')}</p>
+            <p className={styles.modalDesc}><RichText text={t(product, 'description')} inline /></p>
 
             {t(product, 'specs') && (
               <>

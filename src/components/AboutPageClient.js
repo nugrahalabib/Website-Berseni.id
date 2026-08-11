@@ -6,6 +6,7 @@ import Link from 'next/link';
 import SafeImage from '@/components/SafeImage';
 import { useLanguage } from '@/components/LanguageContext';
 import SplitTitle from '@/components/SplitTitle';
+import RichText, { splitParagraphs } from '@/components/RichText';
 import styles from '@/styles/About.module.css';
 
 export default function AboutPageClient({ content }) {
@@ -99,7 +100,9 @@ export default function AboutPageClient({ content }) {
   };
 
   const aboutDescriptionVal = t(data, 'aboutDescription');
-  const paragraphs = aboutDescriptionVal ? aboutDescriptionVal.split('\n\n') : [];
+  // splitParagraphs memaafkan baris kosong yang berisi spasi/tab dan baris
+  // kosong beruntun — tulisan klien di admin tidak selalu rapi.
+  const paragraphs = splitParagraphs(aboutDescriptionVal);
 
   const getMisiList = () => {
     const listKey = `misiList_${language}`;
@@ -199,7 +202,7 @@ export default function AboutPageClient({ content }) {
                   </div>
                   <div className={styles.checkInfo}>
                     <h3>{getTranslation('aboutCommit1Title')}</h3>
-                    <p>{getTranslation('aboutCommit1Desc')}</p>
+                    <p><RichText text={getTranslation('aboutCommit1Desc')} inline /></p>
                   </div>
                 </div>
 
@@ -211,7 +214,7 @@ export default function AboutPageClient({ content }) {
                   </div>
                   <div className={styles.checkInfo}>
                     <h3>{getTranslation('aboutCommit2Title')}</h3>
-                    <p>{getTranslation('aboutCommit2Desc')}</p>
+                    <p><RichText text={getTranslation('aboutCommit2Desc')} inline /></p>
                   </div>
                 </div>
 
@@ -223,7 +226,7 @@ export default function AboutPageClient({ content }) {
                   </div>
                   <div className={styles.checkInfo}>
                     <h3>{getTranslation('aboutCommit3Title')}</h3>
-                    <p>{getTranslation('aboutCommit3Desc')}</p>
+                    <p><RichText text={getTranslation('aboutCommit3Desc')} inline /></p>
                   </div>
                 </div>
               </div>
@@ -277,12 +280,18 @@ export default function AboutPageClient({ content }) {
                 </h2>
                 
                 <div className={styles.storyParagraphs}>
-                  {paragraphs.map((p, idx) => (
-                    <p key={idx} className={styles.storyPara}>
-                      {idx === 0 ? <span className={styles.dropCapText}>{p.charAt(0)}</span> : null}
-                      {idx === 0 ? p.slice(1) : p}
-                    </p>
-                  ))}
+                  {paragraphs.map((p, idx) => {
+                    // Drop cap hanya jika paragraf pertama benar-benar diawali
+                    // huruf — kalau diawali penanda format (mis. **tebal**),
+                    // memotong 1 karakter akan merusak formatnya.
+                    const useDropCap = idx === 0 && /^\p{L}/u.test(p);
+                    return (
+                      <p key={idx} className={styles.storyPara}>
+                        {useDropCap ? <span className={styles.dropCapText}>{p.charAt(0)}</span> : null}
+                        <RichText text={useDropCap ? p.slice(1) : p} inline />
+                      </p>
+                    );
+                  })}
                 </div>
 
                 {/* Vision & Mission Box */}
@@ -291,7 +300,7 @@ export default function AboutPageClient({ content }) {
                     <span className={styles.visionIcon}>👁️</span>
                     <h3>{t(data, 'visiTitle')}</h3>
                   </div>
-                  <p>{t(data, 'visiDescription')}</p>
+                  <p><RichText text={t(data, 'visiDescription')} inline /></p>
                   
                   <div className={styles.visionTitleRow} style={{ marginTop: '2rem' }}>
                     <span className={styles.visionIcon}>🎯</span>
@@ -320,7 +329,7 @@ export default function AboutPageClient({ content }) {
                   layout={dbContent?.aboutPillarsTitleLayout}
                 />
               </h2>
-              <p className={styles.pillarsSubtitle}>{getTranslation('aboutPillarsSubtitle')}</p>
+              <p className={styles.pillarsSubtitle}><RichText text={getTranslation('aboutPillarsSubtitle')} inline /></p>
             </div>
 
             <div className={styles.pillarsGrid}>
@@ -332,7 +341,7 @@ export default function AboutPageClient({ content }) {
                   </svg>
                 </div>
                 <h3>{getTranslation('aboutPillar1Title')}</h3>
-                <p>{getTranslation('aboutPillar1Desc')}</p>
+                <p><RichText text={getTranslation('aboutPillar1Desc')} inline /></p>
               </div>
 
               {/* Card 2 */}
@@ -343,7 +352,7 @@ export default function AboutPageClient({ content }) {
                   </svg>
                 </div>
                 <h3>{getTranslation('aboutPillar2Title')}</h3>
-                <p>{getTranslation('aboutPillar2Desc')}</p>
+                <p><RichText text={getTranslation('aboutPillar2Desc')} inline /></p>
               </div>
 
               {/* Card 3 */}
@@ -354,7 +363,7 @@ export default function AboutPageClient({ content }) {
                   </svg>
                 </div>
                 <h3>{getTranslation('aboutPillar3Title')}</h3>
-                <p>{getTranslation('aboutPillar3Desc')}</p>
+                <p><RichText text={getTranslation('aboutPillar3Desc')} inline /></p>
               </div>
             </div>
           </div>

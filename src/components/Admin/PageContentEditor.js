@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/components/LanguageContext';
 import { uploadImage } from '@/lib/imageUpload';
+import RichTextArea from '@/components/Admin/RichTextArea';
 import styles from '@/styles/Admin.module.css';
 
 // Pilihan posisi teks highlight (bagian cursive) pada judul dua-bagian.
@@ -1906,12 +1907,11 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
                   ) : field.type === 'textarea' ? (
                     <>
                       <label className={styles.adminLabel}>{field.label}</label>
-                      <textarea
+                      <RichTextArea
                         name={field.name}
                         value={form[field.name] || ''}
                         onChange={handleChange}
                         placeholder={field.placeholder || `Masukkan teks ${field.label}...`}
-                        className={styles.adminTextarea}
                       />
                     </>
                   ) : field.type === 'select' ? (

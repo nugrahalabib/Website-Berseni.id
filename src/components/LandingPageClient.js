@@ -12,6 +12,7 @@ import ActivityModal from '@/components/ActivityModal';
 import { useLanguage } from '@/components/LanguageContext';
 import SplitTitle from '@/components/SplitTitle';
 import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
+import RichText from '@/components/RichText';
 import styles from '@/styles/Landing.module.css';
 
 const activitiesData = [
@@ -851,7 +852,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           >
             <span className={styles.heroSubtitle}>{t(content, 'heroSubtitle')}</span>
             <h1 className={styles.heroTitle}>{renderHeroTitle(t(content, 'heroTitle'))}</h1>
-            <p className={styles.heroDesc}>{t(content, 'heroDescription')}</p>
+            <p className={styles.heroDesc}><RichText text={t(content, 'heroDescription')} inline /></p>
             <div className={styles.heroCTAs}>
               {renderDynamicButton(getTranslation('heroBtnGallery'), '#products', 'heroBtn1Link', 'heroBtn1Status', 'btn btn-primary')}
               {renderDynamicButton(getTranslation('heroBtnAbout'), '/about', 'heroBtn2Link', 'heroBtn2Status', 'btn btn-outline')}
@@ -877,7 +878,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               <div className={styles.carouselShowcaseContainer}>
                 <div className={styles.carouselShowcaseHeader}>
                   <h2>{getTranslation('activitiesHeaderTitle')}<span>.</span></h2>
-                  <p>{getTranslation('activitiesHeaderSubtitle')}</p>
+                  <p><RichText text={getTranslation('activitiesHeaderSubtitle')} inline /></p>
                 </div>
                 <HeroCarousel 
                   items={(content && content.activities) || activitiesData} 
@@ -967,7 +968,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
  
         <div className={styles.sectionHeader}>
           <h2>{getTranslation('ourPrograms')}<span>.</span></h2>
-          <p>{getTranslation('programsSubtitle')}</p>
+          <p><RichText text={getTranslation('programsSubtitle')} inline /></p>
         </div>
  
         <div className={styles.programsGrid}>
@@ -986,7 +987,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                 </svg>
               </div>
               <h3>{getTranslation('prog1Title')}</h3>
-              <p>{getTranslation('prog1Desc')}</p>
+              <p><RichText text={getTranslation('prog1Desc')} inline /></p>
               {renderDynamicButton(getTranslation('prog1Btn'), 'filter:offline', 'prog1Link', 'prog1Status', styles.learnMoreBtn, {
                 onClick: setSelectedFilter,
                 children: (
@@ -1012,7 +1013,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                 </svg>
               </div>
               <h3>{getTranslation('prog2Title')}</h3>
-              <p>{getTranslation('prog2Desc')}</p>
+              <p><RichText text={getTranslation('prog2Desc')} inline /></p>
               {renderDynamicButton(getTranslation('prog2Btn'), 'filter:online', 'prog2Link', 'prog2Status', styles.learnMoreBtn, {
                 onClick: setSelectedFilter,
                 children: (
@@ -1038,7 +1039,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                 </svg>
               </div>
               <h3>{getTranslation('prog3Title')}</h3>
-              <p>{getTranslation('prog3Desc')}</p>
+              <p><RichText text={getTranslation('prog3Desc')} inline /></p>
               {renderDynamicButton(getTranslation('prog3Btn'), 'filter:artwork', 'prog3Link', 'prog3Status', styles.learnMoreBtn, {
                 onClick: setSelectedFilter,
                 children: (
@@ -1056,7 +1057,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       <section id="products" className={styles.gallery} style={{ backgroundColor: dbContent?.bg_home_gallery || initialContent?.bg_home_gallery || '' }}>
         <div className={styles.sectionHeader}>
           <h2 style={{ color: 'var(--color-text-dark)' }}>{getTranslation('galleryTitle')}<span>.</span></h2>
-          <p style={{ color: 'var(--color-text-muted)' }}>{getTranslation('gallerySubtitle')}</p>
+          <p style={{ color: 'var(--color-text-muted)' }}><RichText text={getTranslation('gallerySubtitle')} inline /></p>
         </div>
 
         {/* Promo Countdown Banner */}
@@ -1065,7 +1066,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
             <div className={styles.promoIcon}>⚡</div>
             <div className={styles.promoTextCol}>
               <h3>{getTranslation('promoTitle')}</h3>
-              <p>{getTranslation('promoSubtitle')}</p>
+              <p><RichText text={getTranslation('promoSubtitle')} inline /></p>
             </div>
             {promoEndsAt !== null && <PromoCountdown endsAt={promoEndsAt} />}
           </div>
@@ -1176,7 +1177,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           <h2 style={{ color: 'var(--color-text-dark)' }}>{getTranslation('testimonialsTitle')}<span>.</span></h2>
           {/* Section ini berlatar cream: --color-text-muted hanya 4.37:1 di sana.
               Inline style mengalahkan CSS, jadi tokennya harus diganti di sini. */}
-          <p style={{ color: 'var(--color-text-muted-on-cream)' }}>{getTranslation('testimonialsSubtitle')}</p>
+          <p style={{ color: 'var(--color-text-muted-on-cream)' }}><RichText text={getTranslation('testimonialsSubtitle')} inline /></p>
         </div>
 
         {/* Row 1: Left to Right movement */}
@@ -1302,7 +1303,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
               layout={dbContent?.blogHeaderTitleLayout}
             />
           </h2>
-          <p style={{ color: 'var(--color-text-muted)' }}>{getTranslation('blogHeaderSubtitle')}</p>
+          <p style={{ color: 'var(--color-text-muted)' }}><RichText text={getTranslation('blogHeaderSubtitle')} inline /></p>
         </div>
 
         {initialPosts.length > 0 ? (
@@ -1351,7 +1352,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                             {t(post, 'title')}
                           </Link>
                         </h3>
-                        <p className={styles.blogSlideExcerpt}>{t(post, 'excerpt')}</p>
+                        <p className={styles.blogSlideExcerpt}><RichText text={t(post, 'excerpt')} inline /></p>
                         <Link href={`/blog/${post.slug}`} className={styles.blogSlideBtn}>
                           {getTranslation('readArticle')}
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
@@ -1404,7 +1405,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
         
         <div className={styles.ctaInner}>
           <h2>{getTranslation('ctaTitle')}</h2>
-          <p>{getTranslation('ctaSubtitle')}</p>
+          <p><RichText text={getTranslation('ctaSubtitle')} inline /></p>
           {renderDynamicButton(
             getTranslation('ctaBtn'),
             buildWaLink(

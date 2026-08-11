@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import SafeImage from '@/components/SafeImage';
 import { useLanguage } from '@/components/LanguageContext';
+import RichText from '@/components/RichText';
 import styles from '@/styles/Components.module.css';
 
 const FOCUSABLE_SELECTOR = 'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -140,7 +141,7 @@ export default function ActivityModal({ activity, onClose }) {
             </div>
 
             <h4 className={styles.modalDescTitle}>{language === 'id' ? 'Keseruan Aktivitas' : 'Activity Experience'}</h4>
-            <p className={styles.modalDesc}>{t(activity, 'description')}</p>
+            <p className={styles.modalDesc}><RichText text={t(activity, 'description')} inline /></p>
 
             {t(activity, 'details') && (
               <>

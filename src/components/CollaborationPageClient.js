@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
 import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
+import RichText from '@/components/RichText';
 import styles from '@/styles/Collaboration.module.css';
 
 export default function CollaborationPageClient({ content }) {
@@ -138,7 +139,7 @@ export default function CollaborationPageClient({ content }) {
                     </div>
                     <div className={styles.featureText}>
                       <h3>{getTranslation('collabBrandFeat1Title')}</h3>
-                      <p>{getTranslation('collabBrandFeat1Desc')}</p>
+                      <p><RichText text={getTranslation('collabBrandFeat1Desc')} inline /></p>
                     </div>
                   </div>
 
@@ -151,7 +152,7 @@ export default function CollaborationPageClient({ content }) {
                     </div>
                     <div className={styles.featureText}>
                       <h3>{getTranslation('collabBrandFeat2Title')}</h3>
-                      <p>{getTranslation('collabBrandFeat2Desc')}</p>
+                      <p><RichText text={getTranslation('collabBrandFeat2Desc')} inline /></p>
                     </div>
                   </div>
 
@@ -164,7 +165,7 @@ export default function CollaborationPageClient({ content }) {
                     </div>
                     <div className={styles.featureText}>
                       <h3>{getTranslation('collabBrandFeat3Title')}</h3>
-                      <p>{getTranslation('collabBrandFeat3Desc')}</p>
+                      <p><RichText text={getTranslation('collabBrandFeat3Desc')} inline /></p>
                     </div>
                   </div>
 
@@ -177,7 +178,7 @@ export default function CollaborationPageClient({ content }) {
                     </div>
                     <div className={styles.featureText}>
                       <h3>{getTranslation('collabBrandFeat4Title')}</h3>
-                      <p>{getTranslation('collabBrandFeat4Desc')}</p>
+                      <p><RichText text={getTranslation('collabBrandFeat4Desc')} inline /></p>
                     </div>
                   </div>
                 </div>
@@ -225,7 +226,7 @@ export default function CollaborationPageClient({ content }) {
             
             {/* Impact Callout Box */}
             <div className={styles.brandCalloutBox}>
-              <p>{getTranslation('collabBrandCallout')}</p>
+              <p><RichText text={getTranslation('collabBrandCallout')} inline /></p>
               {renderDynamicButton(
                 getTranslation('collabBrandBtn'),
                 getBrandWALink(),
@@ -253,7 +254,7 @@ export default function CollaborationPageClient({ content }) {
               <span className={styles.sectionBadge} style={{ backgroundColor: 'rgba(20, 120, 155, 0.1)', color: 'var(--color-tosca-text)' }}>{getTranslation('collabVenueBadge')}</span>
               <h2>{getTranslation('collabVenueTitle')}</h2>
               <div className={`${styles.underline} ${styles.toscaUnderline}`}></div>
-              <p className={styles.venueSubtitle} style={{ whiteSpace: 'pre-line' }}>{getTranslation('collabVenueSub')}</p>
+              <p className={styles.venueSubtitle} style={{ whiteSpace: 'pre-line' }}><RichText text={getTranslation('collabVenueSub')} inline /></p>
             </div>
             
             {/* Benefits Grid */}
@@ -267,7 +268,7 @@ export default function CollaborationPageClient({ content }) {
                   </svg>
                 </div>
                 <h3>{getTranslation('collabVenueFeat1Title')}</h3>
-                <p>{getTranslation('collabVenueFeat1Desc')}</p>
+                <p><RichText text={getTranslation('collabVenueFeat1Desc')} inline /></p>
               </div>
 
               {/* Benefit 2 */}
@@ -278,7 +279,7 @@ export default function CollaborationPageClient({ content }) {
                   </svg>
                 </div>
                 <h3>{getTranslation('collabVenueFeat2Title')}</h3>
-                <p>{getTranslation('collabVenueFeat2Desc')}</p>
+                <p><RichText text={getTranslation('collabVenueFeat2Desc')} inline /></p>
               </div>
 
               {/* Benefit 3 */}
@@ -289,7 +290,7 @@ export default function CollaborationPageClient({ content }) {
                   </svg>
                 </div>
                 <h3>{getTranslation('collabVenueFeat3Title')}</h3>
-                <p>{getTranslation('collabVenueFeat3Desc')}</p>
+                <p><RichText text={getTranslation('collabVenueFeat3Desc')} inline /></p>
               </div>
               
             </div>
@@ -297,7 +298,7 @@ export default function CollaborationPageClient({ content }) {
             {/* Let's Grow Together CTA Banner */}
             <div className={styles.venueCtaBanner}>
               <h3>{getTranslation('collabVenueCtaTitle')}</h3>
-              <p>{getTranslation('collabVenueCtaDesc')}</p>
+              <p><RichText text={getTranslation('collabVenueCtaDesc')} inline /></p>
               {renderDynamicButton(
                 getTranslation('collabVenueBtn'),
                 getVenueWALink(),

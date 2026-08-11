@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
 import ProductModal from '@/components/ProductModal';
 import { useLanguage } from '@/components/LanguageContext';
+import RichText from '@/components/RichText';
 import styles from '@/styles/Store.module.css';
 
 export default function ClassesPageClient({ content, initialProducts }) {
@@ -201,7 +202,7 @@ export default function ClassesPageClient({ content, initialProducts }) {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                 </svg>
                 <h2>{getTranslation('emptyClassesTitle')}</h2>
-                <p>{getTranslation('emptyClassesDesc')}</p>
+                <p><RichText text={getTranslation('emptyClassesDesc')} inline /></p>
                 <button 
                   className="btn btn-secondary" 
                   style={{ marginTop: '1.5rem' }}

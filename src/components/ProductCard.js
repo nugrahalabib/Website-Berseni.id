@@ -2,6 +2,7 @@
 
 import SafeImage from '@/components/SafeImage';
 import { useLanguage } from '@/components/LanguageContext';
+import RichText from '@/components/RichText';
 import styles from '@/styles/Components.module.css';
 
 export default function ProductCard({ product, onClick }) {
@@ -87,7 +88,7 @@ export default function ProductCard({ product, onClick }) {
       {/* Info Body */}
       <div className={styles.cardBody}>
         <h3 className={styles.cardTitle}>{t(product, 'title')}</h3>
-        <p className={styles.cardDesc}>{t(product, 'description')}</p>
+        <p className={styles.cardDesc}><RichText text={t(product, 'description')} inline /></p>
         
         <div className={styles.cardFooter}>
           <div className={styles.priceContainer}>
