@@ -53,3 +53,5 @@ next-env.d.ts
 
 # handoff document (contains secrets, local only)
 CLAUDE.md
+
+.env*
