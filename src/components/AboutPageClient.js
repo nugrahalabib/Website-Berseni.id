@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import Link from 'next/link';
 import SafeImage from '@/components/SafeImage';
 import { useLanguage } from '@/components/LanguageContext';
+import SplitTitle from '@/components/SplitTitle';
 import styles from '@/styles/About.module.css';
 
 export default function AboutPageClient({ content }) {
@@ -128,7 +129,11 @@ export default function AboutPageClient({ content }) {
             <div className={styles.heroContent}>
               <span className={styles.heroLabel}>{getTranslation('aboutHeroLabel')}</span>
               <h1 className={styles.heroTitle}>
-                {getTranslation('aboutHeroTitle')}<span>{getTranslation('aboutHeroTitleSpan')}</span>
+                <SplitTitle
+                  text={getTranslation('aboutHeroTitle')}
+                  highlight={getTranslation('aboutHeroTitleSpan')}
+                  layout={dbContent?.aboutHeroTitleLayout}
+                />
               </h1>
               <p className={styles.heroDesc}>
                 {getTranslation('aboutHeroDesc')}
@@ -308,7 +313,13 @@ export default function AboutPageClient({ content }) {
         <section className={styles.pillarsSection} style={{ backgroundColor: dbContent?.bg_about_pillars || content?.bg_about_pillars || '' }}>
           <div className={styles.container}>
             <div className={styles.pillarsHeader}>
-              <h2 className={styles.pillarsTitle}>{getTranslation('aboutPillarsTitle')}<span>{getTranslation('aboutPillarsTitleSpan')}</span></h2>
+              <h2 className={styles.pillarsTitle}>
+                <SplitTitle
+                  text={getTranslation('aboutPillarsTitle')}
+                  highlight={getTranslation('aboutPillarsTitleSpan')}
+                  layout={dbContent?.aboutPillarsTitleLayout}
+                />
+              </h2>
               <p className={styles.pillarsSubtitle}>{getTranslation('aboutPillarsSubtitle')}</p>
             </div>
 

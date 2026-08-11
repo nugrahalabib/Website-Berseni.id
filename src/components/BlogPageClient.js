@@ -5,6 +5,7 @@ import SafeImage from '@/components/SafeImage';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
+import SplitTitle from '@/components/SplitTitle';
 import styles from '@/styles/Blog.module.css';
 
 export default function BlogPageClient({ content, initialPosts }) {
@@ -29,7 +30,11 @@ export default function BlogPageClient({ content, initialPosts }) {
         {/* Page Header */}
         <div className={styles.blogHeader} style={{ backgroundColor: dbContent?.bg_blog_header || content?.bg_blog_header || '' }}>
           <h1 className={styles.blogTitle}>
-            {getTranslation('blogHeaderTitleText')}<span>{getTranslation('blogHeaderTitleSpan')}</span>
+            <SplitTitle
+              text={getTranslation('blogHeaderTitleText')}
+              highlight={getTranslation('blogHeaderTitleSpan')}
+              layout={dbContent?.blogHeaderTitleLayout}
+            />
           </h1>
           <p className={styles.blogSubtitle}>
             {getTranslation('blogHeaderDesc')}

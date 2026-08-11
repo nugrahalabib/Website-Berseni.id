@@ -5,6 +5,15 @@ import { useLanguage } from '@/components/LanguageContext';
 import { uploadImage } from '@/lib/imageUpload';
 import styles from '@/styles/Admin.module.css';
 
+// Pilihan posisi teks highlight (bagian cursive) pada judul dua-bagian.
+// Dipakai di beberapa halaman; lihat komponen SplitTitle untuk perilakunya.
+// Admin TIDAK perlu lagi mengetik spasi di akhir judul — pemisah dijamin.
+const LAYOUT_OPTIONS = [
+  { value: 'auto', label: 'Otomatis (1 kata = sebaris, kalimat = turun ke bawah)' },
+  { value: 'inline', label: 'Selalu sebaris (menyambung di kanan)' },
+  { value: 'block', label: 'Selalu baris baru (di bawah)' },
+];
+
 // Component for uploading and editing media URLs / files
 const MediaUploadInput = ({ label, name, value, type, onChange, showToast }) => {
   const [uploading, setUploading] = useState(false);
@@ -1436,8 +1445,9 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'aboutHeroLabel_en', label: 'Label Atas (EN)', type: 'text' },
             { name: 'aboutHeroTitle_id', label: 'Hero Title (ID)', type: 'text' },
             { name: 'aboutHeroTitle_en', label: 'Hero Title (EN)', type: 'text' },
-            { name: 'aboutHeroTitleSpan_id', label: 'Title Highlighted Word (ID)', type: 'text' },
-            { name: 'aboutHeroTitleSpan_en', label: 'Title Highlighted Word (EN)', type: 'text' },
+            { name: 'aboutHeroTitleSpan_id', label: 'Title Highlighted Word (ID) — teks beraksen cursive', type: 'text' },
+            { name: 'aboutHeroTitleSpan_en', label: 'Title Highlighted Word (EN) — teks beraksen cursive', type: 'text' },
+            { name: 'aboutHeroTitleLayout', label: 'Posisi Teks Highlight (Hero)', type: 'select', defaultValue: 'auto', options: LAYOUT_OPTIONS },
             { name: 'aboutHeroDesc_id', label: 'Hero Description (ID)', type: 'textarea' },
             { name: 'aboutHeroDesc_en', label: 'Hero Description (EN)', type: 'textarea' },
             { name: 'aboutCollage1', label: 'Kolase Gambar 1 (Outdoor)', type: 'image' },
@@ -1475,8 +1485,9 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
           fields: [
             { name: 'aboutPillarsTitle_id', label: 'Pillar Main Title (ID)', type: 'text' },
             { name: 'aboutPillarsTitle_en', label: 'Pillar Main Title (EN)', type: 'text' },
-            { name: 'aboutPillarsTitleSpan_id', label: 'Pillar Title Highlight (ID)', type: 'text' },
-            { name: 'aboutPillarsTitleSpan_en', label: 'Pillar Title Highlight (EN)', type: 'text' },
+            { name: 'aboutPillarsTitleSpan_id', label: 'Pillar Title Highlight (ID) — teks beraksen cursive', type: 'text' },
+            { name: 'aboutPillarsTitleSpan_en', label: 'Pillar Title Highlight (EN) — teks beraksen cursive', type: 'text' },
+            { name: 'aboutPillarsTitleLayout', label: 'Posisi Teks Highlight (Judul Pilar)', type: 'select', defaultValue: 'auto', options: LAYOUT_OPTIONS },
             { name: 'aboutPillarsSubtitle_id', label: 'Pillar Subtitle (ID)', type: 'textarea' },
             { name: 'aboutPillarsSubtitle_en', label: 'Pillar Subtitle (EN)', type: 'textarea' },
             // Pillar 1
@@ -1780,8 +1791,9 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
           fields: [
             { name: 'blogHeaderTitleText_id', label: 'Header Title Text (ID)', type: 'text' },
             { name: 'blogHeaderTitleText_en', label: 'Header Title Text (EN)', type: 'text' },
-            { name: 'blogHeaderTitleSpan_id', label: 'Header Title Highlighted (ID)', type: 'text' },
-            { name: 'blogHeaderTitleSpan_en', label: 'Header Title Highlighted (EN)', type: 'text' },
+            { name: 'blogHeaderTitleSpan_id', label: 'Header Title Highlighted (ID) — teks beraksen cursive', type: 'text' },
+            { name: 'blogHeaderTitleSpan_en', label: 'Header Title Highlighted (EN) — teks beraksen cursive', type: 'text' },
+            { name: 'blogHeaderTitleLayout', label: 'Posisi Teks Highlight (Judul Blog)', type: 'select', defaultValue: 'auto', options: LAYOUT_OPTIONS },
             { name: 'blogHeaderDesc_id', label: 'Header Description (ID)', type: 'textarea' },
             { name: 'blogHeaderDesc_en', label: 'Header Description (EN)', type: 'textarea' },
             { name: 'blogFeaturedTag_id', label: 'Featured Article Tag (ID)', type: 'text' },

@@ -10,6 +10,7 @@ import ProductCard from '@/components/ProductCard';
 import ProductModal from '@/components/ProductModal';
 import ActivityModal from '@/components/ActivityModal';
 import { useLanguage } from '@/components/LanguageContext';
+import SplitTitle from '@/components/SplitTitle';
 import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
 import styles from '@/styles/Landing.module.css';
 
@@ -1294,7 +1295,13 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       {/* BLOG SECTION */}
       <section id="blog" className={styles.blogSliderSection} style={{ backgroundColor: dbContent?.bg_home_blog || initialContent?.bg_home_blog || '' }}>
         <div className={styles.sectionHeader}>
-          <h2 style={{ color: 'var(--color-text-dark)' }}>{getTranslation('blogHeaderTitleText')}<span>{getTranslation('blogHeaderTitleSpan')}</span></h2>
+          <h2 style={{ color: 'var(--color-text-dark)' }}>
+            <SplitTitle
+              text={getTranslation('blogHeaderTitleText')}
+              highlight={getTranslation('blogHeaderTitleSpan')}
+              layout={dbContent?.blogHeaderTitleLayout}
+            />
+          </h2>
           <p style={{ color: 'var(--color-text-muted)' }}>{getTranslation('blogHeaderSubtitle')}</p>
         </div>
 
