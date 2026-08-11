@@ -44,7 +44,7 @@
   background: rgba(250, 245, 235, 0.85); /* Semi-transparent cream matching --color-cream-bg */
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  padding: 3.5rem 3rem;
+  padding: clamp(1.5rem, 0.6rem + 2.6vw, 3.5rem) clamp(1.25rem, 0.5rem + 2.2vw, 3rem);
   border-radius: 28px;
   border: 1px solid rgba(20, 120, 155, 0.12);
   box-shadow: 
@@ -53,7 +53,7 @@
 }
 
 .heroSubtitle {
-  font-size: 0.95rem;
+  font-size: clamp(0.72rem, 0.62rem + 0.3vw, 0.95rem);
   text-transform: uppercase;
   letter-spacing: 3px;
   color: var(--color-maroon);
@@ -63,7 +63,7 @@
 }
 
 .heroTitle {
-  font-size: 3.5rem;
+  font-size: clamp(1.75rem, 1.05rem + 2.4vw, 3.5rem);
   font-weight: 800;
   color: var(--color-text-dark);
   line-height: 1.15;
@@ -77,14 +77,14 @@
   font-weight: 500;
   color: var(--color-tosca);
   text-transform: none;
-  font-size: 4rem;
+  font-size: clamp(2rem, 1.2rem + 2.7vw, 4rem);
   display: inline-block;
   transform: rotate(-2deg);
   margin: 0 0.5rem;
 }
 
 .heroDesc {
-  font-size: 1.15rem;
+  font-size: clamp(0.9rem, 0.82rem + 0.32vw, 1.15rem);
   /* Sits on cream (--color-cream-bg): --color-text-muted is only ~4.38:1 there.
      WCAG 1.4.3 needs 4.5:1 for normal text. */
   color: var(--color-text-muted-on-cream);
@@ -834,6 +834,30 @@
   margin-bottom: 2.5rem;
   opacity: 0.9;
   line-height: 1.6;
+}
+
+
+/* Layar pendek (laptop 1366x768, 1280x720, jendela browser tidak penuh).
+   Breakpoint lebar saja tidak menolong: lebarnya besar tapi tingginya sempit,
+   sehingga kartu hero setinggi ~560px menimpa navbar. Di sini tinggi yang
+   jadi patokan, bukan lebar. */
+@media (max-height: 820px) and (min-width: 961px) {
+  .heroContent {
+    padding: clamp(1.1rem, 0.4rem + 1.6vh, 2.2rem) clamp(1.25rem, 0.5rem + 2.2vw, 2.5rem);
+  }
+  .heroTitle {
+    font-size: clamp(1.6rem, 0.9rem + 2.6vh, 2.6rem);
+    margin-bottom: 0.85rem;
+  }
+  .heroTitle cursive,
+  .heroTitle span {
+    font-size: clamp(1.9rem, 1rem + 3vh, 3rem);
+  }
+  .heroSubtitle { margin-bottom: 0.7rem; }
+  .heroDesc {
+    line-height: 1.55;
+    margin-bottom: 1.15rem;
+  }
 }
 
 /* RESPONSIVE DESIGN */

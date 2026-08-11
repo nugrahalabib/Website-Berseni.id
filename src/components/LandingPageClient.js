@@ -683,16 +683,26 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
   // Helper memisahkan teks tebal untuk aksen meliuk (cursive)
   const renderHeroTitle = (title) => {
     if (!title) return '';
-    const parts = title.split('.');
-    if (parts.length > 1) {
-      return (
-        <>
-          {parts[0]}<span>.</span>
-          {parts[1] && <div style={{ fontSize: '2.5rem', marginTop: '0.5rem', fontWeight: 500 }}>{parts[1]}</div>}
-        </>
-      );
-    }
-    return title;
+
+    // Judul boleh dipecah dengan titik: teks sebelum titik tampil normal, teks
+    // SESUDAHNYA tampil sebagai baris cursive di bawahnya.
+    const dotIndex = title.indexOf('.');
+    if (dotIndex === -1) return title;
+
+    const head = title.slice(0, dotIndex);
+    const tail = title.slice(dotIndex + 1).trim();
+
+    // Tidak ada teks setelah titik (mis. "Discover More Than Art.") -> tampilkan
+    // apa adanya. Dulu titiknya tetap dirender sebagai <span> cursive 4rem
+    // sehingga muncul titik besar menggantung yang memakan satu baris penuh.
+    if (!tail) return title;
+
+    return (
+      <>
+        {head}<span>.</span>
+        <div style={{ fontSize: '2.5rem', marginTop: '0.5rem', fontWeight: 500 }}>{tail}</div>
+      </>
+    );
   };
 
   // Nilai yang menggerakkan seluruh animasi hero.
