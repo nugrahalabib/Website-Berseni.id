@@ -4,11 +4,20 @@ import { useState, useEffect } from 'react';
 import { useLanguage } from '@/components/LanguageContext';
 import { uploadImage } from '@/lib/imageUpload';
 import RichTextArea from '@/components/Admin/RichTextArea';
+import { WA_MESSAGE_DEFAULTS } from '@/lib/whatsapp';
 import styles from '@/styles/Admin.module.css';
 
 // Pilihan posisi teks highlight (bagian cursive) pada judul dua-bagian.
 // Dipakai di beberapa halaman; lihat komponen SplitTitle untuk perilakunya.
 // Admin TIDAK perlu lagi mengetik spasi di akhir judul — pemisah dijamin.
+// Turunkan { key: {id,en} } menjadi { key_id: '..', key_en: '..' } untuk form admin.
+const DEFAULT_WA_MESSAGES = Object.fromEntries(
+  Object.entries(WA_MESSAGE_DEFAULTS).flatMap(([key, val]) => [
+    [`${key}_id`, val.id],
+    [`${key}_en`, val.en],
+  ])
+);
+
 const LAYOUT_OPTIONS = [
   { value: 'auto', label: 'Otomatis (1 kata = sebaris, kalimat = turun ke bawah)' },
   { value: 'inline', label: 'Selalu sebaris (menyambung di kanan)' },
@@ -1152,6 +1161,15 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
               updatedForm[key] = defaultColors[key];
             }
           });
+          // Isi kolom pesan WhatsApp dengan teks yang SEDANG dipakai situs bila
+          // di database masih kosong. Tanpa ini kotaknya tampak kosong padahal
+          // tombol WA tetap mengirim kalimat bawaan — admin jadi tidak tahu apa
+          // yang sebenarnya terkirim dan tidak punya titik awal untuk mengedit.
+          Object.keys(DEFAULT_WA_MESSAGES).forEach(key => {
+            if (updatedForm[key] === undefined || updatedForm[key] === '') {
+              updatedForm[key] = DEFAULT_WA_MESSAGES[key];
+            }
+          });
           setForm(updatedForm);
         }
       } catch (err) {
@@ -1388,8 +1406,8 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'ctaSubtitle_en', label: 'CTA Subtitle (EN)', type: 'textarea' },
             { name: 'ctaBtn_id', label: 'CTA Button Text (ID)', type: 'text' },
             { name: 'ctaBtn_en', label: 'CTA Button Text (EN)', type: 'text' },
-            { name: 'ctaWaMessage_id', label: '💬 Pesan Otomatis WhatsApp — Tombol CTA Beranda (ID)', type: 'textarea', placeholder: 'Teks yang otomatis terisi di chat WhatsApp pelanggan' },
-            { name: 'ctaWaMessage_en', label: '💬 Pesan Otomatis WhatsApp — Tombol CTA Beranda (EN)', type: 'textarea' },
+            { name: 'ctaWaMessage_id', label: '💬 Pesan Otomatis WhatsApp — Tombol CTA Beranda (ID)', type: 'textarea', variant: 'whatsapp', placeholder: 'Teks yang otomatis terisi di chat WhatsApp pelanggan' },
+            { name: 'ctaWaMessage_en', label: '💬 Pesan Otomatis WhatsApp — Tombol CTA Beranda (EN)', type: 'textarea', variant: 'whatsapp' },
             // Link tombol ini otomatis pakai Nomor WhatsApp tunggal (atur di section Footer & Medsos).
             { name: 'ctaBtnStatus', label: 'Status Tombol WhatsApp CTA', type: 'select', defaultValue: 'active', options: [
               { value: 'active', label: 'Tampilkan & Aktif' },
@@ -1416,8 +1434,8 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'footerContactDesc_id', label: 'Teks Ajakan Kontak Hubungi Kami (ID)', type: 'textarea' },
             { name: 'footerContactDesc_en', label: 'Teks Ajakan Kontak Hubungi Kami (EN)', type: 'textarea' },
             { name: 'whatsappNumber', label: '📱 Nomor WhatsApp — SATU nomor untuk SEMUA tombol WA di situs (floating, footer, CTA beranda, kolaborasi brand & venue). Contoh: 6281234567890 atau 08123456789', type: 'text', placeholder: '6281234567890' },
-            { name: 'waFloatMessage_id', label: '💬 Pesan Otomatis WhatsApp — Tombol Melayang (ID)', type: 'textarea', placeholder: 'Teks yang sudah terisi otomatis di chat WhatsApp pelanggan' },
-            { name: 'waFloatMessage_en', label: '💬 Pesan Otomatis WhatsApp — Tombol Melayang (EN)', type: 'textarea' },
+            { name: 'waFloatMessage_id', label: '💬 Pesan Otomatis WhatsApp — Tombol Melayang (ID)', type: 'textarea', variant: 'whatsapp', placeholder: 'Teks yang sudah terisi otomatis di chat WhatsApp pelanggan' },
+            { name: 'waFloatMessage_en', label: '💬 Pesan Otomatis WhatsApp — Tombol Melayang (EN)', type: 'textarea', variant: 'whatsapp' },
             { name: 'footerLinkIg', label: 'Tautan Instagram', type: 'text' },
             { name: 'footerLinkTiktok', label: 'Tautan TikTok', type: 'text' },
             { name: 'footerLinkYoutube', label: 'Tautan YouTube', type: 'text' },
@@ -1661,8 +1679,8 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             // Button
             { name: 'collabBrandBtn_id', label: 'Button Text (ID)', type: 'text' },
             { name: 'collabBrandBtn_en', label: 'Button Text (EN)', type: 'text' },
-            { name: 'collabBrandWaMessage_id', label: '💬 Pesan Otomatis WhatsApp — Tombol Brand Collab (ID)', type: 'textarea', placeholder: 'Teks yang otomatis terisi di chat WhatsApp pelanggan' },
-            { name: 'collabBrandWaMessage_en', label: '💬 Pesan Otomatis WhatsApp — Tombol Brand Collab (EN)', type: 'textarea' },
+            { name: 'collabBrandWaMessage_id', label: '💬 Pesan Otomatis WhatsApp — Tombol Brand Collab (ID)', type: 'textarea', variant: 'whatsapp', placeholder: 'Teks yang otomatis terisi di chat WhatsApp pelanggan' },
+            { name: 'collabBrandWaMessage_en', label: '💬 Pesan Otomatis WhatsApp — Tombol Brand Collab (EN)', type: 'textarea', variant: 'whatsapp' },
             // Link tombol ini otomatis pakai Nomor WhatsApp tunggal (atur di section Footer & Medsos).
             { name: 'collabBrandBtnStatus', label: 'Status Tombol Brand Collab', type: 'select', defaultValue: 'active', options: [
               { value: 'active', label: 'Tampilkan & Aktif' },
@@ -1704,8 +1722,8 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             // Button
             { name: 'collabVenueBtn_id', label: 'Button Text (ID)', type: 'text' },
             { name: 'collabVenueBtn_en', label: 'Button Text (EN)', type: 'text' },
-            { name: 'collabVenueWaMessage_id', label: '💬 Pesan Otomatis WhatsApp — Tombol Venue Collab (ID)', type: 'textarea', placeholder: 'Teks yang otomatis terisi di chat WhatsApp pelanggan' },
-            { name: 'collabVenueWaMessage_en', label: '💬 Pesan Otomatis WhatsApp — Tombol Venue Collab (EN)', type: 'textarea' },
+            { name: 'collabVenueWaMessage_id', label: '💬 Pesan Otomatis WhatsApp — Tombol Venue Collab (ID)', type: 'textarea', variant: 'whatsapp', placeholder: 'Teks yang otomatis terisi di chat WhatsApp pelanggan' },
+            { name: 'collabVenueWaMessage_en', label: '💬 Pesan Otomatis WhatsApp — Tombol Venue Collab (EN)', type: 'textarea', variant: 'whatsapp' },
             // Link tombol ini otomatis pakai Nomor WhatsApp tunggal (atur di section Footer & Medsos).
             { name: 'collabVenueBtnStatus', label: 'Status Tombol Venue Collab', type: 'select', defaultValue: 'active', options: [
               { value: 'active', label: 'Tampilkan & Aktif' },
@@ -1920,6 +1938,7 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
                         value={form[field.name] || ''}
                         onChange={handleChange}
                         placeholder={field.placeholder || `Masukkan teks ${field.label}...`}
+                      variant={field.variant}
                       />
                     </>
                   ) : field.type === 'select' ? (

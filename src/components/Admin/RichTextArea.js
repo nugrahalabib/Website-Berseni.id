@@ -33,7 +33,9 @@ export default function RichTextArea({
   style,
   required = false,
   hint = true,
+  variant = 'markdown', // 'markdown' = teks website | 'whatsapp' = pesan chat
 }) {
+  const isWa = variant === 'whatsapp';
   const ref = useRef(null);
   const text = value || '';
 
@@ -71,10 +73,13 @@ export default function RichTextArea({
   return (
     <div>
       <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
+        {/* WhatsApp memakai penanda yang BERBEDA dari teks website:
+            *tebal*, _miring_, ~coret~ (bukan **tebal** ala markdown). Kalau
+            disamakan, penandanya akan tampil mentah di chat pelanggan. */}
         <button
           type="button"
           style={{ ...TOOLBAR_BTN, fontWeight: 800 }}
-          onClick={() => wrapSelection('**', 'teks tebal')}
+          onClick={() => wrapSelection(isWa ? '*' : '**', 'teks tebal')}
           title="Tebalkan teks terpilih (atau sisipkan contoh)"
         >
           B
@@ -82,18 +87,28 @@ export default function RichTextArea({
         <button
           type="button"
           style={{ ...TOOLBAR_BTN, fontStyle: 'italic' }}
-          onClick={() => wrapSelection('*', 'teks miring')}
+          onClick={() => wrapSelection(isWa ? '_' : '*', 'teks miring')}
           title="Miringkan teks terpilih (atau sisipkan contoh)"
         >
           I
         </button>
+        {isWa ? (
+          <button
+            type="button"
+            style={{ ...TOOLBAR_BTN, textDecoration: 'line-through' }}
+            onClick={() => wrapSelection('~', 'teks dicoret')}
+            title="Coret teks terpilih (khas WhatsApp)"
+          >
+            S
+          </button>
+        ) : null}
         <button
           type="button"
           style={TOOLBAR_BTN}
           onClick={insertParagraph}
-          title="Sisipkan baris kosong = paragraf baru"
+          title={isWa ? 'Sisipkan baris kosong (jadi paragraf baru di chat)' : 'Sisipkan baris kosong = paragraf baru'}
         >
-          ¶ Paragraf baru
+          ¶ {isWa ? 'Baris baru' : 'Paragraf baru'}
         </button>
       </div>
 
@@ -108,7 +123,16 @@ export default function RichTextArea({
         required={required}
       />
 
-      {hint ? (
+      {hint && isWa ? (
+        <p style={{ margin: '0.35rem 0 0', fontSize: '0.72rem', color: '#64748B', lineHeight: 1.5 }}>
+          Teks ini yang otomatis terisi di chat WhatsApp pelanggan. Blok teks lalu klik
+          <strong> B</strong> / <em>I</em> / <span style={{ textDecoration: 'line-through' }}>S</span>.
+          Format WhatsApp: <code style={{ margin: '0 0.25rem' }}>*tebal*</code>,
+          <code style={{ margin: '0 0.25rem' }}>_miring_</code>,
+          <code style={{ margin: '0 0.25rem' }}>~coret~</code> (pakai SATU bintang, bukan dua).
+          Tekan Enter untuk ganti baris — ikut terkirim ke chat.
+        </p>
+      ) : hint ? (
         <p style={{ margin: '0.35rem 0 0', fontSize: '0.72rem', color: '#64748B', lineHeight: 1.5 }}>
           Blok teks lalu klik <strong>B</strong> untuk menebalkan, <em>I</em> untuk memiringkan.
           Untuk <strong>tebal + miring sekaligus</strong>, blok teks lalu klik <strong>B</strong>
