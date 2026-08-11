@@ -1209,6 +1209,9 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
         if (refreshContent) {
           refreshContent();
         }
+      } else if (res.status === 401) {
+        // Sistem satu-sesi: login baru di perangkat/tab lain menggusur sesi ini.
+        showToast('Sesi login Anda sudah berakhir (ada login lain yang lebih baru). Silakan Keluar Portal, login ulang, lalu simpan lagi.');
       } else {
         const data = await res.json();
         showToast(data.error || 'Gagal menyimpan konten.');

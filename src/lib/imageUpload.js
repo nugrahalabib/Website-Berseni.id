@@ -85,6 +85,13 @@ export async function uploadImage(file) {
     /* respons non-JSON */
   }
 
+  // 401 = sesi admin sudah tidak berlaku (sistem satu-sesi: login baru di
+  // perangkat/tab lain menggusur sesi lama). Beri instruksi jelas, bukan
+  // "Unauthorized" mentah yang membingungkan.
+  if (res.status === 401) {
+    throw new Error('Sesi login Anda sudah berakhir (ada login lain yang lebih baru). Silakan Keluar Portal, login ulang, lalu coba unggah lagi.');
+  }
+
   if (!res.ok || !data || !data.url) {
     throw new Error((data && data.error) || `Gagal mengunggah gambar (kode ${res.status}).`);
   }
