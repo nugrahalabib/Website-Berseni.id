@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/components/LanguageContext';
+import { uploadImage } from '@/lib/imageUpload';
 import styles from '@/styles/Admin.module.css';
 
 // Component for uploading and editing media URLs / files
@@ -13,23 +14,12 @@ const MediaUploadInput = ({ label, name, value, type, onChange, showToast }) => 
     if (!file) return;
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      if (res.ok) {
-        const data = await res.json();
-        onChange(name, data.url);
-      } else {
-        showToast('Gagal mengunggah file.');
-      }
+      const url = await uploadImage(file);
+      onChange(name, url);
     } catch (err) {
       console.error(err);
-      showToast('Terjadi kesalahan saat mengunggah file.');
+      showToast(err.message || 'Gagal mengunggah file.');
     } finally {
       setUploading(false);
     }
@@ -369,23 +359,12 @@ function ActivitiesEditorSection({ form, setForm, showToast }) {
       const file = e.target.files[0];
       if (!file) return;
 
-      const formData = new FormData();
-      formData.append('file', file);
-
       try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setActForm(prev => ({ ...prev, image: data.url }));
-        } else {
-          showToast('Gagal mengunggah gambar.');
-        }
+        const url = await uploadImage(file);
+        setActForm(prev => ({ ...prev, image: url }));
       } catch (err) {
         console.error(err);
-        showToast('Terjadi kesalahan saat mengunggah.');
+        showToast(err.message || 'Gagal mengunggah gambar.');
       }
     };
 
@@ -668,27 +647,16 @@ function PartnersEditorSection({ form, setForm, showToast }) {
       if (!file) return;
 
       setUploading(true);
-      const formData = new FormData();
-      formData.append('file', file);
-
       try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        if (res.ok) {
-          const data = await res.json();
-          // Add to partners list immediately
-          setForm(prev => ({
-            ...prev,
-            partners: [...(prev.partners || []), data.url]
-          }));
-        } else {
-          showToast('Gagal mengunggah gambar.');
-        }
+        const url = await uploadImage(file);
+        // Add to partners list immediately
+        setForm(prev => ({
+          ...prev,
+          partners: [...(prev.partners || []), url]
+        }));
       } catch (err) {
         console.error(err);
-        showToast('Terjadi kesalahan saat mengunggah gambar.');
+        showToast(err.message || 'Gagal mengunggah gambar.');
       } finally {
         setUploading(false);
       }
@@ -873,23 +841,12 @@ function TestimonialsEditorSection({ form, setForm, showToast }) {
       const file = e.target.files[0];
       if (!file) return;
 
-      const formData = new FormData();
-      formData.append('file', file);
-
       try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setTestiForm(prev => ({ ...prev, avatar: data.url }));
-        } else {
-          showToast('Gagal mengunggah avatar.');
-        }
+        const url = await uploadImage(file);
+        setTestiForm(prev => ({ ...prev, avatar: url }));
       } catch (err) {
         console.error(err);
-        showToast('Terjadi kesalahan saat mengunggah.');
+        showToast(err.message || 'Gagal mengunggah avatar.');
       }
     };
 
@@ -1066,18 +1023,11 @@ function TestimonialsEditorSection({ form, setForm, showToast }) {
                       onChange={async (e) => {
                         const file = e.target.files[0];
                         if (!file) return;
-                        const formData = new FormData();
-                        formData.append('file', file);
                         try {
-                          const res = await fetch('/api/upload', { method: 'POST', body: formData });
-                          if (res.ok) {
-                            const data = await res.json();
-                            setTestiForm(prev => ({ ...prev, videoThumbnail: data.url }));
-                          } else {
-                            showToast('Gagal mengunggah thumbnail.');
-                          }
+                          const url = await uploadImage(file);
+                          setTestiForm(prev => ({ ...prev, videoThumbnail: url }));
                         } catch (err) {
-                          showToast('Terjadi kesalahan saat mengunggah.');
+                          showToast(err.message || 'Gagal mengunggah thumbnail.');
                         }
                       }}
                     />

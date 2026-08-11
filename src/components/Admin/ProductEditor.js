@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { uploadImage } from '@/lib/imageUpload';
 import styles from '@/styles/Admin.module.css';
 
 // Jumlah baris produk yang ditampilkan per halaman tabel
@@ -108,78 +109,20 @@ export default function ProductEditor({ showToast, setIsDirty = () => {} }) {
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  // Logika kompresi gambar klien ke WebP sebelum upload
-  const compressImage = (file) => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target.result;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 1200; // Resolusi maks 1200px lebar
-          let width = img.width;
-          let height = img.height;
-
-          if (width > MAX_WIDTH) {
-            height = Math.round((height * MAX_WIDTH) / width);
-            width = MAX_WIDTH;
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-
-          canvas.toBlob(
-            (blob) => {
-              // Ganti ekstensi file asli menjadi .webp
-              const cleanName = file.name.replace(/\.[^/.]+$/, "") + ".webp";
-              const compressedFile = new File([blob], cleanName, {
-                type: 'image/webp',
-                lastModified: Date.now(),
-              });
-              resolve(compressedFile);
-            },
-            'image/webp',
-            0.8 // Kualitas kompresi 80%
-          );
-        };
-      };
-    });
-  };
-
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     setUploading(true);
     try {
-      // 1. Kompres gambar di sisi klien terlebih dahulu
-      const optimizedFile = await compressImage(file);
-
-      // 2. Kirim berkas terkompresi ke endpoint upload
-      const formData = new FormData();
-      formData.append('file', optimizedFile);
-
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      const data = await res.json();
-      if (res.ok && data.url) {
-        setIsDirty(true);
-        setForm(prev => ({ ...prev, image: data.url }));
-        showToast('Gambar berhasil diunggah dan dioptimasi!');
-      } else {
-        showToast(data.error || 'Gagal mengunggah gambar.');
-      }
+      // Kompres di klien (WebP, <=1920px) + unggah — lihat lib/imageUpload.js
+      const url = await uploadImage(file);
+      setIsDirty(true);
+      setForm(prev => ({ ...prev, image: url }));
+      showToast('Gambar berhasil diunggah dan dioptimasi!');
     } catch (err) {
       console.error(err);
-      showToast('Terjadi kesalahan saat mengunggah.');
+      showToast(err.message || 'Gagal mengunggah gambar.');
     } finally {
       setUploading(false);
     }

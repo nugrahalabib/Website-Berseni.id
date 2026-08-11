@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { uploadImage } from '@/lib/imageUpload';
 import styles from '@/styles/Admin.module.css';
 
 // Jumlah artikel yang ditampilkan per halaman tabel
@@ -156,25 +157,13 @@ export default function BlogEditor({ showToast, setIsDirty = () => {} }) {
     if (!file) return;
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setIsDirty(true);
-        setForm(prev => ({ ...prev, image: data.url }));
-        showToast('Gambar artikel berhasil diunggah!');
-      } else {
-        const errData = await res.json();
-        showToast(errData.error || 'Gagal mengunggah gambar');
-      }
+      const url = await uploadImage(file);
+      setIsDirty(true);
+      setForm(prev => ({ ...prev, image: url }));
+      showToast('Gambar artikel berhasil diunggah!');
     } catch (err) {
-      showToast('Terjadi kesalahan koneksi saat mengunggah.');
+      showToast(err.message || 'Gagal mengunggah gambar.');
     } finally {
       setUploading(false);
     }
