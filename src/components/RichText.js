@@ -22,25 +22,42 @@ import { Fragment } from 'react';
  * yang diketik di admin tidak akan pernah dieksekusi (tidak ada celah XSS).
  */
 
-// Ganda didahulukan agar "**tebal**" tidak tertangkap aturan miring.
+// Urutan penting: tiga bintang dulu, lalu dua, baru satu — kalau dibalik,
+// "***teks***" akan tertangkap aturan tebal dan menyisakan bintang nyasar.
 // Sengaja TIDAK mendukung garis bawah (_) supaya nama_file atau URL berisi
 // underscore tidak berubah jadi miring tanpa sengaja.
-const EMPHASIS_RE = /\*\*([\s\S]+?)\*\*|\*([^*\n]+?)\*/g;
+const EMPHASIS_SOURCE = '\\*\\*\\*([\\s\\S]+?)\\*\\*\\*|\\*\\*([\\s\\S]+?)\\*\\*|\\*([^*\\n]+?)\\*';
+const MAX_NESTING = 3;
 
-function renderEmphasis(line, keyPrefix) {
+// Isi penanda diproses ULANG (rekursif) supaya "**tebal dengan *miring* di
+// dalam**" ikut terbaca. Regex dibuat baru tiap panggilan karena lastIndex
+// pada regex /g bersifat stateful — kalau dipakai bersama, rekursinya kacau.
+function renderEmphasis(line, keyPrefix, depth = 0) {
+  if (depth > MAX_NESTING) return line;
+
+  const re = new RegExp(EMPHASIS_SOURCE, 'g');
   const out = [];
   let lastIndex = 0;
   let match;
   let i = 0;
 
-  EMPHASIS_RE.lastIndex = 0;
-  while ((match = EMPHASIS_RE.exec(line)) !== null) {
+  while ((match = re.exec(line)) !== null) {
     if (match.index > lastIndex) out.push(line.slice(lastIndex, match.index));
 
+    const key = `${keyPrefix}e${i}`;
+    const inner = (value) => renderEmphasis(value, `${key}-`, depth + 1);
+
     if (match[1] !== undefined) {
-      out.push(<strong key={`${keyPrefix}b${i}`}>{match[1]}</strong>);
+      // ***teks*** -> tebal + miring sekaligus
+      out.push(
+        <strong key={key}>
+          <em>{inner(match[1])}</em>
+        </strong>
+      );
+    } else if (match[2] !== undefined) {
+      out.push(<strong key={key}>{inner(match[2])}</strong>);
     } else {
-      out.push(<em key={`${keyPrefix}i${i}`}>{match[2]}</em>);
+      out.push(<em key={key}>{inner(match[3])}</em>);
     }
 
     lastIndex = match.index + match[0].length;

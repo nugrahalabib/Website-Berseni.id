@@ -110,10 +110,13 @@ export default function RichTextArea({
 
       {hint ? (
         <p style={{ margin: '0.35rem 0 0', fontSize: '0.72rem', color: '#64748B', lineHeight: 1.5 }}>
-          Blok teks lalu klik <strong>B</strong> untuk menebalkan. Untuk paragraf baru, tekan
-          Enter <strong>dua kali</strong> (satu baris kosong). Ketik manual juga bisa:
-          <code style={{ margin: '0 0.25rem' }}>**tebal**</code> dan
-          <code style={{ margin: '0 0.25rem' }}>*miring*</code>.
+          Blok teks lalu klik <strong>B</strong> untuk menebalkan, <em>I</em> untuk memiringkan.
+          Untuk <strong>tebal + miring sekaligus</strong>, blok teks lalu klik <strong>B</strong>
+          kemudian <em>I</em>. Paragraf baru: tekan Enter <strong>dua kali</strong> (satu baris
+          kosong). Ketik manual juga bisa:
+          <code style={{ margin: '0 0.25rem' }}>**tebal**</code>,
+          <code style={{ margin: '0 0.25rem' }}>*miring*</code>,
+          <code style={{ margin: '0 0.25rem' }}>***tebal miring***</code>.
         </p>
       ) : null}
     </div>
