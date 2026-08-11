@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { uploadImage } from '@/lib/imageUpload';
+import RichTextArea from '@/components/Admin/RichTextArea';
 import styles from '@/styles/Admin.module.css';
 
 // Jumlah baris produk yang ditampilkan per halaman tabel
@@ -365,9 +366,8 @@ export default function ProductEditor({ showToast, setIsDirty = () => {} }) {
 
             <div>
               <label className={styles.adminLabel}>Deskripsi Singkat (ID)</label>
-              <textarea
+              <RichTextArea
                 name="description_id"
-                className={styles.adminTextarea}
                 value={form.description_id}
                 onChange={handleChange}
                 placeholder="Tuliskan latar belakang, makna karya, atau silabus kelas..."
@@ -376,9 +376,8 @@ export default function ProductEditor({ showToast, setIsDirty = () => {} }) {
             
             <div>
               <label className={styles.adminLabel}>Deskripsi Singkat (EN)</label>
-              <textarea
+              <RichTextArea
                 name="description_en"
-                className={styles.adminTextarea}
                 value={form.description_en}
                 onChange={handleChange}
                 placeholder="Write the background, artwork meaning, or class syllabus in English..."
