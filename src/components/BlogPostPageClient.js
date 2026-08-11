@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
 import RichText, { splitParagraphs } from '@/components/RichText';
+import { getYouTubeId, getYouTubeThumbnail } from '@/lib/video';
 import styles from '@/styles/Blog.module.css';
 
 export default function BlogPostPageClient({ content, post }) {
@@ -16,6 +17,9 @@ export default function BlogPostPageClient({ content, post }) {
   // Pisah jadi paragraf. splitParagraphs memaafkan baris kosong yang berisi
   // spasi/tab dan baris kosong beruntun — penulisan klien tidak selalu rapi.
   const paragraphs = splitParagraphs(t(post, 'content'));
+
+  // Kalau tombol CTA mengarah ke YouTube, tampilkan thumbnail-nya.
+  const ctaVideoId = getYouTubeId(post.ctaButtonLink);
 
   return (
     <div style={{ backgroundColor: dbContent?.bg_blog_detail_main || content?.bg_blog_detail_main || 'var(--color-cream-bg)', minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
@@ -105,9 +109,37 @@ export default function BlogPostPageClient({ content, post }) {
               {(post.ctaDesc_id || post.ctaDesc_en) && (
                 <p className={styles.blogCtaDesc}><RichText text={t(post, 'ctaDesc')} inline /></p>
               )}
+              {/* Link YouTube otomatis tampil sebagai kartu thumbnail yang bisa
+                  diklik — jauh lebih menarik daripada sekadar tombol teks.
+                  Admin tidak perlu setelan tambahan: cukup tempel link videonya. */}
+              {ctaVideoId && post.ctaButtonLink && (
+                <a
+                  href={post.ctaButtonLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.blogCtaVideo}
+                  aria-label={t(post, 'ctaButtonText') || (language === 'id' ? 'Tonton video' : 'Watch video')}
+                >
+                  <SafeImage
+                    src={getYouTubeThumbnail(ctaVideoId)}
+                    alt={t(post, 'ctaTitle') || (language === 'id' ? 'Tonton video' : 'Watch video')}
+                    className={styles.blogCtaVideoThumb}
+                    width={480}
+                    height={360}
+                    sizes="(max-width: 768px) 90vw, 480px"
+                    fallbackSrc={`https://i.ytimg.com/vi/${ctaVideoId}/mqdefault.jpg`}
+                  />
+                  <span className={styles.blogCtaPlay} aria-hidden="true">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </span>
+                </a>
+              )}
+
               {post.ctaShowButton && post.ctaButtonLink && (
-                <a 
-                  href={post.ctaButtonLink} 
+                <a
+                  href={post.ctaButtonLink}
                   className={styles.blogCtaBtn}
                   target={post.ctaButtonLink.startsWith('http') ? '_blank' : undefined}
                   rel={post.ctaButtonLink.startsWith('http') ? 'noopener noreferrer' : undefined}

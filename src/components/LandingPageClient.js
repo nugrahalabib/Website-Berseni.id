@@ -1410,9 +1410,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
             getTranslation('ctaBtn'),
             buildWaLink(
               resolveWaNumber(dbContent || initialContent),
-              language === 'id'
-                ? "Halo Berseni! Saya tertarik untuk bergabung sebagai early supporter dan ingin mendapatkan info terbaru mengenai karya seni dan workshop."
-                : "Hello Berseni! I am interested in joining as an early supporter and want to get the latest info about artworks and workshops."
+              getTranslation('ctaWaMessage') // teks bisa diubah admin
             ),
             null, // nomor dari satu sumber (whatsappNumber), abaikan field lama ctaBtnLink
             'ctaBtnStatus',

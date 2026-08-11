@@ -345,6 +345,20 @@ export function LanguageProvider({ children, defaultLanguage = 'id', initialCont
       id: 'Halo Berseni! Saya ingin tahu lebih lanjut mengenai karya seni, kelas, atau pilar Berseni.',
       en: 'Hello Berseni! I would like to know more about the artworks, classes, or pillars of Berseni.'
     },
+    // Pesan otomatis yang sudah terisi saat tombol WhatsApp diklik.
+    // Semua bisa diubah admin (Konten Halaman > section terkait).
+    ctaWaMessage: {
+      id: 'Halo Berseni! Saya tertarik untuk bergabung sebagai early supporter dan ingin mendapatkan info terbaru mengenai karya seni dan workshop.',
+      en: 'Hello Berseni! I am interested in joining as an early supporter and want to get the latest info about artworks and workshops.'
+    },
+    collabBrandWaMessage: {
+      id: 'Halo Berseni! Brand/Perusahaan kami tertarik untuk berkolaborasi kreatif dengan Berseni.',
+      en: 'Hello Berseni! Our brand/company is interested in collaborating creatively with Berseni.'
+    },
+    collabVenueWaMessage: {
+      id: 'Halo Berseni! Saya memiliki venue/tempat yang tertarik untuk berkolaborasi dengan komunitas Berseni.',
+      en: 'Hello Berseni! I have a venue/space and I am interested in collaborating with the Berseni community.'
+    },
     
     // Product & Activity CTA Modals
     buyArtworkBtn: { id: 'Beli Karya Sekarang', en: 'Buy Artwork Now' },

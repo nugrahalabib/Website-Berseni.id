@@ -9,7 +9,7 @@ import RichText from '@/components/RichText';
 import styles from '@/styles/Collaboration.module.css';
 
 export default function CollaborationPageClient({ content }) {
-  const { language, getTranslation, dbContent } = useLanguage();
+  const { getTranslation, dbContent } = useLanguage();
 
   const renderDynamicButton =(text, defaultLink, linkKey, statusKey, className, extraProps = {}) => {
     const link = dbContent?.[linkKey] !== undefined ? dbContent[linkKey] : defaultLink;
@@ -75,19 +75,9 @@ export default function CollaborationPageClient({ content }) {
   // Nomor dari satu sumber admin (content.whatsappNumber); lihat lib/whatsapp.js
   const waNumber = resolveWaNumber(dbContent || content);
 
-  const getBrandWALink = () => {
-    const text = language === 'id'
-      ? "Halo Berseni! Brand/Perusahaan kami tertarik untuk berkolaborasi kreatif dengan Berseni."
-      : "Hello Berseni! Our brand/company is interested in collaborating creatively with Berseni.";
-    return buildWaLink(waNumber, text);
-  };
-
-  const getVenueWALink = () => {
-    const text = language === 'id'
-      ? "Halo Berseni! Saya memiliki venue/tempat yang tertarik untuk berkolaborasi dengan komunitas Berseni."
-      : "Hello Berseni! I have a venue/space and I am interested in collaborating with the Berseni community.";
-    return buildWaLink(waNumber, text);
-  };
+  // Teks pesan otomatis bisa diubah admin (getTranslation membaca override DB).
+  const getBrandWALink = () => buildWaLink(waNumber, getTranslation('collabBrandWaMessage'));
+  const getVenueWALink = () => buildWaLink(waNumber, getTranslation('collabVenueWaMessage'));
 
   return (
     <div className={styles.pageContainer}>

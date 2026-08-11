@@ -92,8 +92,30 @@ export default function RichText({ text, inline = false, className, paragraphCla
   const raw = typeof text === 'string' ? text : text == null ? '' : String(text);
   if (!raw.trim()) return null;
 
-  // Mode inline: dipakai di dalam <p> yang sudah ada (deskripsi pendek).
-  if (inline) return <>{renderLines(raw.replace(/\r\n/g, '\n'), 'i')}</>;
+  // Mode inline: dipakai DI DALAM <p> yang sudah ada.
+  if (inline) {
+    const parts = splitParagraphs(raw);
+
+    // Satu paragraf: cukup teks biasa (satu enter tetap jadi <br>).
+    if (parts.length <= 1) return <>{renderLines(raw.replace(/\r\n/g, '\n'), 'i')}</>;
+
+    // Lebih dari satu paragraf: JANGAN andalkan <br><br> — itu cuma turun baris,
+    // tidak memberi jarak antar paragraf sehingga tulisan tetap terlihat
+    // menyatu. <p> tidak boleh disarangkan di dalam <p>, jadi dipakai <span>
+    // display:block yang valid dan memberi jarak sungguhan.
+    return (
+      <>
+        {parts.map((part, idx) => (
+          <span
+            key={`ip${idx}`}
+            style={{ display: 'block', marginTop: idx === 0 ? 0 : '0.9em' }}
+          >
+            {renderLines(part, `ip${idx}-`)}
+          </span>
+        ))}
+      </>
+    );
+  }
 
   // Mode blok: menghasilkan <p> sendiri per paragraf (teks panjang/artikel).
   return (

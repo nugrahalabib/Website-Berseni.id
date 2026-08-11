@@ -93,15 +93,24 @@ export async function POST(request) {
         url: `/uploads/${cleanFilename}`
       });
     } else {
-      // MODE PRODUCTION: Upload langsung ke Vercel Blob
+      // MODE PRODUCTION: Upload langsung ke Vercel Blob.
+      // addRandomSuffix WAJIB: tanpa ini @vercel/blob v2 MELEMPAR error kalau
+      // nama file sudah pernah dipakai, sehingga mengunggah ulang foto dengan
+      // nama sama (mis. IMG_1234.jpg dari HP) selalu gagal 500. Dengan suffix
+      // acak tiap unggahan jadi berkas baru — URL lama yang sudah dipakai di
+      // halaman lain pun tidak ikut tertimpa.
       const blob = await put(filename, file, {
         access: 'public',
+        addRandomSuffix: true,
       });
-      
+
       return NextResponse.json(blob);
     }
   } catch (err) {
     console.error("Upload error:", err);
-    return NextResponse.json({ error: 'Gagal mengunggah gambar' }, { status: 500 });
+    // Sertakan sebab aslinya supaya admin tahu harus berbuat apa, bukan sekadar
+    // "gagal" yang menyesatkan.
+    const reason = err && err.message ? ` (${String(err.message).slice(0, 120)})` : '';
+    return NextResponse.json({ error: `Gagal mengunggah gambar${reason}` }, { status: 500 });
   }
 }
