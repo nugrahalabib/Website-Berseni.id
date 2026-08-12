@@ -7,6 +7,7 @@ import ProductCard from '@/components/ProductCard';
 import ProductModal from '@/components/ProductModal';
 import { useLanguage } from '@/components/LanguageContext';
 import RichText from '@/components/RichText';
+import { textVars } from '@/lib/textColors';
 import styles from '@/styles/Store.module.css';
 
 export default function ClassesPageClient({ content, initialProducts }) {
@@ -72,7 +73,7 @@ export default function ClassesPageClient({ content, initialProducts }) {
       {/* Shared Header Navigation */}
       <Navbar />
 
-      <main id="main-content" className={styles.storeMain} style={{ backgroundColor: dbContent?.bg_classes_main || content?.bg_classes_main || '' }}>
+      <main id="main-content" className={styles.storeMain} style={{ ...textVars(dbContent || content || initialContent, 'text_classes_main'), backgroundColor: dbContent?.bg_classes_main || content?.bg_classes_main || '' }}>
         {/* Ambient Gradient Blobs for premium atmosphere */}
         <div className={styles.storeGlowContainer}>
           <div className={`${styles.glowBlob} ${styles.glowTosca}`}></div>

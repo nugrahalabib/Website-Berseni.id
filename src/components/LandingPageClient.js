@@ -13,6 +13,7 @@ import { useLanguage } from '@/components/LanguageContext';
 import SplitTitle from '@/components/SplitTitle';
 import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
 import RichText from '@/components/RichText';
+import { textVars } from '@/lib/textColors';
 import styles from '@/styles/Landing.module.css';
 
 const activitiesData = [
@@ -796,7 +797,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       <section
         id="hero-scroll-container"
         className={styles.heroScrollContainer}
-        style={{ backgroundColor: dbContent?.bg_home_hero || initialContent?.bg_home_hero || '' }}
+        style={{ ...textVars(dbContent || content || initialContent, 'text_home_hero'), backgroundColor: dbContent?.bg_home_hero || initialContent?.bg_home_hero || '' }}
       >
         <div className={styles.heroStickyWrapper}>
 
@@ -926,7 +927,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       </section>
  
       {/* SPONSOR & PARTNER LOGOS LOOP (DI PERCAYA OLEH) */}
-      <section className={styles.partnersSection} style={{ backgroundColor: dbContent?.bg_home_partners || initialContent?.bg_home_partners || '' }}>
+      <section className={styles.partnersSection} style={{ ...textVars(dbContent || content || initialContent, 'text_home_partners'), backgroundColor: dbContent?.bg_home_partners || initialContent?.bg_home_partners || '' }}>
         <div className={styles.partnersInner}>
           <h4 className={styles.partnersTitle}>{getTranslation('trustedBy')}</h4>
           <div className={styles.partnersMarquee}>
@@ -957,8 +958,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       <section 
         id="programs" 
         className={styles.programs} 
-        style={{ 
-          backgroundColor: dbContent?.bg_home_programs || initialContent?.bg_home_programs || '',
+        style={{ ...textVars(dbContent || content || initialContent, 'text_home_programs'), backgroundColor: dbContent?.bg_home_programs || initialContent?.bg_home_programs || '',
           backgroundImage: (dbContent?.bg_home_programs || initialContent?.bg_home_programs) ? 'none' : ''
         }}
       >
@@ -1064,7 +1064,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       </section>
 
       {/* 3. PRODUCT & WORKSHOP GALLERY SECTION */}
-      <section id="products" className={styles.gallery} style={{ backgroundColor: dbContent?.bg_home_gallery || initialContent?.bg_home_gallery || '' }}>
+      <section id="products" className={styles.gallery} style={{ ...textVars(dbContent || content || initialContent, 'text_home_gallery'), backgroundColor: dbContent?.bg_home_gallery || initialContent?.bg_home_gallery || '' }}>
         <div className={styles.sectionHeader}>
           <h2 style={{ color: 'var(--color-text-dark)' }}>{getTranslation('galleryTitle')}<span>.</span></h2>
           <p style={{ color: 'var(--color-text-muted)' }}><RichText text={getTranslation('gallerySubtitle')} inline /></p>
@@ -1182,7 +1182,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       </section>
 
       {/* TESTIMONIALS / REVIEWS SECTION */}
-      <section className={styles.testimonials} style={{ backgroundColor: dbContent?.bg_home_testimonials || initialContent?.bg_home_testimonials || '' }}>
+      <section className={styles.testimonials} style={{ ...textVars(dbContent || content || initialContent, 'text_home_testimonials'), backgroundColor: dbContent?.bg_home_testimonials || initialContent?.bg_home_testimonials || '' }}>
         <div className={styles.sectionHeader}>
           <h2 style={{ color: 'var(--color-text-dark)' }}>{getTranslation('testimonialsTitle')}<span>.</span></h2>
           {/* Section ini berlatar cream: --color-text-muted hanya 4.37:1 di sana.
@@ -1304,7 +1304,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       </section>
 
       {/* BLOG SECTION */}
-      <section id="blog" className={styles.blogSliderSection} style={{ backgroundColor: dbContent?.bg_home_blog || initialContent?.bg_home_blog || '' }}>
+      <section id="blog" className={styles.blogSliderSection} style={{ ...textVars(dbContent || content || initialContent, 'text_home_blog'), backgroundColor: dbContent?.bg_home_blog || initialContent?.bg_home_blog || '' }}>
         <div className={styles.sectionHeader}>
           <h2 style={{ color: 'var(--color-text-dark)' }}>
             <SplitTitle
@@ -1409,7 +1409,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
       </section>
 
       {/* 5. CTA SECTION */}
-      <section className={styles.cta} style={{ backgroundColor: dbContent?.bg_home_cta || initialContent?.bg_home_cta || '', backgroundImage: (dbContent?.bg_home_cta || initialContent?.bg_home_cta) ? 'none' : '' }}>
+      <section className={styles.cta} style={{ ...textVars(dbContent || content || initialContent, 'text_home_cta'), backgroundColor: dbContent?.bg_home_cta || initialContent?.bg_home_cta || '', backgroundImage: (dbContent?.bg_home_cta || initialContent?.bg_home_cta) ? 'none' : '' }}>
         {/* Background light effects */}
         <div style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: 'radial-gradient(circle, rgba(250,164,51,0.08) 0%, transparent 60%)', pointerEvents: 'none' }}></div>
         

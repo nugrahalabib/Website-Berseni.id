@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
 import RichText, { splitParagraphs } from '@/components/RichText';
 import { getYouTubeId, getYouTubeThumbnail } from '@/lib/video';
+import { textVars } from '@/lib/textColors';
 import styles from '@/styles/Blog.module.css';
 
 export default function BlogPostPageClient({ content, post }) {
@@ -22,7 +23,7 @@ export default function BlogPostPageClient({ content, post }) {
   const ctaVideoId = getYouTubeId(post.ctaButtonLink);
 
   return (
-    <div style={{ backgroundColor: dbContent?.bg_blog_detail_main || content?.bg_blog_detail_main || 'var(--color-cream-bg)', minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ ...textVars(dbContent || content || initialContent, 'text_blog_detail_main'), backgroundColor: dbContent?.bg_blog_detail_main || content?.bg_blog_detail_main || 'var(--color-cream-bg)', minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
       {/* Background Decorative Glow Blobs */}
       <div className={styles.blogGlowContainer}>
         <div className={`${styles.glowBlob} ${styles.glowTosca}`}></div>
@@ -98,8 +99,7 @@ export default function BlogPostPageClient({ content, post }) {
           {post.ctaShow && (
             <div 
               className={styles.blogCtaBlock} 
-              style={{ 
-                backgroundColor: dbContent?.bg_blog_detail_cta || content?.bg_blog_detail_cta || '',
+              style={{ ...textVars(dbContent || content || initialContent, 'text_blog_detail_cta'), backgroundColor: dbContent?.bg_blog_detail_cta || content?.bg_blog_detail_cta || '',
                 backgroundImage: (dbContent?.bg_blog_detail_cta || content?.bg_blog_detail_cta) ? 'none' : ''
               }}
             >

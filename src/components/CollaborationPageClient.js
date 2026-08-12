@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
 import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
 import RichText from '@/components/RichText';
+import { textVars } from '@/lib/textColors';
 import styles from '@/styles/Collaboration.module.css';
 
 export default function CollaborationPageClient({ content }) {
@@ -89,7 +90,7 @@ export default function CollaborationPageClient({ content }) {
       <main id="main-content" className={styles.mainContent}>
         
         {/* 1. HERO SECTION */}
-        <section className={styles.heroSection} style={{ backgroundColor: dbContent?.bg_collab_hero || content?.bg_collab_hero || '', backgroundImage: (dbContent?.bg_collab_hero || content?.bg_collab_hero) ? 'none' : '' }}>
+        <section className={styles.heroSection} style={{ ...textVars(dbContent || content || initialContent, 'text_collab_hero'), backgroundColor: dbContent?.bg_collab_hero || content?.bg_collab_hero || '', backgroundImage: (dbContent?.bg_collab_hero || content?.bg_collab_hero) ? 'none' : '' }}>
           <div className={styles.heroGlowContainer}>
             <div className={`${styles.glowBlob} ${styles.glowTosca}`}></div>
             <div className={`${styles.glowBlob} ${styles.glowKunyit}`}></div>
@@ -106,7 +107,7 @@ export default function CollaborationPageClient({ content }) {
         </section>
 
         {/* 2. BRAND COLLABORATION SECTION */}
-        <section className={styles.collabSection} style={{ backgroundColor: dbContent?.bg_collab_brand || content?.bg_collab_brand || '' }}>
+        <section className={styles.collabSection} style={{ ...textVars(dbContent || content || initialContent, 'text_collab_brand'), backgroundColor: dbContent?.bg_collab_brand || content?.bg_collab_brand || '' }}>
           <div className={styles.sectionInner}>
             <div className={styles.brandCollabGrid}>
               
@@ -241,7 +242,7 @@ export default function CollaborationPageClient({ content }) {
         </section>
 
         {/* 3. VENUE COLLABORATION SECTION */}
-        <section className={`${styles.collabSection} ${styles.venueSectionBg}`} style={{ backgroundColor: dbContent?.bg_collab_venue || content?.bg_collab_venue || '' }}>
+        <section className={`${styles.collabSection} ${styles.venueSectionBg}`} style={{ ...textVars(dbContent || content || initialContent, 'text_collab_venue'), backgroundColor: dbContent?.bg_collab_venue || content?.bg_collab_venue || '' }}>
           <div className={styles.sectionInner}>
             <div className={styles.venueHeader}>
               <span className={styles.sectionBadge} style={{ backgroundColor: 'rgba(20, 120, 155, 0.1)', color: 'var(--color-tosca-text)' }}>{getTranslation('collabVenueBadge')}</span>

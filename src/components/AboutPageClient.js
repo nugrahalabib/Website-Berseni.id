@@ -7,6 +7,7 @@ import SafeImage from '@/components/SafeImage';
 import { useLanguage } from '@/components/LanguageContext';
 import SplitTitle from '@/components/SplitTitle';
 import RichText, { splitParagraphs } from '@/components/RichText';
+import { textVars } from '@/lib/textColors';
 import styles from '@/styles/About.module.css';
 
 export default function AboutPageClient({ content }) {
@@ -119,7 +120,7 @@ export default function AboutPageClient({ content }) {
       <main id="main-content" className={styles.aboutMain}>
         
         {/* 1. HERO HEADER SECTION (Lighter background with elegant curves) */}
-        <section className={styles.heroSection} style={{ backgroundColor: dbContent?.bg_about_hero || content?.bg_about_hero || '', backgroundImage: (dbContent?.bg_about_hero || content?.bg_about_hero) ? 'none' : '' }}>
+        <section className={styles.heroSection} style={{ ...textVars(dbContent || content || initialContent, 'text_about_hero'), backgroundColor: dbContent?.bg_about_hero || content?.bg_about_hero || '', backgroundImage: (dbContent?.bg_about_hero || content?.bg_about_hero) ? 'none' : '' }}>
           <div className={styles.heroBgDecor}>
             {/* Sparkles / star accents */}
             <div className={`${styles.sparkle} ${styles.sp1}`}>✦</div>
@@ -174,7 +175,7 @@ export default function AboutPageClient({ content }) {
         </section>
 
         {/* 2. QUALITY & EDUCATION SECTION (Checklist Section) */}
-        <section className={styles.featureSection} style={{ backgroundColor: dbContent?.bg_about_feature || content?.bg_about_feature || '' }}>
+        <section className={styles.featureSection} style={{ ...textVars(dbContent || content || initialContent, 'text_about_feature'), backgroundColor: dbContent?.bg_about_feature || content?.bg_about_feature || '' }}>
           <div className={styles.container}>
             <div className={styles.featureGrid}>
               
@@ -236,7 +237,7 @@ export default function AboutPageClient({ content }) {
         </section>
 
         {/* 3. EMPOWERMENT & VISION-MISSION (Founder Quote & Story Grid) */}
-        <section className={styles.empowerSection} style={{ backgroundColor: dbContent?.bg_about_empower || content?.bg_about_empower || '' }}>
+        <section className={styles.empowerSection} style={{ ...textVars(dbContent || content || initialContent, 'text_about_empower'), backgroundColor: dbContent?.bg_about_empower || content?.bg_about_empower || '' }}>
           <div className={styles.container}>
             <div className={styles.empowerGrid}>
               
@@ -319,7 +320,7 @@ export default function AboutPageClient({ content }) {
         </section>
 
         {/* 4. THREE PILLARS VALUES SECTION (3-Card Bottom Section) */}
-        <section className={styles.pillarsSection} style={{ backgroundColor: dbContent?.bg_about_pillars || content?.bg_about_pillars || '' }}>
+        <section className={styles.pillarsSection} style={{ ...textVars(dbContent || content || initialContent, 'text_about_pillars'), backgroundColor: dbContent?.bg_about_pillars || content?.bg_about_pillars || '' }}>
           <div className={styles.container}>
             <div className={styles.pillarsHeader}>
               <h2 className={styles.pillarsTitle}>
@@ -370,7 +371,7 @@ export default function AboutPageClient({ content }) {
         </section>
 
         {/* 5. ACHIEVEMENTS & STATS (Stats Bar) */}
-        <section className={styles.statsSection} style={{ backgroundColor: dbContent?.bg_about_stats || content?.bg_about_stats || '' }}>
+        <section className={styles.statsSection} style={{ ...textVars(dbContent || content || initialContent, 'text_about_stats'), backgroundColor: dbContent?.bg_about_stats || content?.bg_about_stats || '' }}>
           <div className={styles.container}>
             <div className={styles.statsGrid}>
               <div className={styles.statCard}>
@@ -400,8 +401,7 @@ export default function AboutPageClient({ content }) {
         <section className={styles.ctaSection}>
           <div 
             className={styles.ctaCard}
-            style={{ 
-              backgroundColor: dbContent?.bg_about_cta || content?.bg_about_cta || '',
+            style={{ ...textVars(dbContent || content || initialContent, 'text_about_cta'), backgroundColor: dbContent?.bg_about_cta || content?.bg_about_cta || '',
               backgroundImage: (dbContent?.bg_about_cta || content?.bg_about_cta) ? 'none' : ''
             }}
           >

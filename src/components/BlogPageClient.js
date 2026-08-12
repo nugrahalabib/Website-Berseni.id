@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
 import SplitTitle from '@/components/SplitTitle';
 import RichText from '@/components/RichText';
+import { textVars } from '@/lib/textColors';
 import styles from '@/styles/Blog.module.css';
 
 export default function BlogPageClient({ content, initialPosts }) {
@@ -20,7 +21,7 @@ export default function BlogPageClient({ content, initialPosts }) {
   const remainingPosts = posts.length > 1 ? posts.slice(1) : [];
 
   return (
-    <div style={{ backgroundColor: dbContent?.bg_blog_content || content?.bg_blog_content || 'var(--color-cream-bg)', minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ ...textVars(dbContent || content || initialContent, 'text_blog_content'), backgroundColor: dbContent?.bg_blog_content || content?.bg_blog_content || 'var(--color-cream-bg)', minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
       {/* Background Glow Blobs for Artistic Aesthetic */}
       <div className={styles.blogGlowContainer}>
         <div className={`${styles.glowBlob} ${styles.glowTosca}`}></div>
@@ -32,7 +33,7 @@ export default function BlogPageClient({ content, initialPosts }) {
       
       <main id="main-content" className={styles.blogPage}>
         {/* Page Header */}
-        <div className={styles.blogHeader} style={{ backgroundColor: dbContent?.bg_blog_header || content?.bg_blog_header || '' }}>
+        <div className={styles.blogHeader} style={{ ...textVars(dbContent || content || initialContent, 'text_blog_header'), backgroundColor: dbContent?.bg_blog_header || content?.bg_blog_header || '' }}>
           <h1 className={styles.blogTitle} style={{ color: txt('text_blog_header_title') }}>
             <SplitTitle
               text={getTranslation('blogHeaderTitleText')}
