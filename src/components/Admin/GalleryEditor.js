@@ -169,7 +169,7 @@ export default function GalleryEditor({ showToast, setIsDirty = () => {} }) {
               <label className={styles.adminLabel}>Foto Kegiatan</label>
               <div
                 style={{
-                  width: '100%', aspectRatio: '4 / 3', borderRadius: '12px', overflow: 'hidden',
+                  width: '100%', aspectRatio: '4 / 5', borderRadius: '12px', overflow: 'hidden',
                   border: form.image ? '1px solid #CBD5E1' : '2px dashed #CBD5E1',
                   background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   color: '#94A3B8', fontSize: '0.8rem', marginBottom: '0.6rem',
@@ -243,7 +243,7 @@ export default function GalleryEditor({ showToast, setIsDirty = () => {} }) {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.25rem' }}>
             {items.map((item, index) => (
               <div key={item.id} style={{ border: '1px solid #E2E8F0', borderRadius: '12px', overflow: 'hidden', background: '#fff' }}>
-                <div style={{ aspectRatio: '4 / 3', background: '#F1F5F9' }}>
+                <div style={{ aspectRatio: '4 / 5', background: '#F1F5F9' }}>
                   <img src={item.image} alt={item.title_id || 'Foto galeri'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 <div style={{ padding: '0.75rem' }}>
