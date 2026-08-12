@@ -11,6 +11,9 @@ import styles from '@/styles/Collaboration.module.css';
 export default function CollaborationPageClient({ content }) {
   const { getTranslation, dbContent } = useLanguage();
 
+  // Warna teks yang bisa diatur admin (kosong = pakai warna bawaan tema).
+  const txt = (key) => dbContent?.[key] || content?.[key] || undefined;
+
   const renderDynamicButton =(text, defaultLink, linkKey, statusKey, className, extraProps = {}) => {
     const link = dbContent?.[linkKey] !== undefined ? dbContent[linkKey] : defaultLink;
     const status = dbContent?.[statusKey] || 'active';
@@ -94,9 +97,9 @@ export default function CollaborationPageClient({ content }) {
           </div>
           
           <div className={styles.heroInner}>
-            <span className={styles.heroSubtitle}>{getTranslation('collabHeroSubtitle')}</span>
-            <h1 className={styles.heroTitle}>{getTranslation('collabHeroTitle')}<span>.</span></h1>
-            <p className={styles.heroDesc}>
+            <span className={styles.heroSubtitle} style={{ color: txt('text_collab_hero_body') }}>{getTranslation('collabHeroSubtitle')}</span>
+            <h1 className={styles.heroTitle} style={{ color: txt('text_collab_hero_title') }}>{getTranslation('collabHeroTitle')}<span>.</span></h1>
+            <p className={styles.heroDesc} style={{ color: txt('text_collab_hero_body') }}>
               <RichText text={getTranslation('collabHeroDesc')} inline />
             </p>
           </div>

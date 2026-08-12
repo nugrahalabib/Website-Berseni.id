@@ -11,6 +11,9 @@ import styles from '@/styles/Store.module.css';
 
 export default function StorePageClient({ content, initialProducts }) {
   const { language, t, getTranslation, dbContent } = useLanguage();
+
+  // Warna teks yang bisa diatur admin (kosong = pakai warna bawaan tema).
+  const txt = (key) => dbContent?.[key] || content?.[key] || undefined;
   const [products, setProducts] = useState(initialProducts || []);
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -69,11 +72,11 @@ export default function StorePageClient({ content, initialProducts }) {
         {/* Hero Header Section */}
         <section className={styles.heroSection}>
           <div className={styles.heroInner}>
-            <span className={styles.heroSubtitle}>Berseni Art Market & Hub</span>
-            <h1 className={styles.heroTitle}>
+            <span className={styles.heroSubtitle} style={{ color: txt('text_store_header_body') }}>Berseni Art Market & Hub</span>
+            <h1 className={styles.heroTitle} style={{ color: txt('text_store_header_title') }}>
               {getTranslation('storeTitle')}
             </h1>
-            <p className={styles.heroDesc}>
+            <p className={styles.heroDesc} style={{ color: txt('text_store_header_body') }}>
               <RichText text={getTranslation('galleryArtworkSubtitle')} inline />
             </p>
           </div>

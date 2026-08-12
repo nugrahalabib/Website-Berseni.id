@@ -1271,7 +1271,22 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
               { value: 'id', label: 'Bahasa Indonesia (ID)' },
               { value: 'en', label: 'English (EN)' }
             ]},
-            { name: 'navLayout', label: 'Layout Menu Navigasi (Navbar)', type: 'select', defaultValue: 'floating', options: [
+                        // Nama menu di navbar & footer — admin bebas mengganti (mis. Galeri -> Artwork)
+            { name: 'navHome_id', label: 'Menu: Beranda (ID)', type: 'text' },
+            { name: 'navHome_en', label: 'Menu: Beranda (EN)', type: 'text' },
+            { name: 'navStore_id', label: 'Menu: Galeri/Artwork (ID)', type: 'text' },
+            { name: 'navStore_en', label: 'Menu: Galeri/Artwork (EN)', type: 'text' },
+            { name: 'navClasses_id', label: 'Menu: Kelas (ID)', type: 'text' },
+            { name: 'navClasses_en', label: 'Menu: Kelas (EN)', type: 'text' },
+            { name: 'navAbout_id', label: 'Menu: Tentang Kami (ID)', type: 'text' },
+            { name: 'navAbout_en', label: 'Menu: Tentang Kami (EN)', type: 'text' },
+            { name: 'navCollab_id', label: 'Menu: Kolaborasi (ID)', type: 'text' },
+            { name: 'navCollab_en', label: 'Menu: Kolaborasi (EN)', type: 'text' },
+            { name: 'navBlog_id', label: 'Menu: Blog (ID)', type: 'text' },
+            { name: 'navBlog_en', label: 'Menu: Blog (EN)', type: 'text' },
+            { name: 'navGallery_id', label: 'Menu: Galeri Kegiatan (ID)', type: 'text' },
+            { name: 'navGallery_en', label: 'Menu: Galeri Kegiatan (EN)', type: 'text' },
+{ name: 'navLayout', label: 'Layout Menu Navigasi (Navbar)', type: 'select', defaultValue: 'floating', options: [
               { value: 'floating', label: 'Capsule Melayang (Melayang dengan sudut tumpul di atas)' },
               { value: 'full', label: 'Kotak Penuh Lebar (Full-width rectangle di atas)' }
             ]},
@@ -1453,7 +1468,19 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'bg_home_gallery', label: 'Latar Belakang Koleksi & Kelas Seni', type: 'color' },
             { name: 'bg_home_testimonials', label: 'Latar Belakang Testimonial (Apa Kata Mereka)', type: 'color' },
             { name: 'bg_home_blog', label: 'Latar Belakang Blog/Artikel Terbaru', type: 'color' },
-            { name: 'bg_home_cta', label: 'Latar Belakang CTA Banner WhatsApp', type: 'color' }
+            { name: 'bg_home_cta', label: 'Latar Belakang CTA Banner WhatsApp', type: 'color' },
+            { name: 'text_home_hero_title', label: '🖊️ Warna Teks Judul — Hero Banner', type: 'color' },
+            { name: 'text_home_hero_body', label: '🖊️ Warna Teks Paragraf — Hero Banner', type: 'color' },
+            { name: 'text_home_programs_title', label: '🖊️ Warna Teks Judul — Program Kami', type: 'color' },
+            { name: 'text_home_programs_body', label: '🖊️ Warna Teks Paragraf — Program Kami', type: 'color' },
+            { name: 'text_home_gallery_title', label: '🖊️ Warna Teks Judul — Koleksi & Kelas', type: 'color' },
+            { name: 'text_home_gallery_body', label: '🖊️ Warna Teks Paragraf — Koleksi & Kelas', type: 'color' },
+            { name: 'text_home_testimonials_title', label: '🖊️ Warna Teks Judul — Testimonial', type: 'color' },
+            { name: 'text_home_testimonials_body', label: '🖊️ Warna Teks Paragraf — Testimonial', type: 'color' },
+            { name: 'text_home_blog_title', label: '🖊️ Warna Teks Judul — Blog Terbaru', type: 'color' },
+            { name: 'text_home_blog_body', label: '🖊️ Warna Teks Paragraf — Blog Terbaru', type: 'color' },
+            { name: 'text_home_cta_title', label: '🖊️ Warna Teks Judul — CTA WhatsApp', type: 'color' },
+            { name: 'text_home_cta_body', label: '🖊️ Warna Teks Paragraf — CTA WhatsApp', type: 'color' },
           ]
         }
       }
@@ -1625,7 +1652,17 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'bg_about_pillars', label: 'Latar Belakang Pillars Section', type: 'color' },
             { name: 'bg_about_feature', label: 'Latar Belakang Commitment Section', type: 'color' },
             { name: 'bg_about_stats', label: 'Latar Belakang Stats Section', type: 'color' },
-            { name: 'bg_about_cta', label: 'Latar Belakang CTA Section', type: 'color' }
+            { name: 'bg_about_cta', label: 'Latar Belakang CTA Section', type: 'color' },
+            { name: 'text_about_hero_title', label: '🖊️ Warna Teks Judul — Hero About', type: 'color' },
+            { name: 'text_about_hero_body', label: '🖊️ Warna Teks Paragraf — Hero About', type: 'color' },
+            { name: 'text_about_story_title', label: '🖊️ Warna Teks Judul — Story', type: 'color' },
+            { name: 'text_about_story_body', label: '🖊️ Warna Teks Paragraf — Story', type: 'color' },
+            { name: 'text_about_pillars_title', label: '🖊️ Warna Teks Judul — Tiga Pilar', type: 'color' },
+            { name: 'text_about_pillars_body', label: '🖊️ Warna Teks Paragraf — Tiga Pilar', type: 'color' },
+            { name: 'text_about_stats_title', label: '🖊️ Warna Teks Judul — Statistik', type: 'color' },
+            { name: 'text_about_stats_body', label: '🖊️ Warna Teks Paragraf — Statistik', type: 'color' },
+            { name: 'text_about_cta_title', label: '🖊️ Warna Teks Judul — CTA About', type: 'color' },
+            { name: 'text_about_cta_body', label: '🖊️ Warna Teks Paragraf — CTA About', type: 'color' },
           ]
         }
       }
@@ -1737,7 +1774,13 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
           fields: [
             { name: 'bg_collab_hero', label: 'Latar Belakang Hero Header', type: 'color' },
             { name: 'bg_collab_brand', label: 'Latar Belakang Brand & Corporate Collab', type: 'color' },
-            { name: 'bg_collab_venue', label: 'Latar Belakang Host & Space Partners', type: 'color' }
+            { name: 'bg_collab_venue', label: 'Latar Belakang Host & Space Partners', type: 'color' },
+            { name: 'text_collab_hero_title', label: '🖊️ Warna Teks Judul — Hero Kolaborasi', type: 'color' },
+            { name: 'text_collab_hero_body', label: '🖊️ Warna Teks Paragraf — Hero Kolaborasi', type: 'color' },
+            { name: 'text_collab_brand_title', label: '🖊️ Warna Teks Judul — Section Brand', type: 'color' },
+            { name: 'text_collab_brand_body', label: '🖊️ Warna Teks Paragraf — Section Brand', type: 'color' },
+            { name: 'text_collab_venue_title', label: '🖊️ Warna Teks Judul — Section Venue', type: 'color' },
+            { name: 'text_collab_venue_body', label: '🖊️ Warna Teks Paragraf — Section Venue', type: 'color' },
           ]
         }
       }
@@ -1775,7 +1818,9 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
         backgrounds: {
           title: '🎨 Warna Latar Belakang Page',
           fields: [
-            { name: 'bg_store_main', label: 'Latar Belakang Utama Halaman Galeri', type: 'color' }
+            { name: 'bg_store_main', label: 'Latar Belakang Utama Halaman Galeri', type: 'color' },
+            { name: 'text_store_header_title', label: '🖊️ Warna Teks Judul — Header Galeri/Artwork', type: 'color' },
+            { name: 'text_store_header_body', label: '🖊️ Warna Teks Paragraf — Header Galeri/Artwork', type: 'color' },
           ]
         }
       }
@@ -1805,7 +1850,9 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
         backgrounds: {
           title: '🎨 Warna Latar Belakang Page',
           fields: [
-            { name: 'bg_classes_main', label: 'Latar Belakang Utama Halaman Kelas', type: 'color' }
+            { name: 'bg_classes_main', label: 'Latar Belakang Utama Halaman Kelas', type: 'color' },
+            { name: 'text_classes_header_title', label: '🖊️ Warna Teks Judul — Header Kelas', type: 'color' },
+            { name: 'text_classes_header_body', label: '🖊️ Warna Teks Paragraf — Header Kelas', type: 'color' },
           ]
         }
       }
@@ -1848,7 +1895,11 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'bg_blog_header', label: 'Latar Belakang Header Halaman Blog', type: 'color' },
             { name: 'bg_blog_content', label: 'Latar Belakang Konten Daftar Blog', type: 'color' },
             { name: 'bg_blog_detail_main', label: 'Latar Belakang Utama Detail Artikel (Detail Blog)', type: 'color' },
-            { name: 'bg_blog_detail_cta', label: 'Latar Belakang CTA Detail Artikel (Detail Blog)', type: 'color' }
+            { name: 'bg_blog_detail_cta', label: 'Latar Belakang CTA Detail Artikel (Detail Blog)', type: 'color' },
+            { name: 'text_blog_header_title', label: '🖊️ Warna Teks Judul — Header Blog', type: 'color' },
+            { name: 'text_blog_header_body', label: '🖊️ Warna Teks Paragraf — Header Blog', type: 'color' },
+            { name: 'text_blog_about_title', label: '🖊️ Warna Teks Judul — Tentang Berseni', type: 'color' },
+            { name: 'text_blog_about_body', label: '🖊️ Warna Teks Paragraf — Tentang Berseni', type: 'color' },
           ]
         }
       }

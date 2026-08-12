@@ -57,6 +57,11 @@ export default function Footer() {
                   {getTranslation('navBlog')}
                 </Link>
               </li>
+              <li>
+                <Link href="/gallery" className={styles.footerLink}>
+                  {getTranslation('navGallery')}
+                </Link>
+              </li>
             </ul>
           </div>
 

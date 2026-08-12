@@ -41,6 +41,7 @@ export default function Navbar() {
     { name: getTranslation('navAbout'), path: '/about' },
     { name: getTranslation('navCollab'), path: '/collaboration' },
     { name: getTranslation('navBlog'), path: '/blog' },
+    { name: getTranslation('navGallery'), path: '/gallery' },
   ];
 
   const langSwitchLabel = `Switch language, currently ${language === 'id' ? 'Indonesian' : 'English'}`;

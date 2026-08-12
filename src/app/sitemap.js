@@ -11,6 +11,7 @@ export default async function sitemap() {
     '/store',
     '/classes',
     '/blog',
+    '/gallery',
   ].map((route) => ({
     url: `${SITE_URL}${route}`,
     lastModified: new Date().toISOString().split('T')[0],

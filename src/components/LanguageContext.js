@@ -98,6 +98,21 @@ export function LanguageProvider({ children, defaultLanguage = 'id', initialCont
     navCollab: { id: 'Kolaborasi', en: 'Collaboration' },
     navBlog: { id: 'Blog', en: 'Blog' },
     langToggle: { id: 'EN', en: 'ID' },
+    // Halaman Galeri Kegiatan
+    navGallery: { id: 'Galeri', en: 'Gallery' },
+    galleryHeaderLabel: { id: 'Dokumentasi Berseni', en: 'Berseni Documentation' },
+    galleryHeaderTitle: { id: 'Galeri', en: 'Activity' },
+    galleryHeaderTitleSpan: { id: 'Kegiatan.', en: 'Gallery.' },
+    galleryHeaderDesc: {
+      id: 'Potret momen workshop melukis, kelas, dan kegiatan komunitas Berseni bersama teman-teman pecinta seni.',
+      en: 'Moments from our painting workshops, classes, and Berseni community activities with fellow art lovers.'
+    },
+    galleryEmpty: { id: 'Belum ada foto kegiatan. Nantikan dokumentasi acara Berseni berikutnya!', en: 'No activity photos yet. Stay tuned for our next Berseni event documentation!' },
+    galleryOpenPhoto: { id: 'Lihat foto kegiatan', en: 'View activity photo' },
+    galleryClose: { id: 'Tutup', en: 'Close' },
+    galleryPrev: { id: 'Foto sebelumnya', en: 'Previous photo' },
+    galleryNext: { id: 'Foto berikutnya', en: 'Next photo' },
+
 
     // Footer
     footerTagline: { id: 'Dunia Seni untuk Semua', en: 'A World of Art for Everyone' },

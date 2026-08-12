@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import PageContentEditor from './PageContentEditor';
 import ProductEditor from './ProductEditor';
 import BlogEditor from './BlogEditor';
+import GalleryEditor from './GalleryEditor';
 import SeoEditor from './SeoEditor';
 import AccountEditor from './AccountEditor';
 import styles from '@/styles/Admin.module.css';
@@ -137,6 +138,8 @@ export default function DashboardClient() {
         return <ProductEditor showToast={showToast} setIsDirty={setIsDirty} />;
       case 'blog':
         return <BlogEditor showToast={showToast} setIsDirty={setIsDirty} />;
+      case 'gallery':
+        return <GalleryEditor showToast={showToast} setIsDirty={setIsDirty} />;
       case 'seo':
         return <SeoEditor showToast={showToast} setIsDirty={setIsDirty} />;
       case 'account':
@@ -156,6 +159,8 @@ export default function DashboardClient() {
         return 'Kelola karya lukisan fisik, workshop offline, atau kelas online untuk dijual.';
       case 'blog':
         return 'Kelola artikel blog kreatif, catatan seni, dan parameter SEO masing-masing tulisan.';
+      case 'gallery':
+        return 'Kelola foto dokumentasi workshop dan kegiatan komunitas Berseni.';
       case 'seo':
         return 'Konfigurasi metadata penelusuran (SEO) dan Optimasi AI Generatif (GEO) tiap halaman.';
 
@@ -226,6 +231,15 @@ export default function DashboardClient() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
               </svg>
               Kelola Blog
+            </li>
+            <li
+              className={`${styles.menuItem} ${activeTab === 'gallery' ? styles.menuItemActive : ''}`}
+              onClick={() => handleTabChange('gallery')}
+            >
+              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm5 4a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm13 7l-5-5L5 21" />
+              </svg>
+              Galeri Kegiatan
             </li>
             <li
               className={`${styles.menuItem} ${activeTab === 'seo' ? styles.menuItemActive : ''}`}

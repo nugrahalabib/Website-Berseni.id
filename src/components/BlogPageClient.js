@@ -11,6 +11,9 @@ import styles from '@/styles/Blog.module.css';
 
 export default function BlogPageClient({ content, initialPosts }) {
   const { t, getTranslation, dbContent } = useLanguage();
+
+  // Warna teks yang bisa diatur admin (kosong = pakai warna bawaan tema).
+  const txt = (key) => dbContent?.[key] || content?.[key] || undefined;
   
   const posts = initialPosts || [];
   const featuredPost = posts.length > 0 ? posts[0] : null;
@@ -30,14 +33,14 @@ export default function BlogPageClient({ content, initialPosts }) {
       <main id="main-content" className={styles.blogPage}>
         {/* Page Header */}
         <div className={styles.blogHeader} style={{ backgroundColor: dbContent?.bg_blog_header || content?.bg_blog_header || '' }}>
-          <h1 className={styles.blogTitle}>
+          <h1 className={styles.blogTitle} style={{ color: txt('text_blog_header_title') }}>
             <SplitTitle
               text={getTranslation('blogHeaderTitleText')}
               highlight={getTranslation('blogHeaderTitleSpan')}
               layout={dbContent?.blogHeaderTitleLayout}
             />
           </h1>
-          <p className={styles.blogSubtitle}>
+          <p className={styles.blogSubtitle} style={{ color: txt('text_blog_header_body') }}>
             <RichText text={getTranslation('blogHeaderDesc')} inline />
           </p>
         </div>
