@@ -92,7 +92,9 @@ export function LanguageProvider({ children, defaultLanguage = 'id', initialCont
   const dict = {
     // Navbar
     navHome: { id: 'Beranda', en: 'Home' },
-    navStore: { id: 'Galeri', en: 'Store' },
+    // Menu toko karya: dulu bernama "Galeri" di ID, bentrok dengan halaman
+    // Galeri Kegiatan yang baru. Dinamai "Artwork" di kedua bahasa (permintaan klien).
+    navStore: { id: 'Artwork', en: 'Artwork' },
     navClasses: { id: 'Kelas', en: 'Classes' },
     navAbout: { id: 'Tentang Kami', en: 'About Us' },
     navCollab: { id: 'Kolaborasi', en: 'Collaboration' },
