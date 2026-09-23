@@ -5,6 +5,8 @@ import { useLanguage } from '@/components/LanguageContext';
 import { uploadImage, uploadIcon } from '@/lib/imageUpload';
 import RichTextArea from '@/components/Admin/RichTextArea';
 import { WA_MESSAGE_DEFAULTS } from '@/lib/whatsapp';
+import SocialIcon, { SOCIAL_PRESETS, SOCIAL_PRESET_ORDER } from '@/components/SocialIcon';
+import { buildDefaultFooterSocials } from '@/lib/footerSocials';
 import styles from '@/styles/Admin.module.css';
 
 // Pilihan posisi teks highlight (bagian cursive) pada judul dua-bagian.
@@ -193,7 +195,16 @@ const defaultColors = {
   bg_blog_header: "#FAF5EB",
   bg_blog_content: "#FFFFFF",
   bg_blog_detail_main: "#FFFFFF",
-  bg_blog_detail_cta: "#FAF5EB"
+  bg_blog_detail_cta: "#FAF5EB",
+
+  // Footer. Nilainya = warna yang MEMANG dipakai footer sekarang, disalin dari
+  // Components.module.css, supaya tombol DEFAULT di panel mengembalikan
+  // tampilan aslinya dan bukan menebak.
+  bg_footer: "#0B132B",
+  text_footer_title: "#FAA433",
+  text_footer_body: "#94A3B8",
+  text_footer_brand: "#F8FAFC",
+  footerAccentColor: "#14789B"
 };
 
 // Component for visual color picking with typed hex codes support
@@ -300,6 +311,172 @@ const IconUploadInput = ({ label, hint, name, value, onChange, showToast }) => {
     </div>
   );
 };
+
+// Daftar tautan medsos di footer.
+//
+// Setiap entri disunting langsung di tempat — tidak ada mode "sunting" terpisah
+// seperti editor aktivitas. Untuk daftar sependek ini, melihat semua isian
+// sekaligus jauh lebih cepat daripada bolak-balik membuka satu per satu.
+function FooterSocialsEditorSection({ form, setForm, showToast }) {
+  const [mengunggahId, setMengunggahId] = useState(null);
+
+  const daftar = Array.isArray(form.footerSocials) ? form.footerSocials : [];
+
+  const ubahItem = (id, kunci, nilai) => {
+    setForm((prev) => ({
+      ...prev,
+      footerSocials: (prev.footerSocials || []).map((it) =>
+        it.id === id ? { ...it, [kunci]: nilai } : it
+      ),
+    }));
+  };
+
+  const tambah = () => {
+    const baru = {
+      id: `soc-${Date.now()}`,
+      preset: 'custom',
+      label_id: '',
+      label_en: '',
+      icon: '',
+      link: '',
+    };
+    setForm((prev) => ({ ...prev, footerSocials: [...(prev.footerSocials || []), baru] }));
+  };
+
+  const hapus = (id) => {
+    const it = daftar.find((x) => x.id === id);
+    const nama = (it && (it.label_id || it.label_en)) || (it && SOCIAL_PRESETS[it.preset]?.label) || 'tautan ini';
+    if (!confirm(`Hapus "${nama}" dari footer?`)) return;
+    setForm((prev) => ({
+      ...prev,
+      footerSocials: (prev.footerSocials || []).filter((x) => x.id !== id),
+    }));
+  };
+
+  const geser = (idx, arah) => {
+    const next = [...daftar];
+    const tujuan = arah === 'up' ? idx - 1 : idx + 1;
+    if (tujuan < 0 || tujuan >= next.length) return;
+    [next[idx], next[tujuan]] = [next[tujuan], next[idx]];
+    setForm((prev) => ({ ...prev, footerSocials: next }));
+  };
+
+  const unggahIkon = async (id, e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setMengunggahId(id);
+    try {
+      const url = await uploadIcon(file);
+      ubahItem(id, 'icon', url);
+      showToast('Ikon berhasil diunggah & dikonversi otomatis.');
+    } catch (err) {
+      console.error(err);
+      showToast(err.message || 'Gagal mengunggah ikon.');
+    } finally {
+      setMengunggahId(null);
+      e.target.value = '';
+    }
+  };
+
+  // Keterangan kolom Link berbeda per platform: WhatsApp boleh dikosongkan
+  // (ikut nomor global), Email cukup alamatnya saja.
+  const petunjukLink = (preset) => {
+    if (preset === 'whatsapp') return 'Kosongkan untuk memakai Nomor WhatsApp di pengaturan Footer di atas';
+    if (preset === 'email') return 'Cukup alamatnya, mis. halo@berseni.id';
+    return 'Alamat lengkap, mis. https://instagram.com/berseni.id';
+  };
+
+  return (
+    <div style={{ marginTop: '1.5rem', borderTop: '1px dashed #E2E8F0', paddingTop: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+        <label className={styles.adminLabel} style={{ marginBottom: 0 }}>Tautan Media Sosial di Footer</label>
+        <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem', borderRadius: '8px' }} onClick={tambah}>
+          + Tambah Tautan
+        </button>
+      </div>
+      <p style={{ fontSize: '0.78rem', color: '#64748B', margin: '0 0 1.25rem 0', lineHeight: 1.6 }}>
+        Tambah, hapus, atau geser urutannya sesuka Anda. Tidak ingin menampilkan Instagram? Hapus saja barisnya.
+        Ingin menambah platform yang belum ada di daftar pilihan, pilih <strong>Lainnya</strong>, unggah ikonnya, lalu isi label &amp; link-nya.
+        Baris yang link-nya kosong tidak akan tampil di situs.
+      </p>
+
+      {daftar.length === 0 ? (
+        <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', border: '1px dashed #CBD5E1', borderRadius: '12px' }}>
+          Belum ada tautan medsos. Klik &quot;+ Tambah Tautan&quot; untuk menambahkan.
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+          {daftar.map((item, idx) => (
+            <div key={item.id} style={{ border: '1px solid #E2E8F0', borderRadius: '12px', padding: '1rem', background: '#FFFFFF' }}>
+              <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
+                {/* Pratinjau di atas latar gelap — footer memang berlatar gelap */}
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#0B132B', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF', flexShrink: 0, border: '1px solid #1E293B' }}>
+                  {item.icon
+                    ? <img src={item.icon} alt="" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+                    : <SocialIcon preset={item.preset} size={20} />}
+                </div>
+
+                <div style={{ flex: 1, minWidth: '180px' }}>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 'bold', color: '#64748B', marginBottom: '0.25rem' }}>Platform</label>
+                  <select
+                    value={item.preset || 'custom'}
+                    onChange={(e) => ubahItem(item.id, 'preset', e.target.value)}
+                    className={styles.adminSelect}
+                    style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: '8px', border: '1px solid #CBD5E1' }}
+                  >
+                    {SOCIAL_PRESET_ORDER.map((key) => (
+                      <option key={key} value={key}>{SOCIAL_PRESETS[key].label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.35rem', flexShrink: 0 }}>
+                  <button type="button" onClick={() => geser(idx, 'up')} disabled={idx === 0} title="Naikkan" style={{ padding: '0.4rem 0.6rem', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#FFFFFF', cursor: idx === 0 ? 'not-allowed' : 'pointer', opacity: idx === 0 ? 0.4 : 1 }}>↑</button>
+                  <button type="button" onClick={() => geser(idx, 'down')} disabled={idx === daftar.length - 1} title="Turunkan" style={{ padding: '0.4rem 0.6rem', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#FFFFFF', cursor: idx === daftar.length - 1 ? 'not-allowed' : 'pointer', opacity: idx === daftar.length - 1 ? 0.4 : 1 }}>↓</button>
+                  <button type="button" onClick={() => hapus(item.id)} title="Hapus" style={{ padding: '0.4rem 0.7rem', borderRadius: '8px', border: '1px solid #FCA5A5', background: '#FEF2F2', color: '#B91C1C', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 'bold' }}>Hapus</button>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 'bold', color: '#64748B', marginBottom: '0.25rem' }}>Keterangan (ID)</label>
+                  <input type="text" className={styles.adminInput} value={item.label_id || ''} onChange={(e) => ubahItem(item.id, 'label_id', e.target.value)} placeholder="mis. Instagram" />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 'bold', color: '#64748B', marginBottom: '0.25rem' }}>Keterangan (EN)</label>
+                  <input type="text" className={styles.adminInput} value={item.label_en || ''} onChange={(e) => ubahItem(item.id, 'label_en', e.target.value)} placeholder="e.g. Instagram" />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '0.75rem' }}>
+                <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 'bold', color: '#64748B', marginBottom: '0.25rem' }}>Link Tujuan</label>
+                <input type="text" className={styles.adminInput} value={item.link || ''} onChange={(e) => ubahItem(item.id, 'link', e.target.value)} placeholder={petunjukLink(item.preset)} />
+                <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>{petunjukLink(item.preset)}</span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <label className="btn btn-secondary" style={{ padding: '0.35rem 0.8rem', borderRadius: '8px', fontSize: '0.75rem', cursor: mengunggahId === item.id ? 'wait' : 'pointer', margin: 0 }}>
+                  {mengunggahId === item.id ? 'Mengonversi & mengunggah...' : (item.icon ? 'Ganti Ikon' : 'Unggah Ikon Sendiri')}
+                  <input type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/gif,image/svg+xml,.svg" style={{ display: 'none' }} onChange={(e) => unggahIkon(item.id, e)} disabled={mengunggahId === item.id} />
+                </label>
+                {item.icon && (
+                  <button type="button" onClick={() => ubahItem(item.id, 'icon', '')} style={{ padding: '0.35rem 0.8rem', borderRadius: '8px', fontSize: '0.75rem', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#64748B', cursor: 'pointer' }}>
+                    Pakai ikon bawaan
+                  </button>
+                )}
+                <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>
+                  {item.preset === 'custom' && !item.icon
+                    ? 'Platform "Lainnya" wajib punya ikon sendiri.'
+                    : 'Kosong = ikon bawaan platform.'}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const ColorPickerInput = ({ label, name, value, onChange }) => {
   const defaultVal = defaultColors[name] || '#ffffff';
@@ -1342,6 +1519,12 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
               updatedForm[key] = CAROUSEL_DEFAULTS[key];
             }
           });
+          // Daftar medsos footer: kalau belum pernah disunting, isi dari
+          // field-field lama (footerLinkIg, footerIconWa, dst) supaya admin
+          // mulai dari kondisi situs saat ini, bukan dari daftar kosong.
+          if (!Array.isArray(updatedForm.footerSocials)) {
+            updatedForm.footerSocials = buildDefaultFooterSocials(updatedForm);
+          }
           setForm(updatedForm);
         }
       } catch (err) {
@@ -1634,6 +1817,7 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
         footer: {
           title: 'Pengaturan Kaki Halaman (Footer) & Medsos',
           fields: [
+            { name: 'footerBrandText', label: 'Nama Brand di Footer (tulisan besar bergaya tulisan tangan)', type: 'text', placeholder: 'Berseni' },
             { name: 'footerDesc_id', label: 'Deskripsi Singkat Footer (ID)', type: 'textarea' },
             { name: 'footerDesc_en', label: 'Deskripsi Singkat Footer (EN)', type: 'textarea' },
             { name: 'footerContactDesc_id', label: 'Teks Ajakan Kontak Hubungi Kami (ID)', type: 'textarea' },
@@ -1641,19 +1825,22 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'whatsappNumber', label: '📱 Nomor WhatsApp — SATU nomor untuk SEMUA tombol WA di situs (floating, footer, CTA beranda, kolaborasi brand & venue). Contoh: 6281234567890 atau 08123456789', type: 'text', placeholder: '6281234567890' },
             { name: 'waFloatMessage_id', label: '💬 Pesan Otomatis WhatsApp — Tombol Melayang (ID)', type: 'textarea', variant: 'whatsapp', placeholder: 'Teks yang sudah terisi otomatis di chat WhatsApp pelanggan' },
             { name: 'waFloatMessage_en', label: '💬 Pesan Otomatis WhatsApp — Tombol Melayang (EN)', type: 'textarea', variant: 'whatsapp' },
-            { name: 'footerLinkIg', label: 'Tautan Instagram', type: 'text' },
-            { name: 'footerLinkTiktok', label: 'Tautan TikTok', type: 'text' },
-            { name: 'footerLinkYoutube', label: 'Tautan YouTube', type: 'text' },
-            { name: 'footerLinkFacebook', label: 'Tautan Facebook (opsional — kosongkan untuk menyembunyikan)', type: 'text', placeholder: 'https://facebook.com/berseni.id' },
-            { name: 'footerLinkEmail', label: 'Email Kontak (opsional — muncul sebagai ikon amplop)', type: 'text', placeholder: 'halo@berseni.id' },
-            // Ikon medsos footer — kosong = ikon bawaan (logo resmi tiap platform).
-            { name: 'footerIconWa', label: '🖼️ Ikon WhatsApp (footer)', type: 'icon', hint: 'Unggah PNG, JPG, WebP, atau SVG — ukuran & format diurus otomatis (dikonversi jadi WebP transparan). Kosongkan untuk kembali ke ikon bawaan situs.' },
-            { name: 'footerIconIg', label: '🖼️ Ikon Instagram (footer)', type: 'icon' },
-            { name: 'footerIconTiktok', label: '🖼️ Ikon TikTok (footer)', type: 'icon' },
-            { name: 'footerIconYoutube', label: '🖼️ Ikon YouTube (footer)', type: 'icon' },
-            { name: 'footerIconFacebook', label: '🖼️ Ikon Facebook (footer)', type: 'icon' },
-            { name: 'footerIconEmail', label: '🖼️ Ikon Email (footer)', type: 'icon' }
-          ]
+
+            // Baris paling bawah footer.
+            { name: 'footerCopyright_id', label: 'Baris Hak Cipta (ID) — kosongkan untuk teks otomatis bertahun berjalan', type: 'text', placeholder: 'Hak Cipta © 2026 Berseni. Hak cipta dilindungi undang-undang.' },
+            { name: 'footerCopyright_en', label: 'Baris Hak Cipta (EN) — kosongkan untuk teks otomatis', type: 'text', placeholder: 'Copyright © 2026 Berseni. All rights reserved.' },
+            { name: 'footerPoweredByText', label: 'Teks Kredit Pembuat — kosongkan untuk menyembunyikan', type: 'text', placeholder: 'Powered by' },
+            { name: 'footerPoweredByName', label: 'Nama Kredit Pembuat (tampil berwarna)', type: 'text', placeholder: 'AgentBuff' },
+            { name: 'footerPoweredByLink', label: 'Link Kredit Pembuat (opsional — kosongkan agar tidak bisa diklik)', type: 'text', placeholder: 'https://...' },
+
+            // Warna footer. Kosong = warna bawaan situs.
+            { name: 'bg_footer', label: '🎨 Warna Latar Belakang Footer', type: 'color' },
+            { name: 'text_footer_title', label: '🎨 Warna Judul Kolom (NAVIGATION / CONTACT US)', type: 'color' },
+            { name: 'text_footer_body', label: '🎨 Warna Teks Isi (deskripsi, tautan, tagline, baris hak cipta)', type: 'color' },
+            { name: 'text_footer_brand', label: '🎨 Warna Nama Brand', type: 'color' },
+            { name: 'footerAccentColor', label: '🎨 Warna Garis Aksen di Atas Footer', type: 'color' }
+          ],
+          customRender: 'footer_socials_editor'
         },
         backgrounds: {
           title: '🎨 Warna Latar Belakang Section & Navbar',
@@ -2254,6 +2441,11 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             {/* Custom render for Activities list */}
             {currentPageConfig.sections[activeSection].customRender === 'activities_editor' && (
               <ActivitiesEditorSection form={form} setForm={updateForm} showToast={showToast} />
+            )}
+
+            {/* Custom render for Footer socials list */}
+            {currentPageConfig.sections[activeSection].customRender === 'footer_socials_editor' && (
+              <FooterSocialsEditorSection form={form} setForm={updateForm} showToast={showToast} />
             )}
 
             {/* Custom render for Partners list */}

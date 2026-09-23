@@ -220,11 +220,24 @@
 
 /* FOOTER STYLES */
 .footer {
-  background-color: var(--color-dark-bg);
+  /* Warna footer diatur admin dengan menimpa variabel-variabel ini di elemen
+     <footer> (lihat bangunWarnaFooter di Footer.js). Nilai di bawah adalah
+     bawaannya — dipakai selama kolom di panel admin dibiarkan kosong.
+     --footer-body sengaja satu nilai untuk deskripsi, tautan, tagline, dan baris
+     hak cipta: keempatnya memang sudah #94A3B8 sebelumnya, sama dengan
+     --color-text-muted-on-dark yang dipilih agar kontrasnya lolos WCAG di atas
+     latar gelap. */
+  --footer-bg: var(--color-dark-bg);
+  --footer-heading: var(--color-kunyit);
+  --footer-body: var(--color-text-muted-on-dark);
+  --footer-brand: var(--color-text-light);
+  --footer-accent: var(--color-tosca);
+
+  background-color: var(--footer-bg);
   color: var(--color-text-light);
   padding: 4.5rem 0 2rem 0;
   margin-top: auto;
-  border-top: 4px solid var(--color-tosca);
+  border-top: 4px solid var(--footer-accent);
 }
 
 .footerInner {
@@ -245,11 +258,11 @@
   margin-bottom: 1.5rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--color-kunyit);
+  color: var(--footer-heading);
 }
 
 .footerBrandText {
-  color: var(--color-text-light);
+  color: var(--footer-brand);
   font-family: var(--font-cursive);
   font-size: 2.2rem;
   font-weight: 700;
@@ -261,11 +274,11 @@
   letter-spacing: 2px;
   margin-bottom: 1.25rem;
   /* Footer berlatar gelap: --color-text-muted hanya 3.86:1 di atas #0B132B. */
-  color: var(--color-text-muted-on-dark);
+  color: var(--footer-body);
 }
 
 .footerDesc {
-  color: #94A3B8;
+  color: var(--footer-body);
   font-size: 0.95rem;
   margin-bottom: 1.5rem;
   max-width: 400px;
@@ -279,7 +292,7 @@
 }
 
 .footerLink {
-  color: #94A3B8;
+  color: var(--footer-body);
   font-size: 0.95rem;
   transition: color 0.3s;
 }
@@ -365,7 +378,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #94A3B8;
+  color: var(--footer-body);
   font-size: 0.85rem;
 }
 
