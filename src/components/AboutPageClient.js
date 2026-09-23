@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import Link from 'next/link';
 import SafeImage from '@/components/SafeImage';
 import { useLanguage } from '@/components/LanguageContext';
+import CustomIcon from '@/components/CustomIcon';
 import SplitTitle from '@/components/SplitTitle';
 import RichText, { splitParagraphs } from '@/components/RichText';
 import { textVars } from '@/lib/textColors';
@@ -337,9 +338,11 @@ export default function AboutPageClient({ content }) {
               {/* Card 1 */}
               <div className={`${styles.pillarCard} glass`}>
                 <div className={`${styles.pillarCardIcon} ${styles.iconTosca}`}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                  </svg>
+                  <CustomIcon src={dbContent?.aboutPillar1Icon || data?.aboutPillar1Icon} size={24}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                  </CustomIcon>
                 </div>
                 <h3>{getTranslation('aboutPillar1Title')}</h3>
                 <p><RichText text={getTranslation('aboutPillar1Desc')} inline /></p>
@@ -348,9 +351,11 @@ export default function AboutPageClient({ content }) {
               {/* Card 2 */}
               <div className={`${styles.pillarCard} glass`}>
                 <div className={`${styles.pillarCardIcon} ${styles.iconMaroon}`}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
+                  <CustomIcon src={dbContent?.aboutPillar2Icon || data?.aboutPillar2Icon} size={24}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </CustomIcon>
                 </div>
                 <h3>{getTranslation('aboutPillar2Title')}</h3>
                 <p><RichText text={getTranslation('aboutPillar2Desc')} inline /></p>
@@ -359,9 +364,11 @@ export default function AboutPageClient({ content }) {
               {/* Card 3 */}
               <div className={`${styles.pillarCard} glass`}>
                 <div className={`${styles.pillarCardIcon} ${styles.iconKunyit}`}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
+                  <CustomIcon src={dbContent?.aboutPillar3Icon || data?.aboutPillar3Icon} size={24}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </CustomIcon>
                 </div>
                 <h3>{getTranslation('aboutPillar3Title')}</h3>
                 <p><RichText text={getTranslation('aboutPillar3Desc')} inline /></p>

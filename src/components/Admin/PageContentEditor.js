@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/components/LanguageContext';
-import { uploadImage } from '@/lib/imageUpload';
+import { uploadImage, uploadIcon } from '@/lib/imageUpload';
 import RichTextArea from '@/components/Admin/RichTextArea';
 import { WA_MESSAGE_DEFAULTS } from '@/lib/whatsapp';
 import styles from '@/styles/Admin.module.css';
@@ -197,6 +197,110 @@ const defaultColors = {
 };
 
 // Component for visual color picking with typed hex codes support
+// Penggantian ikon per-slot.
+//
+// Dibuat terpisah dari MediaUploadInput karena kebutuhannya berbeda: ikon itu
+// kecil, harus transparan, dan hasilnya sangat bergantung pada latar tempat ia
+// dipasang. Ikon medsos duduk di footer navy gelap, ikon pilar di kartu krem
+// terang — sebuah ikon hitam solid akan hilang di footer, dan admin tidak akan
+// tahu sebelum situsnya dibuka. Karena itu pratinjaunya ditampilkan di KEDUA
+// latar sekaligus.
+//
+// Kolom kosong = ikon bawaan situs. Itu sebabnya ada tombol "Pakai ikon bawaan":
+// membatalkan pilihan tidak menuntut admin mencari lagi ikon aslinya.
+const IconUploadInput = ({ label, hint, name, value, onChange, showToast }) => {
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      // uploadIcon mengonversi apa pun yang dipilih (termasuk SVG) menjadi WebP
+      // transparan berukuran wajar, jadi admin tidak perlu menyiapkan apa-apa.
+      const url = await uploadIcon(file);
+      onChange(name, url);
+      showToast('Ikon berhasil diunggah & dikonversi otomatis.');
+    } catch (err) {
+      console.error(err);
+      showToast(err.message || 'Gagal mengunggah ikon.');
+    } finally {
+      setUploading(false);
+      e.target.value = ''; // supaya memilih berkas yang SAMA lagi tetap memicu onChange
+    }
+  };
+
+  const previewChip = (background, borderColor, caption) => (
+    <div style={{ textAlign: 'center' }}>
+      <div
+        style={{
+          width: '46px', height: '46px', borderRadius: '10px', background,
+          border: `1px solid ${borderColor}`, display: 'flex', alignItems: 'center',
+          justifyContent: 'center', overflow: 'hidden',
+        }}
+      >
+        {value ? (
+          <img src={value} alt="" style={{ width: '26px', height: '26px', objectFit: 'contain' }} />
+        ) : (
+          <span style={{ fontSize: '0.6rem', color: '#94A3B8' }}>bawaan</span>
+        )}
+      </div>
+      <span style={{ fontSize: '0.6rem', color: '#94A3B8', display: 'block', marginTop: '2px' }}>{caption}</span>
+    </div>
+  );
+
+  return (
+    <div style={{ marginBottom: '1rem', border: '1px solid #E2E8F0', padding: '0.9rem 1rem', borderRadius: '12px', background: '#F8FAFC', width: '100%' }}>
+      <label style={{ display: 'block', fontWeight: 'bold', fontSize: '0.82rem', color: 'var(--color-text-dark)', marginBottom: hint ? '0.15rem' : '0.6rem' }}>
+        {label}
+      </label>
+      {hint && (
+        <p style={{ fontSize: '0.72rem', color: '#64748B', margin: '0 0 0.6rem 0', lineHeight: 1.5 }}>{hint}</p>
+      )}
+
+      <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
+          {previewChip('#FAF5EB', '#CBD5E1', 'terang')}
+          {previewChip('#0B132B', '#0B132B', 'gelap')}
+        </div>
+
+        <div style={{ flex: 1, minWidth: '220px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <label className="btn btn-secondary" style={{ padding: '0.35rem 0.8rem', borderRadius: '8px', fontSize: '0.75rem', cursor: uploading ? 'wait' : 'pointer', display: 'inline-block', margin: 0 }}>
+              {uploading ? 'Mengonversi & mengunggah...' : (value ? 'Ganti Ikon' : 'Unggah Ikon')}
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/avif,image/gif,image/svg+xml,.svg"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+                disabled={uploading}
+              />
+            </label>
+            {value && (
+              <button
+                type="button"
+                onClick={() => onChange(name, '')}
+                style={{ padding: '0.35rem 0.8rem', borderRadius: '8px', fontSize: '0.75rem', cursor: 'pointer', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#64748B' }}
+              >
+                Pakai ikon bawaan
+              </button>
+            )}
+          </div>
+          <input
+            type="text"
+            className={styles.adminInput}
+            value={value || ''}
+            onChange={(e) => onChange(name, e.target.value)}
+            placeholder="Kosong = memakai ikon bawaan situs"
+            style={{ marginTop: '0.5rem', fontSize: '0.78rem' }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ColorPickerInput = ({ label, name, value, onChange }) => {
   const defaultVal = defaultColors[name] || '#ffffff';
 
@@ -1541,7 +1645,14 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'footerLinkTiktok', label: 'Tautan TikTok', type: 'text' },
             { name: 'footerLinkYoutube', label: 'Tautan YouTube', type: 'text' },
             { name: 'footerLinkFacebook', label: 'Tautan Facebook (opsional — kosongkan untuk menyembunyikan)', type: 'text', placeholder: 'https://facebook.com/berseni.id' },
-            { name: 'footerLinkEmail', label: 'Email Kontak (opsional — muncul sebagai ikon amplop)', type: 'text', placeholder: 'halo@berseni.id' }
+            { name: 'footerLinkEmail', label: 'Email Kontak (opsional — muncul sebagai ikon amplop)', type: 'text', placeholder: 'halo@berseni.id' },
+            // Ikon medsos footer — kosong = ikon bawaan (logo resmi tiap platform).
+            { name: 'footerIconWa', label: '🖼️ Ikon WhatsApp (footer)', type: 'icon', hint: 'Unggah PNG, JPG, WebP, atau SVG — ukuran & format diurus otomatis (dikonversi jadi WebP transparan). Kosongkan untuk kembali ke ikon bawaan situs.' },
+            { name: 'footerIconIg', label: '🖼️ Ikon Instagram (footer)', type: 'icon' },
+            { name: 'footerIconTiktok', label: '🖼️ Ikon TikTok (footer)', type: 'icon' },
+            { name: 'footerIconYoutube', label: '🖼️ Ikon YouTube (footer)', type: 'icon' },
+            { name: 'footerIconFacebook', label: '🖼️ Ikon Facebook (footer)', type: 'icon' },
+            { name: 'footerIconEmail', label: '🖼️ Ikon Email (footer)', type: 'icon' }
           ]
         },
         backgrounds: {
@@ -1627,16 +1738,19 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'aboutPillarsSubtitle_id', label: 'Pillar Subtitle (ID)', type: 'textarea' },
             { name: 'aboutPillarsSubtitle_en', label: 'Pillar Subtitle (EN)', type: 'textarea' },
             // Pillar 1
+            { name: 'aboutPillar1Icon', label: '🖼️ Ikon Pilar 1 — kartu paling kiri', type: 'icon', hint: 'Unggah PNG, JPG, WebP, atau SVG — ukuran & format diurus otomatis (dikonversi jadi WebP transparan). Kosongkan untuk kembali ke ikon bawaan situs.' },
             { name: 'aboutPillar1Title_id', label: 'Pillar 1 Title (ID)', type: 'text' },
             { name: 'aboutPillar1Title_en', label: 'Pillar 1 Title (EN)', type: 'text' },
             { name: 'aboutPillar1Desc_id', label: 'Pillar 1 Desc (ID)', type: 'textarea' },
             { name: 'aboutPillar1Desc_en', label: 'Pillar 1 Desc (EN)', type: 'textarea' },
             // Pillar 2
+            { name: 'aboutPillar2Icon', label: '🖼️ Ikon Pilar 2 — kartu tengah', type: 'icon' },
             { name: 'aboutPillar2Title_id', label: 'Pillar 2 Title (ID)', type: 'text' },
             { name: 'aboutPillar2Title_en', label: 'Pillar 2 Title (EN)', type: 'text' },
             { name: 'aboutPillar2Desc_id', label: 'Pillar 2 Desc (ID)', type: 'textarea' },
             { name: 'aboutPillar2Desc_en', label: 'Pillar 2 Desc (EN)', type: 'textarea' },
             // Pillar 3
+            { name: 'aboutPillar3Icon', label: '🖼️ Ikon Pilar 3 — kartu paling kanan', type: 'icon' },
             { name: 'aboutPillar3Title_id', label: 'Pillar 3 Title (ID)', type: 'text' },
             { name: 'aboutPillar3Title_en', label: 'Pillar 3 Title (EN)', type: 'text' },
             { name: 'aboutPillar3Desc_id', label: 'Pillar 3 Desc (ID)', type: 'textarea' },
@@ -1777,21 +1891,25 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'collabBrandIntro_id', label: 'Brand Intro (ID)', type: 'textarea' },
             { name: 'collabBrandIntro_en', label: 'Brand Intro (EN)', type: 'textarea' },
             // Feat 1
+            { name: 'collabBrandFeat1Icon', label: '🖼️ Ikon Fitur 1 (Brand) — baris teratas', type: 'icon', hint: 'Unggah PNG, JPG, WebP, atau SVG — ukuran & format diurus otomatis (dikonversi jadi WebP transparan). Kosongkan untuk kembali ke ikon bawaan situs.' },
             { name: 'collabBrandFeat1Title_id', label: 'Feature 1 Title (ID)', type: 'text' },
             { name: 'collabBrandFeat1Title_en', label: 'Feature 1 Title (EN)', type: 'text' },
             { name: 'collabBrandFeat1Desc_id', label: 'Feature 1 Desc (ID)', type: 'textarea' },
             { name: 'collabBrandFeat1Desc_en', label: 'Feature 1 Desc (EN)', type: 'textarea' },
             // Feat 2
+            { name: 'collabBrandFeat2Icon', label: '🖼️ Ikon Fitur 2 (Brand)', type: 'icon' },
             { name: 'collabBrandFeat2Title_id', label: 'Feature 2 Title (ID)', type: 'text' },
             { name: 'collabBrandFeat2Title_en', label: 'Feature 2 Title (EN)', type: 'text' },
             { name: 'collabBrandFeat2Desc_id', label: 'Feature 2 Desc (ID)', type: 'textarea' },
             { name: 'collabBrandFeat2Desc_en', label: 'Feature 2 Desc (EN)', type: 'textarea' },
             // Feat 3
+            { name: 'collabBrandFeat3Icon', label: '🖼️ Ikon Fitur 3 (Brand)', type: 'icon' },
             { name: 'collabBrandFeat3Title_id', label: 'Feature 3 Title (ID)', type: 'text' },
             { name: 'collabBrandFeat3Title_en', label: 'Feature 3 Title (EN)', type: 'text' },
             { name: 'collabBrandFeat3Desc_id', label: 'Feature 3 Desc (ID)', type: 'textarea' },
             { name: 'collabBrandFeat3Desc_en', label: 'Feature 3 Desc (EN)', type: 'textarea' },
             // Feat 4
+            { name: 'collabBrandFeat4Icon', label: '🖼️ Ikon Fitur 4 (Brand) — baris terbawah', type: 'icon' },
             { name: 'collabBrandFeat4Title_id', label: 'Feature 4 Title (ID)', type: 'text' },
             { name: 'collabBrandFeat4Title_en', label: 'Feature 4 Title (EN)', type: 'text' },
             { name: 'collabBrandFeat4Desc_id', label: 'Feature 4 Desc (ID)', type: 'textarea' },
@@ -1823,16 +1941,19 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'collabVenueSub_id', label: 'Venue Subtitle (ID)', type: 'textarea' },
             { name: 'collabVenueSub_en', label: 'Venue Subtitle (EN)', type: 'textarea' },
             // Feat 1
+            { name: 'collabVenueFeat1Icon', label: '🖼️ Ikon Kartu 1 (Venue) — kartu paling kiri', type: 'icon', hint: 'Unggah PNG, JPG, WebP, atau SVG — ukuran & format diurus otomatis (dikonversi jadi WebP transparan). Kosongkan untuk kembali ke ikon bawaan situs.' },
             { name: 'collabVenueFeat1Title_id', label: 'Feature 1 Title (ID)', type: 'text' },
             { name: 'collabVenueFeat1Title_en', label: 'Feature 1 Title (EN)', type: 'text' },
             { name: 'collabVenueFeat1Desc_id', label: 'Feature 1 Desc (ID)', type: 'textarea' },
             { name: 'collabVenueFeat1Desc_en', label: 'Feature 1 Desc (EN)', type: 'textarea' },
             // Feat 2
+            { name: 'collabVenueFeat2Icon', label: '🖼️ Ikon Kartu 2 (Venue) — kartu tengah', type: 'icon' },
             { name: 'collabVenueFeat2Title_id', label: 'Feature 2 Title (ID)', type: 'text' },
             { name: 'collabVenueFeat2Title_en', label: 'Feature 2 Title (EN)', type: 'text' },
             { name: 'collabVenueFeat2Desc_id', label: 'Feature 2 Desc (ID)', type: 'textarea' },
             { name: 'collabVenueFeat2Desc_en', label: 'Feature 2 Desc (EN)', type: 'textarea' },
             // Feat 3
+            { name: 'collabVenueFeat3Icon', label: '🖼️ Ikon Kartu 3 (Venue) — kartu paling kanan', type: 'icon' },
             { name: 'collabVenueFeat3Title_id', label: 'Feature 3 Title (ID)', type: 'text' },
             { name: 'collabVenueFeat3Title_en', label: 'Feature 3 Title (EN)', type: 'text' },
             { name: 'collabVenueFeat3Desc_id', label: 'Feature 3 Desc (ID)', type: 'textarea' },
@@ -2050,13 +2171,22 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
           <form onSubmit={handleSubmit}>
             <div className={styles.formGrid}>
               {currentPageConfig.sections[activeSection].fields.map(field => (
-                <div key={field.name} className={(field.type === 'textarea' || field.type === 'image' || field.type === 'video' || field.type === 'color') ? styles.formGridFull : ''}>
+                <div key={field.name} className={(field.type === 'textarea' || field.type === 'image' || field.type === 'video' || field.type === 'color' || field.type === 'icon') ? styles.formGridFull : ''}>
                   {field.type === 'image' || field.type === 'video' ? (
                     <MediaUploadInput
                       label={field.label}
                       name={field.name}
                       value={form[field.name] || ''}
                       type={field.type}
+                      showToast={showToast}
+                      onChange={(name, val) => updateForm(prev => ({ ...prev, [name]: val }))}
+                    />
+                  ) : field.type === 'icon' ? (
+                    <IconUploadInput
+                      label={field.label}
+                      hint={field.hint}
+                      name={field.name}
+                      value={form[field.name] || ''}
                       showToast={showToast}
                       onChange={(name, val) => updateForm(prev => ({ ...prev, [name]: val }))}
                     />

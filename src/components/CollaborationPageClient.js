@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/components/LanguageContext';
+import CustomIcon from '@/components/CustomIcon';
 import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
 import RichText from '@/components/RichText';
 import { textVars } from '@/lib/textColors';
@@ -14,6 +15,9 @@ export default function CollaborationPageClient({ content }) {
 
   // Warna teks yang bisa diatur admin (kosong = pakai warna bawaan tema).
   const txt = (key) => dbContent?.[key] || content?.[key] || undefined;
+
+  // Ikon yang diunggah admin (kosong = ikon bawaan dipakai).
+  const icon = (key) => dbContent?.[key] || content?.[key] || '';
 
   const renderDynamicButton =(text, defaultLink, linkKey, statusKey, className, extraProps = {}) => {
     const link = dbContent?.[linkKey] !== undefined ? dbContent[linkKey] : defaultLink;
@@ -127,9 +131,11 @@ export default function CollaborationPageClient({ content }) {
                   {/* Feature 1 */}
                   <div className={styles.featureItem}>
                     <div className={`${styles.iconBox} ${styles.maroonIcon}`}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
+                      <CustomIcon src={icon('collabBrandFeat1Icon')} size={24}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      </CustomIcon>
                     </div>
                     <div className={styles.featureText}>
                       <h3>{getTranslation('collabBrandFeat1Title')}</h3>
@@ -140,9 +146,11 @@ export default function CollaborationPageClient({ content }) {
                   {/* Feature 2 */}
                   <div className={styles.featureItem}>
                     <div className={`${styles.iconBox} ${styles.toscaIcon}`}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
+                      <CustomIcon src={icon('collabBrandFeat2Icon')} size={24}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                      </CustomIcon>
                     </div>
                     <div className={styles.featureText}>
                       <h3>{getTranslation('collabBrandFeat2Title')}</h3>
@@ -153,9 +161,11 @@ export default function CollaborationPageClient({ content }) {
                   {/* Feature 3 */}
                   <div className={styles.featureItem}>
                     <div className={`${styles.iconBox} ${styles.kunyitIcon}`}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                      </svg>
+                      <CustomIcon src={icon('collabBrandFeat3Icon')} size={24}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                      </CustomIcon>
                     </div>
                     <div className={styles.featureText}>
                       <h3>{getTranslation('collabBrandFeat3Title')}</h3>
@@ -166,9 +176,11 @@ export default function CollaborationPageClient({ content }) {
                   {/* Feature 4 */}
                   <div className={styles.featureItem}>
                     <div className={`${styles.iconBox} ${styles.maroonIcon}`}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-                      </svg>
+                      <CustomIcon src={icon('collabBrandFeat4Icon')} size={24}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                        </svg>
+                      </CustomIcon>
                     </div>
                     <div className={styles.featureText}>
                       <h3>{getTranslation('collabBrandFeat4Title')}</h3>
@@ -257,9 +269,11 @@ export default function CollaborationPageClient({ content }) {
               {/* Benefit 1 */}
               <div className={styles.benefitCard}>
                 <div className={`${styles.benefitIconBox} ${styles.toscaBg}`}>
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
+                  <CustomIcon src={icon('collabVenueFeat1Icon')} size={32}>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </CustomIcon>
                 </div>
                 <h3>{getTranslation('collabVenueFeat1Title')}</h3>
                 <p><RichText text={getTranslation('collabVenueFeat1Desc')} inline /></p>
@@ -268,9 +282,11 @@ export default function CollaborationPageClient({ content }) {
               {/* Benefit 2 */}
               <div className={styles.benefitCard}>
                 <div className={`${styles.benefitIconBox} ${styles.maroonBg}`}>
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-                  </svg>
+                  <CustomIcon src={icon('collabVenueFeat2Icon')} size={32}>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                    </svg>
+                  </CustomIcon>
                 </div>
                 <h3>{getTranslation('collabVenueFeat2Title')}</h3>
                 <p><RichText text={getTranslation('collabVenueFeat2Desc')} inline /></p>
@@ -279,9 +295,11 @@ export default function CollaborationPageClient({ content }) {
               {/* Benefit 3 */}
               <div className={styles.benefitCard}>
                 <div className={`${styles.benefitIconBox} ${styles.kunyitBg}`}>
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <CustomIcon src={icon('collabVenueFeat3Icon')} size={32}>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </CustomIcon>
                 </div>
                 <h3>{getTranslation('collabVenueFeat3Title')}</h3>
                 <p><RichText text={getTranslation('collabVenueFeat3Desc')} inline /></p>
