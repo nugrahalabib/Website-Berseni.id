@@ -55,3 +55,9 @@ next-env.d.ts
 CLAUDE.md
 
 .env*
+
+# Pengaturan Claude Code milik mesin ini saja (daftar izin tool, jalur lokal).
+# Bukan rahasia, tapi tidak ada gunanya dibagikan — dan selama tidak diabaikan
+# ia selalu muncul sebagai perubahan yang belum di-commit, sehingga sulit
+# memastikan lokal benar-benar sama dengan GitHub.
+.claude/settings.local.json
