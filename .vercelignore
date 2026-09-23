@@ -1,0 +1,16 @@
+# Berkas yang TIDAK ikut diunggah saat `vercel deploy`.
+#
+# Kenapa file ini ada: `vercel deploy` mengunggah isi folder kerja apa adanya
+# dan TIDAK membaca .gitignore. Jadi berkas yang sudah dilepas dari Git pun
+# tetap ikut ter-deploy selama masih ada di disk — itulah yang terjadi pada
+# tiga gambar sisa di public/uploads (3,5 MB yang tidak dirujuk siapa pun).
+
+# Ruang kerja unggahan LOKAL saja. Di produksi setiap unggahan admin masuk ke
+# Vercel Blob, tidak pernah ke folder ini. Sudah diverifikasi: tidak ada satu
+# pun data produksi (content, products, posts, gallery, seo) yang merujuk
+# /uploads/.
+public/uploads/
+
+# Hasil build & dependensi — dibangun ulang di sisi Vercel.
+.next/
+node_modules/
