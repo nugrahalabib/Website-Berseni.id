@@ -11,6 +11,7 @@ import ProductModal from '@/components/ProductModal';
 import ActivityModal from '@/components/ActivityModal';
 import { useLanguage } from '@/components/LanguageContext';
 import SplitTitle from '@/components/SplitTitle';
+import SectionHeading from '@/components/SectionHeading';
 import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
 import RichText from '@/components/RichText';
 import { textVars } from '@/lib/textColors';
@@ -980,10 +981,11 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
             {/* Carousel Aktivitas Berseni */}
             {carousel.items.length > 0 && (
               <div className={styles.carouselShowcaseContainer}>
-                <div className={styles.carouselShowcaseHeader}>
-                  <h2>{getTranslation('activitiesHeaderTitle')}<span>.</span></h2>
-                  <p><RichText text={getTranslation('activitiesHeaderSubtitle')} inline /></p>
-                </div>
+                <SectionHeading
+                  className={styles.carouselShowcaseHeader}
+                  title={getTranslation('activitiesHeaderTitle')}
+                  subtitle={getTranslation('activitiesHeaderSubtitle')}
+                />
                 <HeroCarousel
                   items={carousel.items}
                   onCardClick={carousel.isProducts ? handleCardSelect : handleActivitySelect}
@@ -1069,10 +1071,11 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           </svg>
         </div>
  
-        <div className={styles.sectionHeader}>
-          <h2>{getTranslation('ourPrograms')}<span>.</span></h2>
-          <p><RichText text={getTranslation('programsSubtitle')} inline /></p>
-        </div>
+        <SectionHeading
+          className={styles.sectionHeader}
+          title={getTranslation('ourPrograms')}
+          subtitle={getTranslation('programsSubtitle')}
+        />
  
         <div className={styles.programsGrid}>
           {/* Card 1: Offline */}
@@ -1158,10 +1161,13 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
 
       {/* 3. PRODUCT & WORKSHOP GALLERY SECTION */}
       <section id="products" className={styles.gallery} style={{ ...textVars(dbContent || content || initialContent, 'text_home_gallery'), backgroundColor: dbContent?.bg_home_gallery || initialContent?.bg_home_gallery || '' }}>
-        <div className={styles.sectionHeader}>
-          <h2 style={{ color: 'var(--color-text-dark)' }}>{getTranslation('galleryTitle')}<span>.</span></h2>
-          <p style={{ color: 'var(--color-text-muted)' }}><RichText text={getTranslation('gallerySubtitle')} inline /></p>
-        </div>
+        <SectionHeading
+          className={styles.sectionHeader}
+          title={getTranslation('galleryTitle')}
+          subtitle={getTranslation('gallerySubtitle')}
+          titleStyle={{ color: 'var(--color-text-dark)' }}
+          subtitleStyle={{ color: 'var(--color-text-muted)' }}
+        />
 
         {/* Promo Countdown Banner — hanya dirender kalau ada isinya (lihat showPromoBanner) */}
         {showPromoBanner && (
@@ -1278,12 +1284,15 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
 
       {/* TESTIMONIALS / REVIEWS SECTION */}
       <section className={styles.testimonials} style={{ ...textVars(dbContent || content || initialContent, 'text_home_testimonials'), backgroundColor: dbContent?.bg_home_testimonials || initialContent?.bg_home_testimonials || '' }}>
-        <div className={styles.sectionHeader}>
-          <h2 style={{ color: 'var(--color-text-dark)' }}>{getTranslation('testimonialsTitle')}<span>.</span></h2>
-          {/* Section ini berlatar cream: --color-text-muted hanya 4.37:1 di sana.
-              Inline style mengalahkan CSS, jadi tokennya harus diganti di sini. */}
-          <p style={{ color: 'var(--color-text-muted-on-cream)' }}><RichText text={getTranslation('testimonialsSubtitle')} inline /></p>
-        </div>
+        {/* subtitleStyle: section ini berlatar cream, dan --color-text-muted hanya
+            4.37:1 di sana. Inline style mengalahkan CSS, jadi tokennya diganti. */}
+        <SectionHeading
+          className={styles.sectionHeader}
+          title={getTranslation('testimonialsTitle')}
+          subtitle={getTranslation('testimonialsSubtitle')}
+          titleStyle={{ color: 'var(--color-text-dark)' }}
+          subtitleStyle={{ color: 'var(--color-text-muted-on-cream)' }}
+        />
 
         {/* Row 1: Left to Right movement */}
         {marqueeRow1.length > 0 && (
