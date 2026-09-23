@@ -906,21 +906,46 @@ function ActivitiesEditorSection({ form, setForm, showToast }) {
       );
     }
 
-    // Saat carousel disetel Otomatis, daftar di bawah ini tidak tampil di
-    // beranda. Tanpa penanda, admin akan mengedit daftar ini lalu bingung
-    // kenapa situsnya tidak berubah.
-    const isAutoFromCatalog = form.activitiesSource === 'products';
+    // Daftar di bawah ini hanya berpengaruh pada sebagian pilihan sumber:
+    //
+    //   manual   -> dipakai sendirian          (aktif)
+    //   mixed    -> dipakai BERSAMA katalog    (aktif — sengaja tidak dikunci)
+    //   products -> tidak dipakai sama sekali  (dikunci)
+    //
+    // Saat dikunci, daftarnya tidak cukup diberi keterangan: ia harus TERLIHAT
+    // mati. Tanpa itu admin tetap menyunting daftar yang tidak berpengaruh apa
+    // pun, lalu bingung kenapa situsnya tidak berubah.
+    const sumberCarousel = form.activitiesSource || 'manual';
+    const terkunci = sumberCarousel === 'products';
+    const digabung = sumberCarousel === 'mixed';
 
     return (
       <div style={{ marginTop: '1rem' }}>
-        {isAutoFromCatalog && (
-          <div style={{ padding: '1rem 1.25rem', marginBottom: '1.25rem', borderRadius: '12px', background: '#ECFDF5', border: '1px solid #6EE7B7', color: '#065F46', fontSize: '0.88rem', lineHeight: 1.6 }}>
-            <strong>⚡ Carousel sedang Otomatis dari Katalog Produk.</strong>
+        {terkunci && (
+          <div style={{ padding: '1rem 1.25rem', marginBottom: '1.25rem', borderRadius: '12px', background: '#FFFBEB', border: '1px solid #FCD34D', color: '#78350F', fontSize: '0.88rem', lineHeight: 1.6 }}>
+            <strong>🔒 Daftar di bawah sedang TIDAK DIPAKAI.</strong>
             <br />
-            Kartu di beranda diambil langsung dari tab <strong>Katalog Produk</strong>, lengkap dengan harga dan tautan belinya. Daftar manual di bawah ini <strong>disimpan tapi tidak ditampilkan</strong> — ubah pilihan di atas ke &quot;Aktivitas manual&quot; kalau ingin memakainya lagi.
+            Sumber carousel disetel ke <strong>&quot;Hanya Katalog Produk&quot;</strong>, jadi kartu di beranda diambil dari tab <strong>Katalog Produk</strong> — bukan dari daftar ini. Isinya <strong>tetap tersimpan aman</strong>, hanya tidak bisa disunting dan tidak ditampilkan selama pilihan di atas belum diubah.
+            <br />
+            <span style={{ display: 'inline-block', marginTop: '0.5rem' }}>
+              Ingin memakainya lagi? Pilih <strong>&quot;Hanya aktivitas manual&quot;</strong> — atau <strong>&quot;Gabungan&quot;</strong> kalau ingin daftar ini tampil berdampingan dengan katalog.
+            </span>
           </div>
         )}
 
+        {digabung && (
+          <div style={{ padding: '0.9rem 1.25rem', marginBottom: '1.25rem', borderRadius: '12px', background: '#ECFDF5', border: '1px solid #6EE7B7', color: '#065F46', fontSize: '0.88rem', lineHeight: 1.6 }}>
+            <strong>⚡ Mode Gabungan aktif.</strong> Daftar di bawah ini <strong>tetap tampil</strong> di beranda, berdampingan dengan seluruh isi Katalog Produk.
+          </div>
+        )}
+
+        {/* `inert` mematikan klik DAN fokus keyboard untuk seluruh isinya — lebih
+            tepat daripada sekadar pointer-events:none, yang masih bisa di-Tab. */}
+        <div
+          inert={terkunci ? true : undefined}
+          aria-disabled={terkunci || undefined}
+          style={terkunci ? { opacity: 0.4, filter: 'grayscale(1)', userSelect: 'none' } : undefined}
+        >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <label className={styles.adminLabel} style={{ marginBottom: 0 }}>Daftar Aktivitas Carousel</label>
           <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem', borderRadius: '8px' }} onClick={handleAddNew}>
@@ -992,6 +1017,7 @@ function ActivitiesEditorSection({ form, setForm, showToast }) {
             ))}
           </div>
         )}
+        </div>
       </div>
     );
 }
