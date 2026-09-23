@@ -997,7 +997,19 @@
 }
 
 .mobileMenuVisible {
-  max-height: 380px; /* High enough to contain all navigation links */
+  /* Tingginya mengikuti layar, BUKAN angka tetap.
+     Sebelumnya 380px dengan komentar "cukup untuk semua tautan navigasi" —
+     dan memang cukup, untuk tautannya saja. Di bawah tautan masih ada tombol
+     ganti bahasa, dan ketika menu Galeri ditambahkan, isi menu tumbuh jadi
+     466px. Dengan overflow:hidden, 86px terbawah terpotong diam-diam — persis
+     setinggi tombol bahasa itu, sehingga di HP situs tampak tidak punya
+     pilihan bahasa sama sekali.
+     Ukuran relatif layar membuat penambahan menu berikutnya tidak mengulang
+     bug yang sama, dan overflow-y:auto menjadikan isi yang kelewat panjang
+     bisa digulir — bukan lenyap tanpa jejak. */
+  max-height: calc(100vh - 140px);
+  max-height: calc(100dvh - 140px); /* dvh: aman dari bilah URL yang muncul-hilang di HP */
+  overflow-y: auto;
   opacity: 1;
   transform: translateY(0);
   border-top: 1px solid rgba(20, 120, 155, 0.12);
