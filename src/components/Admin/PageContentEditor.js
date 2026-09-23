@@ -1565,7 +1565,7 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
         promo: {
           title: 'Banner Promo / Countdown',
           fields: [
-            { name: 'promoTitle_id', label: 'Promo Title (ID)', type: 'text' },
+            { name: 'promoTitle_id', label: 'Promo Title (ID) — kosongkan judul, subjudul, DAN tanggal untuk menyembunyikan banner promo dari beranda', type: 'text' },
             { name: 'promoTitle_en', label: 'Promo Title (EN)', type: 'text' },
             { name: 'promoSubtitle_id', label: 'Promo Subtitle (ID)', type: 'textarea' },
             { name: 'promoSubtitle_en', label: 'Promo Subtitle (EN)', type: 'textarea' },

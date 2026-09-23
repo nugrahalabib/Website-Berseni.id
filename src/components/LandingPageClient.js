@@ -722,6 +722,42 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
   const promoEnd = dbContent?.promoEndDate || initialContent?.promoEndDate;
   const promoEndsAt = useMemo(() => parsePromoEnd(promoEnd), [promoEnd]);
 
+  // Banner promo dirender HANYA kalau ada yang benar-benar bisa dibaca pengunjung.
+  //
+  // Dulu banner ini selalu ada. Begitu admin mengosongkan judul & subjudulnya,
+  // yang tersisa di beranda adalah kotak kosong berisi ikon petir — terlihat
+  // seperti bagian yang rusak, bukan promo yang sedang tidak berjalan.
+  //
+  // Dua sumber "isi" yang dihitung:
+  //   - teks judul atau subjudul yang tidak kosong; getTranslation mengembalikan
+  //     string kosong (bukan teks bawaan) begitu admin mengosongkan kolomnya,
+  //     jadi isinya harus di-trim, bukan sekadar dicek ada/tidak.
+  //   - hitung mundur yang MASIH berjalan. parsePromoEnd tidak menolak tanggal
+  //     yang sudah lewat, sedangkan PromoCountdown tidak merender apa pun setelah
+  //     kedaluwarsa — tanpa pengecekan ini, promo yang sudah habis meninggalkan
+  //     kotak kosong yang sama.
+  const promoTitleText = getTranslation('promoTitle');
+  const promoSubtitleText = getTranslation('promoSubtitle');
+  const hasPromoText =
+    (typeof promoTitleText === 'string' && promoTitleText.trim() !== '') ||
+    (typeof promoSubtitleText === 'string' && promoSubtitleText.trim() !== '');
+
+  // Membaca jam saat render memang membuat render tidak murni, dan aturan
+  // react-hooks/purity benar untuk mengeluhkannya. Dimatikan di sini secara
+  // sempit karena alternatifnya lebih buruk: tanpa perbandingan ini, promo yang
+  // tanggalnya sudah lewat dan tidak punya teks meninggalkan kotak kosong —
+  // persis keluhan yang membuat penjagaan ini dibuat.
+  //
+  // Risikonya sekecil mungkin: nilainya boolean yang berubah SEKALI seumur
+  // promo, bukan angka yang berdetak tiap detik (itulah kenapa PromoCountdown
+  // memakai effect, bukan render). Hydration hanya bisa berbeda bila promo
+  // kebetulan berakhir tepat di sela render server dan hydration klien, dan
+  // React akan langsung mengoreksinya sendiri.
+  // eslint-disable-next-line react-hooks/purity
+  const isPromoCountdownLive = promoEndsAt !== null && promoEndsAt > Date.now();
+
+  const showPromoBanner = hasPromoText || isPromoCountdownLive;
+
   const handleCardSelect = (product) => {
     setSelectedProduct(product);
   };
@@ -1127,17 +1163,19 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
           <p style={{ color: 'var(--color-text-muted)' }}><RichText text={getTranslation('gallerySubtitle')} inline /></p>
         </div>
 
-        {/* Promo Countdown Banner */}
-        <div className={styles.promoBanner}>
-          <div className={styles.promoBannerInner}>
-            <div className={styles.promoIcon}>⚡</div>
-            <div className={styles.promoTextCol}>
-              <h3>{getTranslation('promoTitle')}</h3>
-              <p><RichText text={getTranslation('promoSubtitle')} inline /></p>
+        {/* Promo Countdown Banner — hanya dirender kalau ada isinya (lihat showPromoBanner) */}
+        {showPromoBanner && (
+          <div className={styles.promoBanner}>
+            <div className={styles.promoBannerInner}>
+              <div className={styles.promoIcon}>⚡</div>
+              <div className={styles.promoTextCol}>
+                <h3>{getTranslation('promoTitle')}</h3>
+                <p><RichText text={getTranslation('promoSubtitle')} inline /></p>
+              </div>
+              {promoEndsAt !== null && <PromoCountdown endsAt={promoEndsAt} />}
             </div>
-            {promoEndsAt !== null && <PromoCountdown endsAt={promoEndsAt} />}
           </div>
-        </div>
+        )}
 
         {/* Filter Navigation Tabs */}
         <div className={styles.filterTabs}>
