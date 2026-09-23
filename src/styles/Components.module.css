@@ -44,6 +44,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  /* space-between saja tidak menjamin jarak: begitu blok logo + tagline dan
+     daftar menu sama-sama melebar, keduanya bersentuhan tanpa sela — tagline
+     menempel persis di huruf pertama "HOME". Tagline memang sudah disembunyikan
+     di bawah 1024px, tapi rentang 1024-1250px masih bertabrakan. gap memberi
+     jarak minimum yang tidak bisa ditembus. */
+  gap: 1.5rem;
 }
 
 .logo {

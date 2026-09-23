@@ -1648,6 +1648,11 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
         general: {
           title: 'Pengaturan Umum Situs & Menu (Navbar)',
           fields: [
+            { name: 'navLogo', label: '🖼️ Logo di Navbar — kosongkan untuk memakai logo bawaan situs. Tingginya otomatis menyesuaikan, lebarnya mengikuti proporsi gambar.', type: 'image' },
+            // getTranslation('footerTagline') sudah membaca kunci ini lebih dulu,
+            // jadi mengisinya langsung mengubah navbar DAN footer sekaligus.
+            { name: 'footerTagline_id', label: 'Tagline di Sebelah Logo (ID) — tampil di navbar DAN di footer. Kosongkan untuk menyembunyikannya.', type: 'text', placeholder: 'Dunia Seni Untuk Semua' },
+            { name: 'footerTagline_en', label: 'Tagline di Sebelah Logo (EN)', type: 'text', placeholder: 'A World of Art For Everyone' },
             { name: 'defaultLanguage', label: 'Bahasa Default Website (Untuk Pengunjung Baru)', type: 'select', defaultValue: 'id', options: [
               { value: 'id', label: 'Bahasa Indonesia (ID)' },
               { value: 'en', label: 'English (EN)' }

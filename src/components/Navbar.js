@@ -115,10 +115,23 @@ export default function Navbar() {
             }
           }}
         >
-          <Image src="/logo.png" alt="Berseni Logo" className={styles.logoImage} width={160} height={48} priority />
-          <div className={styles.logoTextContainer}>
-            <span className={styles.logoTagline}>{getTranslation('footerTagline')}</span>
-          </div>
+          {/* Logo diatur admin (Konten Halaman > Pengaturan Umum Situs & Menu).
+              Kosong = logo bawaan situs. */}
+          <Image
+            src={(dbContent?.navLogo || '').trim() || '/logo.png'}
+            alt="Berseni Logo"
+            className={styles.logoImage}
+            width={160}
+            height={48}
+            priority
+          />
+          {/* Tagline kosong tidak dirender sama sekali, supaya tidak menyisakan
+              kotak kosong yang tetap memakan lebar di sebelah logo. */}
+          {(getTranslation('footerTagline') || '').trim() ? (
+            <div className={styles.logoTextContainer}>
+              <span className={styles.logoTagline}>{getTranslation('footerTagline')}</span>
+            </div>
+          ) : null}
         </Link>
 
         {/* Desktop Links */}

@@ -64,7 +64,9 @@ export default function Footer() {
           {/* Brand & About */}
           <div className={styles.footerCol}>
             <div className={styles.footerBrandText}>{namaBrand}</div>
-            <div className={styles.footerTagline}>{getTranslation('footerTagline')}</div>
+            {(getTranslation('footerTagline') || '').trim() ? (
+              <div className={styles.footerTagline}>{getTranslation('footerTagline')}</div>
+            ) : null}
             <p className={styles.footerDesc}>
               <RichText text={t(dbContent, 'footerDesc') || getTranslation('footerDesc')} inline />
             </p>
