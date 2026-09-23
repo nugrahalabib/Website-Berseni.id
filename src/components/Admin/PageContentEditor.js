@@ -34,7 +34,7 @@ const LAYOUT_OPTIONS = [
 const CAROUSEL_DEFAULTS = {
   activitiesSource: 'manual',
   activitiesProductFilter: 'all',
-  activitiesProductLimit: '5',
+  activitiesVisibleCount: '5',
 };
 
 // Component for uploading and editing media URLs / files
@@ -1789,22 +1789,21 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
         activities: {
           title: 'Kelola Carousel Aktivitas',
           fields: [
-            { name: 'activitiesSource', label: '🔄 Sumber Kartu Carousel — pilih "Otomatis" agar lukisan & kelas baru langsung tampil di beranda tanpa diketik ulang', type: 'select', defaultValue: 'manual', options: [
-              { value: 'manual', label: '✍️ Aktivitas manual — pakai daftar yang Anda ketik di bawah' },
-              { value: 'products', label: '⚡ Otomatis dari Katalog Produk — ikut isi tab "Katalog Produk"' }
+            { name: 'activitiesSource', label: '🔄 Isi Carousel — apa yang ditampilkan di section "Berseni Activities" beranda', type: 'select', defaultValue: 'manual', options: [
+              { value: 'manual', label: '✍️ Hanya aktivitas manual — daftar yang Anda ketik di bawah' },
+              { value: 'mixed', label: '⚡ Gabungan — aktivitas manual + seluruh Katalog Produk' },
+              { value: 'products', label: '🛍️ Hanya Katalog Produk — artwork, workshop, & kelas online' }
             ] },
-            { name: 'activitiesProductFilter', label: 'Jika Otomatis: produk mana yang ditampilkan?', type: 'select', defaultValue: 'all', options: [
+            { name: 'activitiesProductFilter', label: 'Kalau Katalog Produk ikut: produk mana saja yang ditampilkan?', type: 'select', defaultValue: 'all', options: [
               { value: 'all', label: 'Semua — Artwork + Workshop Offline + Kelas Online' },
               { value: 'artwork', label: 'Hanya Artwork (lukisan orisinal)' },
               { value: 'classes', label: 'Hanya Kelas & Workshop' }
             ] },
-            { name: 'activitiesProductLimit', label: 'Jika Otomatis: berapa kartu yang ditampilkan?', type: 'select', defaultValue: '5', options: [
-              { value: '3', label: '3 kartu' },
-              { value: '4', label: '4 kartu' },
-              { value: '5', label: '5 kartu (disarankan)' },
-              { value: '6', label: '6 kartu' },
-              { value: '7', label: '7 kartu' },
-              { value: '8', label: '8 kartu' }
+            { name: 'activitiesVisibleCount', label: '👁️ Berapa kartu terlihat bersamaan? Ini BUKAN batas isi — berapa pun pilihannya, carousel tetap berputar melewati SELURUH katalog', type: 'select', defaultValue: '5', options: [
+              { value: '3', label: '3 kartu terlihat' },
+              { value: '5', label: '5 kartu terlihat (disarankan)' },
+              { value: '7', label: '7 kartu terlihat' },
+              { value: '9', label: '9 kartu terlihat' }
             ] }
           ],
           customRender: 'activities_editor'

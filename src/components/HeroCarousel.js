@@ -7,7 +7,13 @@ import styles from '@/styles/Components.module.css';
 
 const AUTO_ADVANCE_MS = 5000;
 
-export default function HeroCarousel({ items = [], onCardClick }) {
+// Berapa kartu yang TERLIHAT bersamaan di tumpukan 3D — bukan berapa item yang
+// ada di dalamnya. Carousel ini memang berputar melingkar melewati SELURUH item;
+// yang jauh dari kartu aktif hanya memudar sampai tak terlihat. Jadi katalog 50
+// produk tetap terputar semuanya walau hanya 5 kartu yang tampak sekaligus.
+const DEFAULT_VISIBLE = 5;
+
+export default function HeroCarousel({ items = [], onCardClick, visibleCount = DEFAULT_VISIBLE }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isInteracting, setIsInteracting] = useState(false);
@@ -70,14 +76,22 @@ export default function HeroCarousel({ items = [], onCardClick }) {
     handleCardClick(index);
   };
 
-  const getCardStyle = (index) => {
+  // Jumlah kartu di SATU sisi kartu aktif. visibleCount 5 -> 2 di kiri, 2 di
+  // kanan. Dengan 5 item, jarak melingkar maksimum memang 2, jadi nilai bawaan
+  // ini menghasilkan tampilan yang sama persis seperti sebelum ada pengaturan.
+  const sideCount = Math.max(1, Math.floor(((Number(visibleCount) || DEFAULT_VISIBLE) - 1) / 2));
+
+  // Jarak melingkar terpendek dari kartu aktif.
+  const circularDiff = (index) => {
     const total = items.length;
-    // Calculate circular shortest distance
     let diff = index - activeIndex;
-    
     if (diff > total / 2) diff -= total;
     if (diff < -total / 2) diff += total;
+    return diff;
+  };
 
+  const getCardStyle = (index) => {
+    const diff = circularDiff(index);
     const absDiff = Math.abs(diff);
 
     // Responsive card metrics
@@ -90,8 +104,9 @@ export default function HeroCarousel({ items = [], onCardClick }) {
     let translateZ = -absDiff * depth;
     let rotateY = diff * rotateYVal;
     
-    // Increased side opacity so all 5 cards are clearly visible in the queue
-    let opacity = 1 - absDiff * 0.22;
+    // Kartu di luar jangkauan tampil disembunyikan penuh. Tanpa ini, katalog
+    // panjang membuat kartu-kartu jauh menumpuk samar di belakang tumpukan.
+    let opacity = absDiff > sideCount ? 0 : 1 - absDiff * 0.22;
     let zIndex = 100 - absDiff;
 
     // Active card focus styling
@@ -110,9 +125,16 @@ export default function HeroCarousel({ items = [], onCardClick }) {
       // (opacity 0 di awal hero). Memaksa 'auto' membatalkan 'none' induk itu,
       // sehingga kartu yang TAK TERLIHAT (z-index 30) menutupi tombol CTA hero
       // (z-index 20) dan memakan semua klik. undefined = warisi induk.
-      pointerEvents: absDiff > 2 ? 'none' : undefined
+      pointerEvents: absDiff > sideCount ? 'none' : undefined
     };
   };
+
+  // Katalog bisa panjang. Kartu yang jauh di belakang tumpukan sudah opacity 0,
+  // jadi tidak ada gunanya menaruhnya di DOM beserta gambarnya. Disisakan satu
+  // cadangan di tiap sisi supaya kartu yang masuk sudah siap saat bergeser dan
+  // transisinya tidak berkedip. Daftar pendek tidak terpengaruh sama sekali.
+  const renderRadius = sideCount + 1;
+  const shouldWindow = items.length > renderRadius * 2 + 1;
 
   const formatPrice = (price) => {
     if (price === undefined || price === null) return '';
@@ -166,6 +188,7 @@ export default function HeroCarousel({ items = [], onCardClick }) {
     >
       <div className={styles.carouselTrack}>
         {items.map((item, idx) => {
+          if (shouldWindow && Math.abs(circularDiff(idx)) > renderRadius) return null;
           const isActive = idx === activeIndex;
           return (
             <div

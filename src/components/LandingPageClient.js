@@ -17,22 +17,28 @@ import RichText from '@/components/RichText';
 import { textVars } from '@/lib/textColors';
 import styles from '@/styles/Landing.module.css';
 
-// Carousel showcase di bawah hero bisa mengambil kartunya dari dua sumber,
-// dipilih admin lewat `activitiesSource` (Admin > Konten Halaman > Kelola
-// Carousel Aktivitas):
+// Carousel showcase di bawah hero. Isinya dipilih admin lewat `activitiesSource`
+// (Admin > Konten Halaman > Kelola Carousel Aktivitas):
 //
-//   'manual'   daftar aktivitas yang diketik sendiri di panel admin
-//   'products' otomatis mengikuti Katalog Produk
+//   'manual'   hanya daftar aktivitas yang diketik sendiri di panel admin
+//   'products' hanya Katalog Produk (artwork / workshop / kelas online)
+//   'mixed'    aktivitas DAN katalog produk sekaligus
 //
-// Mode 'products' ada supaya artwork atau kelas yang baru ditambahkan langsung
+// Mode otomatis ada supaya artwork atau kelas yang baru ditambahkan langsung
 // muncul di beranda tanpa perlu diketik ulang — termasuk tautan belinya, jadi
 // tidak ada link yang perlu disalin manual dan tidak ada yang bisa basi.
+//
+// PENTING: tidak ada pemotongan daftar di sini. Carousel berputar melingkar
+// melewati SELURUH item; pengaturan jumlah kartu hanya mengatur berapa yang
+// terlihat bersamaan (lihat visibleCount di HeroCarousel). Versi pertama fitur
+// ini memakai slice() dan diam-diam membuang produk ke-6 dan seterusnya —
+// produk itu tidak pernah tampil sama sekali, bahkan setelah carousel berputar.
 const CAROUSEL_CATEGORY_FILTERS = {
   all: null, // null = tanpa penyaringan, semua kategori produk ikut
   artwork: ['artwork'],
   classes: ['offline', 'online'],
 };
-const CAROUSEL_DEFAULT_LIMIT = 5;
+const CAROUSEL_DEFAULT_VISIBLE = 5;
 
 const activitiesData = [
   {
@@ -675,48 +681,55 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
     [initialProducts, selectedFilter]
   );
 
-  // Kartu carousel showcase di bawah hero. Mengembalikan `isProducts` juga,
-  // karena kartu produk harus membuka ProductModal (ada harga + tombol beli)
-  // sedangkan kartu aktivitas membuka ActivityModal.
-  const carousel = useMemo(() => {
-    const manualItems =
-      dbContent?.activities || initialContent?.activities || activitiesData;
+  // Kartu carousel showcase di bawah hero.
+  //
+  // Tiap kartu ditandai `_isProduct` karena dalam mode gabungan satu carousel
+  // memuat dua jenis isi sekaligus: kartu produk harus membuka ProductModal
+  // (ada harga + tombol beli), kartu aktivitas membuka ActivityModal.
+  const carouselItems = useMemo(() => {
+    const aktivitas = (dbContent?.activities || initialContent?.activities || activitiesData)
+      .map((it) => ({ ...it, _isProduct: false }));
 
-    const source =
+    const sumber =
       dbContent?.activitiesSource || initialContent?.activitiesSource || 'manual';
-    if (source !== 'products') return { items: manualItems, isProducts: false };
+    if (sumber === 'manual') return aktivitas;
 
     const filterKey =
       dbContent?.activitiesProductFilter ||
       initialContent?.activitiesProductFilter ||
       'all';
-    const allowed = CAROUSEL_CATEGORY_FILTERS[filterKey] || null;
-    const pool = allowed
-      ? initialProducts.filter((p) => allowed.includes(p.category))
-      : initialProducts;
+    const diizinkan = CAROUSEL_CATEGORY_FILTERS[filterKey] || null;
+    const produk = (diizinkan
+      ? initialProducts.filter((p) => diizinkan.includes(p.category))
+      : initialProducts
+    ).map((it) => ({ ...it, _isProduct: true }));
+
+    const hasil = sumber === 'mixed' ? [...aktivitas, ...produk] : produk;
 
     // Katalog kosong untuk filter ini (mis. admin memilih "Hanya Artwork"
     // padahal belum ada lukisan) -> kembali ke aktivitas manual, supaya
     // section-nya tidak pernah tampil kosong di beranda.
-    if (!pool.length) return { items: manualItems, isProducts: false };
-
-    const limit =
-      Number(
-        dbContent?.activitiesProductLimit ?? initialContent?.activitiesProductLimit
-      ) || CAROUSEL_DEFAULT_LIMIT;
-
-    return { items: pool.slice(0, limit), isProducts: true };
+    return hasil.length ? hasil : aktivitas;
   }, [
     dbContent?.activities,
     dbContent?.activitiesSource,
     dbContent?.activitiesProductFilter,
-    dbContent?.activitiesProductLimit,
     initialContent?.activities,
     initialContent?.activitiesSource,
     initialContent?.activitiesProductFilter,
-    initialContent?.activitiesProductLimit,
     initialProducts,
   ]);
+
+  // Berapa kartu terlihat bersamaan di tumpukan 3D — BUKAN batas jumlah isi.
+  // `activitiesProductLimit` adalah nama lama dari kunci yang sama, dibaca agar
+  // pengaturan yang sudah terlanjur tersimpan tidak hilang begitu saja.
+  const carouselVisibleCount =
+    Number(
+      dbContent?.activitiesVisibleCount ??
+      initialContent?.activitiesVisibleCount ??
+      dbContent?.activitiesProductLimit ??
+      initialContent?.activitiesProductLimit
+    ) || CAROUSEL_DEFAULT_VISIBLE;
 
   // Tanggal berakhirnya promo diambil dari database (bisa diatur dari admin).
   // Jika kosong / tidak valid, countdown tidak dirender sama sekali.
@@ -769,6 +782,13 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
 
   const handleActivitySelect = (activity) => {
     setSelectedActivity(activity);
+  };
+
+  // Satu carousel bisa memuat aktivitas DAN produk sekaligus (mode gabungan),
+  // jadi tujuan kliknya ditentukan per kartu, bukan per mode.
+  const handleCarouselCardClick = (item) => {
+    if (item && item._isProduct) handleCardSelect(item);
+    else handleActivitySelect(item);
   };
 
   const handleCloseActivityModal = () => {
@@ -979,7 +999,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
             <div className={styles.showcaseTreeRight} />
             
             {/* Carousel Aktivitas Berseni */}
-            {carousel.items.length > 0 && (
+            {carouselItems.length > 0 && (
               <div className={styles.carouselShowcaseContainer}>
                 <SectionHeading
                   className={styles.carouselShowcaseHeader}
@@ -987,8 +1007,9 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                   subtitle={getTranslation('activitiesHeaderSubtitle')}
                 />
                 <HeroCarousel
-                  items={carousel.items}
-                  onCardClick={carousel.isProducts ? handleCardSelect : handleActivitySelect}
+                  items={carouselItems}
+                  onCardClick={handleCarouselCardClick}
+                  visibleCount={carouselVisibleCount}
                 />
               </div>
             )}
