@@ -24,6 +24,17 @@ const LAYOUT_OPTIONS = [
   { value: 'block', label: 'Selalu baris baru (di bawah)' },
 ];
 
+// Pengaturan carousel showcase beranda. Sebuah <select> yang tidak pernah
+// disentuh admin hanya MENAMPILKAN defaultValue-nya — nilainya tidak ikut
+// tersimpan. Tanpa penyemaian ini, admin yang memilih "Otomatis" lalu menyimpan
+// akan menyimpan sumbernya saja, sementara filter & jumlah kartu tetap kosong di
+// database: yang terlihat di panel tidak sama dengan yang tersimpan.
+const CAROUSEL_DEFAULTS = {
+  activitiesSource: 'manual',
+  activitiesProductFilter: 'all',
+  activitiesProductLimit: '5',
+};
+
 // Component for uploading and editing media URLs / files
 const MediaUploadInput = ({ label, name, value, type, onChange, showToast }) => {
   const [uploading, setUploading] = useState(false);
@@ -614,8 +625,21 @@ function ActivitiesEditorSection({ form, setForm, showToast }) {
       );
     }
 
+    // Saat carousel disetel Otomatis, daftar di bawah ini tidak tampil di
+    // beranda. Tanpa penanda, admin akan mengedit daftar ini lalu bingung
+    // kenapa situsnya tidak berubah.
+    const isAutoFromCatalog = form.activitiesSource === 'products';
+
     return (
       <div style={{ marginTop: '1rem' }}>
+        {isAutoFromCatalog && (
+          <div style={{ padding: '1rem 1.25rem', marginBottom: '1.25rem', borderRadius: '12px', background: '#ECFDF5', border: '1px solid #6EE7B7', color: '#065F46', fontSize: '0.88rem', lineHeight: 1.6 }}>
+            <strong>⚡ Carousel sedang Otomatis dari Katalog Produk.</strong>
+            <br />
+            Kartu di beranda diambil langsung dari tab <strong>Katalog Produk</strong>, lengkap dengan harga dan tautan belinya. Daftar manual di bawah ini <strong>disimpan tapi tidak ditampilkan</strong> — ubah pilihan di atas ke &quot;Aktivitas manual&quot; kalau ingin memakainya lagi.
+          </div>
+        )}
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <label className={styles.adminLabel} style={{ marginBottom: 0 }}>Daftar Aktivitas Carousel</label>
           <button type="button" className="btn btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem', borderRadius: '8px' }} onClick={handleAddNew}>
@@ -1207,6 +1231,13 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
               updatedForm[key] = DEFAULT_WA_MESSAGES[key];
             }
           });
+          // Samakan pilihan carousel yang TAMPIL di panel dengan yang TERSIMPAN
+          // (lihat CAROUSEL_DEFAULTS).
+          Object.keys(CAROUSEL_DEFAULTS).forEach(key => {
+            if (updatedForm[key] === undefined || updatedForm[key] === '') {
+              updatedForm[key] = CAROUSEL_DEFAULTS[key];
+            }
+          });
           setForm(updatedForm);
         }
       } catch (err) {
@@ -1470,7 +1501,25 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
         },
         activities: {
           title: 'Kelola Carousel Aktivitas',
-          fields: [],
+          fields: [
+            { name: 'activitiesSource', label: '🔄 Sumber Kartu Carousel — pilih "Otomatis" agar lukisan & kelas baru langsung tampil di beranda tanpa diketik ulang', type: 'select', defaultValue: 'manual', options: [
+              { value: 'manual', label: '✍️ Aktivitas manual — pakai daftar yang Anda ketik di bawah' },
+              { value: 'products', label: '⚡ Otomatis dari Katalog Produk — ikut isi tab "Katalog Produk"' }
+            ] },
+            { name: 'activitiesProductFilter', label: 'Jika Otomatis: produk mana yang ditampilkan?', type: 'select', defaultValue: 'all', options: [
+              { value: 'all', label: 'Semua — Artwork + Workshop Offline + Kelas Online' },
+              { value: 'artwork', label: 'Hanya Artwork (lukisan orisinal)' },
+              { value: 'classes', label: 'Hanya Kelas & Workshop' }
+            ] },
+            { name: 'activitiesProductLimit', label: 'Jika Otomatis: berapa kartu yang ditampilkan?', type: 'select', defaultValue: '5', options: [
+              { value: '3', label: '3 kartu' },
+              { value: '4', label: '4 kartu' },
+              { value: '5', label: '5 kartu (disarankan)' },
+              { value: '6', label: '6 kartu' },
+              { value: '7', label: '7 kartu' },
+              { value: '8', label: '8 kartu' }
+            ] }
+          ],
           customRender: 'activities_editor'
         },
         partners: {
