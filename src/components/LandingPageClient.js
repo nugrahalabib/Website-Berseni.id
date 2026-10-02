@@ -12,6 +12,7 @@ import ActivityModal from '@/components/ActivityModal';
 import { useLanguage } from '@/components/LanguageContext';
 import SplitTitle from '@/components/SplitTitle';
 import SectionHeading from '@/components/SectionHeading';
+import CustomIcon from '@/components/CustomIcon';
 import { resolveWaNumber, buildWaLink } from '@/lib/whatsapp';
 import RichText from '@/components/RichText';
 import { textVars } from '@/lib/textColors';
@@ -39,6 +40,19 @@ const CAROUSEL_CATEGORY_FILTERS = {
   classes: ['offline', 'online'],
 };
 const CAROUSEL_DEFAULT_VISIBLE = 5;
+
+// Foto bawaan tiap kartu "Program Kami". Admin bisa menggantinya per kartu
+// (prog1Image..prog3Image); kolom kosong = foto bawaan ini.
+const PROGRAM_DEFAULT_IMAGES = {
+  prog1Image: '/activity-outdoor.webp',
+  prog2Image: '/activity-talk.webp',
+  prog3Image: '/collage-1.jpg',
+};
+
+// Nilai background-image yang aman untuk URL dari admin. JSON.stringify
+// menghasilkan string CSS bertanda kutip ganda yang sudah ter-escape, jadi
+// URL berisi tanda kutip atau garis miring terbalik tidak bisa memecah deklarasi.
+const cssUrl = (src) => `url(${JSON.stringify(String(src))})`;
 
 const activitiesData = [
   {
@@ -681,6 +695,10 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
     [initialProducts, selectedFilter]
   );
 
+  // Foto kartu "Program Kami": isian admin bila ada, foto bawaan bila kosong.
+  const programImage = (key) =>
+    (dbContent?.[key] || initialContent?.[key] || '').trim() || PROGRAM_DEFAULT_IMAGES[key];
+
   // Kartu carousel showcase di bawah hero.
   //
   // Tiap kartu ditandai `_isProduct` karena dalam mode gabungan satu carousel
@@ -1101,17 +1119,19 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
         <div className={styles.programsGrid}>
           {/* Card 1: Offline */}
           <div className={styles.programCard}>
-            <div className={styles.cardImageBg} style={{ backgroundImage: "url('/activity-outdoor.webp')" }}></div>
+            <div className={styles.cardImageBg} style={{ backgroundImage: cssUrl(programImage('prog1Image')) }}></div>
             <div className={styles.cardOverlayGradient}></div>
             <div className={styles.cardAccentLine}></div>
             <span className={styles.cardIndicator}>01</span>
  
             <div className={styles.cardContent}>
               <div className={styles.iconWrapper}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
+                <CustomIcon src={dbContent?.prog1Icon || initialContent?.prog1Icon} size={32}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </CustomIcon>
               </div>
               <h3>{getTranslation('prog1Title')}</h3>
               <p><RichText text={getTranslation('prog1Desc')} inline /></p>
@@ -1128,16 +1148,18 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
  
           {/* Card 2: Online */}
           <div className={styles.programCard}>
-            <div className={styles.cardImageBg} style={{ backgroundImage: "url('/activity-talk.webp')" }}></div>
+            <div className={styles.cardImageBg} style={{ backgroundImage: cssUrl(programImage('prog2Image')) }}></div>
             <div className={styles.cardOverlayGradient}></div>
             <div className={styles.cardAccentLine}></div>
             <span className={styles.cardIndicator}>02</span>
  
             <div className={styles.cardContent}>
               <div className={styles.iconWrapper}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 00-2 2z" />
-                </svg>
+                <CustomIcon src={dbContent?.prog2Icon || initialContent?.prog2Icon} size={32}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 00-2 2z" />
+                  </svg>
+                </CustomIcon>
               </div>
               <h3>{getTranslation('prog2Title')}</h3>
               <p><RichText text={getTranslation('prog2Desc')} inline /></p>
@@ -1154,16 +1176,18 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
  
           {/* Card 3: Supplies */}
           <div className={styles.programCard}>
-            <div className={styles.cardImageBg} style={{ backgroundImage: "url('/collage-1.jpg')" }}></div>
+            <div className={styles.cardImageBg} style={{ backgroundImage: cssUrl(programImage('prog3Image')) }}></div>
             <div className={styles.cardOverlayGradient}></div>
             <div className={styles.cardAccentLine}></div>
             <span className={styles.cardIndicator}>03</span>
  
             <div className={styles.cardContent}>
               <div className={styles.iconWrapper}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
+                <CustomIcon src={dbContent?.prog3Icon || initialContent?.prog3Icon} size={32}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                </CustomIcon>
               </div>
               <h3>{getTranslation('prog3Title')}</h3>
               <p><RichText text={getTranslation('prog3Desc')} inline /></p>

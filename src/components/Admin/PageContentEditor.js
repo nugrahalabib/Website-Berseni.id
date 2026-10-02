@@ -1715,6 +1715,8 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
             { name: 'programsSubtitle_id', label: 'Pilar Subtitle (ID)', type: 'textarea' },
             { name: 'programsSubtitle_en', label: 'Pilar Subtitle (EN)', type: 'textarea' },
             // Program 1
+            { name: 'prog1Image', label: '📷 Foto Program 1 — kartu paling kiri. Kosongkan untuk memakai foto bawaan.', type: 'image' },
+            { name: 'prog1Icon', label: '🖼️ Ikon Program 1 — kartu paling kiri', type: 'icon', hint: 'Unggah PNG, JPG, WebP, atau SVG — ukuran & format diurus otomatis (dikonversi jadi WebP transparan). Kosongkan untuk kembali ke ikon bawaan situs.' },
             { name: 'prog1Title_id', label: 'Program 1 Title (ID)', type: 'text' },
             { name: 'prog1Title_en', label: 'Program 1 Title (EN)', type: 'text' },
             { name: 'prog1Desc_id', label: 'Program 1 Description (ID)', type: 'textarea' },
@@ -1728,6 +1730,8 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
               { value: 'hidden', label: 'Sembunyikan Tombol' }
             ]},
             // Program 2
+            { name: 'prog2Image', label: '📷 Foto Program 2 — kartu tengah. Kosongkan untuk memakai foto bawaan.', type: 'image' },
+            { name: 'prog2Icon', label: '🖼️ Ikon Program 2 — kartu tengah', type: 'icon' },
             { name: 'prog2Title_id', label: 'Program 2 Title (ID)', type: 'text' },
             { name: 'prog2Title_en', label: 'Program 2 Title (EN)', type: 'text' },
             { name: 'prog2Desc_id', label: 'Program 2 Description (ID)', type: 'textarea' },
@@ -1741,6 +1745,8 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
               { value: 'hidden', label: 'Sembunyikan Tombol' }
             ]},
             // Program 3
+            { name: 'prog3Image', label: '📷 Foto Program 3 — kartu paling kanan. Kosongkan untuk memakai foto bawaan.', type: 'image' },
+            { name: 'prog3Icon', label: '🖼️ Ikon Program 3 — kartu paling kanan', type: 'icon' },
             { name: 'prog3Title_id', label: 'Program 3 Title (ID)', type: 'text' },
             { name: 'prog3Title_en', label: 'Program 3 Title (EN)', type: 'text' },
             { name: 'prog3Desc_id', label: 'Program 3 Description (ID)', type: 'textarea' },
