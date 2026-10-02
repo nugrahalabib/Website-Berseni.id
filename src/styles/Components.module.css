@@ -973,9 +973,28 @@
   .navLinks {
     display: none; /* Mobile menu drawer will overlay this */
   }
-  
+
   .menuToggle {
     display: flex;
+  }
+
+  /* Tagline di sebelah logo DITAMPILKAN LAGI di HP.
+     Aturan max-width:1024px di atas menyembunyikannya karena di tablet deretan
+     menu desktop sudah memenuhi navbar. Tapi di bawah 768px deretan itu diganti
+     tombol hamburger, sehingga ruang di sebelah logo justru kosong — tagline
+     tidak punya alasan untuk hilang, dan klien melihatnya tampil di desktop
+     tapi lenyap di HP. Lebarnya dibatasi dan boleh turun ke baris kedua supaya
+     tidak pernah menabrak hamburger, bahkan di layar 360px. */
+  .logoTextContainer {
+    min-width: 0;
+  }
+
+  .logoTagline {
+    display: block;
+    max-width: 128px;
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+    line-height: 1.35;
   }
   
   .carouselContainer {
