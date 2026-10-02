@@ -274,6 +274,28 @@
   font-weight: 700;
 }
 
+/* Logo brand di footer (lihat gayaBrand di Footer.js). */
+.footerLogoChip,
+.footerLogoPlain {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0.9rem;
+}
+
+.footerLogoChip {
+  /* Warna navbar: logo bawaan dirancang untuk tampil di atas krem. */
+  background-color: var(--color-cream-bg);
+  padding: 0.55rem 0.95rem;
+  border-radius: 14px;
+}
+
+.footerLogoImage {
+  display: block;
+  height: 56px;
+  width: auto;
+  object-fit: contain;
+}
+
 .footerTagline {
   font-size: 0.7rem;
   text-transform: uppercase;

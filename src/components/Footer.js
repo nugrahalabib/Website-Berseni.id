@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useLanguage } from '@/components/LanguageContext';
 import RichText from '@/components/RichText';
 import CustomIcon from '@/components/CustomIcon';
@@ -44,6 +45,24 @@ export default function Footer() {
 
   const namaBrand = (dbContent?.footerBrandText || '').trim() || 'Berseni';
 
+  // Brand di footer. Bawaannya LOGO yang sama dengan navbar, karena klien
+  // melihat footer menulis "Berseni" dengan huruf tulisan tangan yang berbeda
+  // dari logonya dan ingin keduanya sama.
+  //
+  // logo.png bawaan bergambar gelap di atas latar transparan. Ditaruh langsung
+  // di footer yang navy, tulisannya tenggelam — jadi gaya bawaan 'logo' memberi
+  // chip krem di belakangnya, persis warna navbar tempat logo itu memang
+  // dirancang tampil (pola yang sama dipakai sidebar admin).
+  //   'logo'       logo di atas chip krem (bawaan)
+  //   'logo-plain' logo tanpa chip — untuk logo versi terang yang diunggah admin
+  //   'text'       tulisan nama brand, gaya lama
+  const gayaBrand = ['logo', 'logo-plain', 'text'].includes(dbContent?.footerBrandStyle)
+    ? dbContent.footerBrandStyle
+    : 'logo';
+  const logoFooter = (dbContent?.footerLogo || '').trim()
+    || (dbContent?.navLogo || '').trim()
+    || '/logo.png';
+
   const teksCopyright = (t(dbContent, 'footerCopyright') || '').trim()
     || (language === 'id'
       ? `Hak Cipta © ${currentYear} ${namaBrand}. Hak cipta dilindungi undang-undang.`
@@ -63,7 +82,23 @@ export default function Footer() {
         <div className={styles.footerGrid}>
           {/* Brand & About */}
           <div className={styles.footerCol}>
-            <div className={styles.footerBrandText}>{namaBrand}</div>
+            {gayaBrand === 'text' ? (
+              <div className={styles.footerBrandText}>{namaBrand}</div>
+            ) : (
+              <Link
+                href="/"
+                className={gayaBrand === 'logo' ? styles.footerLogoChip : styles.footerLogoPlain}
+                aria-label={language === 'id' ? `${namaBrand}, kembali ke beranda` : `${namaBrand}, go to homepage`}
+              >
+                <Image
+                  src={logoFooter}
+                  alt={namaBrand}
+                  width={160}
+                  height={56}
+                  className={styles.footerLogoImage}
+                />
+              </Link>
+            )}
             {(getTranslation('footerTagline') || '').trim() ? (
               <div className={styles.footerTagline}>{getTranslation('footerTagline')}</div>
             ) : null}

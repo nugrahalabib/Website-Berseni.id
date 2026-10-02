@@ -1853,7 +1853,13 @@ export default function PageContentEditor({ showToast, setIsDirty = () => {} }) 
         footer: {
           title: 'Pengaturan Kaki Halaman (Footer) & Medsos',
           fields: [
-            { name: 'footerBrandText', label: 'Nama Brand di Footer (tulisan besar bergaya tulisan tangan)', type: 'text', placeholder: 'Berseni' },
+            { name: 'footerBrandStyle', label: '🏷️ Tampilan Brand di Footer', type: 'select', defaultValue: 'logo', options: [
+              { value: 'logo', label: 'Logo — sama dengan navbar, di atas latar terang (disarankan)' },
+              { value: 'logo-plain', label: 'Logo tanpa latar — pakai ini kalau Anda mengunggah logo versi putih/terang di bawah' },
+              { value: 'text', label: 'Tulisan nama brand (gaya tulisan tangan, seperti dulu)' }
+            ] },
+            { name: 'footerLogo', label: '🖼️ Logo Khusus Footer (opsional) — kosongkan agar sama persis dengan logo navbar', type: 'image' },
+            { name: 'footerBrandText', label: 'Nama Brand — tampil sebagai tulisan bila memilih "Tulisan nama brand", dan dipakai di baris hak cipta', type: 'text', placeholder: 'Berseni' },
             { name: 'footerDesc_id', label: 'Deskripsi Singkat Footer (ID)', type: 'textarea' },
             { name: 'footerDesc_en', label: 'Deskripsi Singkat Footer (EN)', type: 'textarea' },
             { name: 'footerContactDesc_id', label: 'Teks Ajakan Kontak Hubungi Kami (ID)', type: 'textarea' },
