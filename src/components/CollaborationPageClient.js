@@ -103,12 +103,11 @@ export default function CollaborationPageClient({ content }) {
           
           <div className={styles.heroInner}>
             <span className={styles.heroSubtitle} style={{ color: txt('text_collab_hero_body') }}>{getTranslation('collabHeroSubtitle')}</span>
-            {/* Titik beraksen ditulis di JSX, bukan bagian teks yang diketik admin —
-                jadi judul yang dikosongkan hanya menyisakan titik menggantung.
-                Judul kosong = seluruh <h1> tidak dirender. */}
+            {/* Judul kosong = seluruh <h1> tidak dirender. Titik dekoratif yang
+                dulu ditempel di sini sudah dihapus atas permintaan klien. */}
             {getTranslation('collabHeroTitle')?.trim() ? (
               <h1 className={styles.heroTitle} style={{ color: txt('text_collab_hero_title') }}>
-                {getTranslation('collabHeroTitle').trim()}<span>.</span>
+                {getTranslation('collabHeroTitle').trim()}
               </h1>
             ) : null}
             <p className={styles.heroDesc} style={{ color: txt('text_collab_hero_body') }}>

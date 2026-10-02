@@ -104,7 +104,7 @@ export function LanguageProvider({ children, defaultLanguage = 'id', initialCont
     navGallery: { id: 'Galeri', en: 'Gallery' },
     galleryHeaderLabel: { id: 'Dokumentasi Berseni', en: 'Berseni Documentation' },
     galleryHeaderTitle: { id: 'Galeri', en: 'Activity' },
-    galleryHeaderTitleSpan: { id: 'Kegiatan.', en: 'Gallery.' },
+    galleryHeaderTitleSpan: { id: 'Kegiatan', en: 'Gallery' },
     galleryHeaderDesc: {
       id: 'Potret momen workshop melukis, kelas, dan kegiatan komunitas Berseni bersama teman-teman pecinta seni.',
       en: 'Moments from our painting workshops, classes, and Berseni community activities with fellow art lovers.'
@@ -218,7 +218,7 @@ export function LanguageProvider({ children, defaultLanguage = 'id', initialCont
     // About Page
     aboutHeroLabel: { id: 'Tentang Berseni', en: 'About Us' },
     aboutHeroTitle: { id: 'Menghubungkan Jiwa, Karya, dan Cerita ', en: 'Connecting Souls, Works, and Stories of ' },
-    aboutHeroTitleSpan: { id: 'Seniman.', en: 'Artists.' },
+    aboutHeroTitleSpan: { id: 'Seniman', en: 'Artists' },
     aboutHeroDesc: {
       id: 'Kami adalah wadah kreatif yang berdedikasi untuk melestarikan warisan seni rupa Indonesia, memberdayakan seniman lokal, dan menghadirkan edukasi seni yang inklusif bagi semua orang.',
       en: 'We are a creative hub dedicated to preserving Indonesian art heritage, empowering local artists, and bringing inclusive art education to everyone.'
@@ -255,7 +255,7 @@ export function LanguageProvider({ children, defaultLanguage = 'id', initialCont
     aboutQuoteAuthor: { id: 'Tim Kreatif Berseni', en: 'Creative Team Berseni' },
     aboutQuoteLocation: { id: 'Studio Ubud, Bali', en: 'Studio Ubud, Bali' },
     aboutPillarsTitle: { id: 'Tiga Pilar ', en: 'Three Main ' },
-    aboutPillarsTitleSpan: { id: 'Utama.', en: 'Pillars.' },
+    aboutPillarsTitleSpan: { id: 'Utama', en: 'Pillars' },
     aboutPillarsSubtitle: {
       id: 'Nilai-nilai dasar yang memandu setiap langkah gerakan komunitas seni rupa Berseni.',
       en: 'Basic values guiding every step of the Berseni art community movement.'
@@ -331,7 +331,7 @@ export function LanguageProvider({ children, defaultLanguage = 'id', initialCont
 
     // Blog Pages
     blogHeaderTitleText: { id: 'Artikel & ', en: 'Articles & ' },
-    blogHeaderTitleSpan: { id: 'Catatan Seni.', en: 'Art Notes.' },
+    blogHeaderTitleSpan: { id: 'Catatan Seni', en: 'Art Notes' },
     blogHeaderDesc: {
       id: 'Wawasan seputar teknik melukis, sejarah seni rupa, dan proses kreatif dari para seniman Indonesia.',
       en: 'Insights around painting techniques, visual art history, and the creative process of Indonesian artists.'
