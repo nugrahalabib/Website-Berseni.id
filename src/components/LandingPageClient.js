@@ -216,14 +216,46 @@ const DEFAULT_TESTIMONIALS = [
 // Ensure marquee has enough elements to loop seamlessly on wide screens
 const MIN_MARQUEE_ITEMS = 12;
 
+// Gambar di dalam marquee (testimoni & logo partner) dimuat LANGSUNG, bukan lazy.
+//
+// Safari/WebKit memutuskan kapan memuat gambar lazy berdasarkan posisinya saat
+// halaman di-SCROLL. Kartu marquee masuk ke layar lewat animasi CSS transform —
+// bukan scroll — sehingga WebKit tidak pernah memeriksanya ulang: kartu yang
+// mula-mula berada di luar layar tidak pernah dimuat, lalu bergeser masuk dalam
+// keadaan kosong. Itulah "review di iPhone tidak ada gambarnya". Direproduksi
+// di mesin WebKit dengan emulasi iPhone 13: setelah menggulir seluruh halaman
+// dan berhenti di section testimoni, 3 dari 12 gambar video tetap kosong.
+// Chrome (Android) memakai radius pemuatan yang jauh lebih lebar, makanya di
+// sana tidak terlihat.
+//
+// Biayanya kecil: salinan loop memakai URL yang sama, jadi setelah satu gambar
+// termuat sisanya dilayani dari cache. fetchPriority low menjaga gambar-gambar
+// ini tidak berebut jaringan dengan gambar hero di atas.
+const MARQUEE_IMAGE_LOADING = { loading: 'eager', fetchPriority: 'low' };
+
 const getMarqueeItems = (arr) => {
   if (!arr || arr.length === 0) return [];
   let items = [...arr];
   while (items.length < MIN_MARQUEE_ITEMS) {
     items = items.concat(arr);
   }
-  return items;
+  // Salinan ke-2 dst hanya ada demi loop marquee yang mulus (animasinya
+  // menggeser -50%, jadi isi track harus berulang). Ditandai supaya bisa
+  // disembunyikan dari pembaca layar dan dari mode geser saat Reduce Motion.
+  return items.map((item, i) => ({ ...item, _isLoopCopy: i >= arr.length }));
 };
+
+// Atribut untuk salinan loop marquee:
+// - aria-hidden: pembaca layar membacakan tiap testimoni/logo SEKALI, bukan
+//   dua sampai enam kali seperti sebelumnya.
+// - tabIndex -1 (hanya untuk elemen yang bisa difokus, mis. tautan video):
+//   elemen ber-aria-hidden tidak boleh tetap bisa dicapai lewat Tab.
+// - data-loop-copy: dipakai CSS untuk menyembunyikannya saat Reduce Motion
+//   aktif, karena di mode itu barisnya digeser manual dan salinan hanya akan
+//   membuat pengguna menggulir isi yang sama berulang kali.
+const loopCopyProps = (isCopy, { focusable = false } = {}) => (isCopy
+  ? { 'data-loop-copy': '', 'aria-hidden': true, ...(focusable ? { tabIndex: -1 } : {}) }
+  : {});
 
 const MS_PER_SECOND = 1000;
 const MS_PER_MINUTE = 60 * MS_PER_SECOND;
@@ -1068,13 +1100,13 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
             <div className={styles.partnersTrack}>
               {/* Render the logo set 3 times for a seamless loop */}
               {Array.from({ length: 3 }).map((_, loopIdx) => (
-                <div key={loopIdx} className={styles.partnersGroup}>
+                <div key={loopIdx} className={styles.partnersGroup} {...loopCopyProps(loopIdx > 0)}>
                   {partnersList.map((partnerUrl, imgIdx) => (
                     <SafeImage
                       key={`${loopIdx}-${imgIdx}`}
                       src={partnerUrl}
                       alt={`Partner ${imgIdx + 1}`}
-                      className={styles.partnerLogo}
+                      className={styles.partnerLogo} {...MARQUEE_IMAGE_LOADING}
                       width={140}
                       height={45}
                       sizes="140px"
@@ -1353,9 +1385,10 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className={styles.videoReviewCard}
+                      {...loopCopyProps(review._isLoopCopy, { focusable: true })}
                     >
                       <div style={{ height: '4px', backgroundColor: review.borderColor, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, borderRadius: '24px 24px 0 0' }} />
-                      <SafeImage src={review.videoThumbnail} alt="Video Review Thumbnail" className={styles.videoCardImage} width={600} height={400} sizes="(max-width: 768px) 80vw, 400px" fallbackSrc="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop" />
+                      <SafeImage src={review.videoThumbnail} alt="Video Review Thumbnail" className={styles.videoCardImage} {...MARQUEE_IMAGE_LOADING} width={600} height={400} sizes="(max-width: 768px) 80vw, 400px" fallbackSrc="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600&auto=format&fit=crop" />
                       <div className={styles.videoCardPlayOverlay}>
                         <div className={styles.playButtonIconLarge}>
                           <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
@@ -1371,7 +1404,7 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                       {/* Glassmorphic reviewer card info at the bottom */}
                       <div className={styles.videoCardFooter}>
                         <div className={styles.videoCardHeader}>
-                          <SafeImage src={review.avatar} alt={review.name} className={styles.videoCardAvatar} width={100} height={100} sizes="60px" fallbackSrc="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop" />
+                          <SafeImage src={review.avatar} alt={review.name} className={styles.videoCardAvatar} {...MARQUEE_IMAGE_LOADING} width={100} height={100} sizes="60px" fallbackSrc="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop" />
                           <div className={styles.videoCardMeta}>
                             <span className={styles.videoCardName}>{review.name}</span>
                             <div className={styles.videoCardStars}>
@@ -1394,12 +1427,13 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                 // Standard reviewCard
                 return (
                   <div 
-                    key={`row1-text-${review.id}-${idx}`} 
+                    key={`row1-text-${review.id}-${idx}`}
                     className={styles.reviewCard}
+                    {...loopCopyProps(review._isLoopCopy)}
                   >
                     <div style={{ height: '4px', backgroundColor: review.borderColor, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, borderRadius: '24px 24px 0 0' }} />
                     <div className={styles.reviewHeader}>
-                      <SafeImage src={review.avatar} alt={review.name} className={styles.reviewAvatar} width={52} height={52} sizes="52px" fallbackSrc="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop" />
+                      <SafeImage src={review.avatar} alt={review.name} className={styles.reviewAvatar} {...MARQUEE_IMAGE_LOADING} width={52} height={52} sizes="52px" fallbackSrc="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop" />
                       <div className={styles.reviewMeta}>
                         <span className={styles.reviewName}>{review.name}</span>
                         <div className={styles.reviewStars}>
@@ -1428,10 +1462,11 @@ export default function LandingPageClient({ initialContent, initialProducts, ini
                   <div 
                     key={`row2-${review.id}-${idx}`} 
                     className={styles.reviewCard}
+                    {...loopCopyProps(review._isLoopCopy)}
                   >
                     <div style={{ height: '4px', backgroundColor: review.borderColor, position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, borderRadius: '24px 24px 0 0' }} />
                     <div className={styles.reviewHeader}>
-                      <SafeImage src={review.avatar} alt={review.name} className={styles.reviewAvatar} width={52} height={52} sizes="52px" fallbackSrc="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop" />
+                      <SafeImage src={review.avatar} alt={review.name} className={styles.reviewAvatar} {...MARQUEE_IMAGE_LOADING} width={52} height={52} sizes="52px" fallbackSrc="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop" />
                       <div className={styles.reviewMeta}>
                         <span className={styles.reviewName}>{review.name}</span>
                         <div className={styles.reviewStars}>

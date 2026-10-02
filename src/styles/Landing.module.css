@@ -1355,7 +1355,15 @@
 
 /* Review Card styling */
 .reviewCard {
+  /* width WAJIB sama dengan flex-basis. Track marquee berukuran
+     width:max-content, dan Safari/WebKit menghitung max-content itu dari
+     panjang teks komentar yang TIDAK dibungkus (~1100px per kartu), bukan dari
+     flex-basis. Hasilnya track 3x terlalu lebar, dan animasi translateX(-50%)
+     melempar seluruh kartu ke luar layar: di iPhone & Safari Mac baris
+     testimoni tampak kosong hampir sepanjang siklus. Diukur dengan WebKit:
+     track 13.197px untuk 12 kartu 300px. width eksplisit menyamakan semua mesin. */
   flex: 0 0 360px;
+  width: 360px;
   background: var(--color-white);
   padding: 1.75rem;
   border-radius: 24px;
@@ -1572,7 +1580,10 @@
 
 /* FULL VIDEO REVIEW CARD STYLING */
 .videoReviewCard {
+  /* Lihat catatan di .reviewCard — alasan yang sama (komentar di kartu ini juga
+     satu baris ber-elipsis, jadi max-content-nya sepanjang komentar penuh). */
   flex: 0 0 360px;
+  width: 360px;
   height: 280px;
   position: relative;
   border-radius: 24px;
@@ -1800,6 +1811,7 @@
 @media (max-width: 768px) {
   .videoReviewCard {
     flex-basis: 300px;
+    width: 300px;
     height: 250px;
   }
   .videoCardPlayOverlay {
@@ -1811,6 +1823,7 @@
   }
   .reviewCard {
     flex-basis: 300px;
+    width: 300px;
     padding: 1.25rem;
   }
   .reviewAvatar {
@@ -2201,3 +2214,51 @@
 }
 
 
+
+/* ==========================================================================
+   MARQUEE SAAT "REDUCE MOTION" AKTIF
+   --------------------------------------------------------------------------
+   globals.css menghormati prefers-reduced-motion dengan menghentikan semua
+   animasi. Untuk marquee testimoni & logo partner itu berakibat buruk: track
+   berhenti di posisi awal, wadahnya overflow:hidden, sehingga kartu di luar
+   layar TIDAK BISA DIJANGKAU sama sekali. Di iPhone yang menyalakan
+   Pengaturan > Aksesibilitas > Gerakan > Kurangi Gerakan, kedua section ini
+   tampak "macet" — persis laporan klien (iPhone-nya diam, iPhone lain jalan).
+
+   "Kurangi gerakan" berarti jangan bergerak SENDIRI, bukan "sembunyikan isi".
+   Jadi di mode ini barisnya menjadi bisa digeser jari: animasi mati, wadah
+   menggulir horizontal, salinan loop disembunyikan (cukup tampil sekali), dan
+   masker pudar di tepi dilepas supaya kartu pertama & terakhir terlihat utuh.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .marqueeWrapper,
+  .partnersMarquee {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .marqueeTrackLeft,
+  .marqueeTrackRight,
+  .partnersTrack {
+    animation: none;
+    transform: none;
+    padding-inline: 1.25rem;
+  }
+
+  .marqueeTrackLeft > *,
+  .marqueeTrackRight > *,
+  .partnersGroup {
+    scroll-snap-align: start;
+  }
+
+  .marqueeTrackLeft > [data-loop-copy],
+  .marqueeTrackRight > [data-loop-copy],
+  .partnersTrack > [data-loop-copy] {
+    display: none;
+  }
+}
