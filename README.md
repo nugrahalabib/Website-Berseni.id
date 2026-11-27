@@ -303,3 +303,10 @@ licensed for reuse.
 ---
 
 <sub>Made by [Nugraha Labib Mujaddid](https://github.com/nugrahalabib) · [nugrahalabib.com](https://nugrahalabib.com) · [nugrahalabib@gmail.com](mailto:nugrahalabib@gmail.com)</sub>
+
+## Related
+
+- [nugrahalabib.com](https://github.com/nugrahalabib/web-portfolio-3.0)
+- [Future Companion](https://github.com/nugrahalabib/Future-Companion)
+- [Presentation Skills](https://github.com/nugrahalabib/AgentBuff-Presentation-Skills)
+- [All my work on GitHub](https://github.com/nugrahalabib)
